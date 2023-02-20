@@ -1,5 +1,5 @@
-// Sample stub for the channelsListV1 function
-// Return stub value matches table below
+
+// stub function for the channelsListV1 function
 function channelsListV1(email, password) {
   return {
     channels: [
@@ -9,4 +9,11 @@ function channelsListV1(email, password) {
       }
     ],
   }
+
+
+// stub function for the channelsCreateV1 function
+function channelsCreateV1(authUserId, name, isPublic) {
+  return {
+    authUserId: 1,
+  };
 }
