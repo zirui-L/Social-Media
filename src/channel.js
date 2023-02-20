@@ -28,7 +28,7 @@ function channelDetailsV1(authUserId, channelId) {
     }
   ],
   allMembers: [
-    {
+    {s
     uId: 1,
     email: 'example@gmail.com',
     nameFirst: 'Hayden',
@@ -36,5 +36,9 @@ function channelDetailsV1(authUserId, channelId) {
     handleStr: 'haydenjacobs',
     }
   ],
+  }
 }
 
+function channelJoinV1(authUserId, channelId) {
+  return {}
+}
