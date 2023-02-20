@@ -1,3 +1,4 @@
+
 function channelMessagesV1 (authUserId, channelId, start  ) {
     return {
         messages: [
@@ -13,3 +14,27 @@ function channelMessagesV1 (authUserId, channelId, start  ) {
     }
 
 }
+
+function channelDetailsV1(authUserId, channelId) {
+  return {
+  name: 'Hayden',
+  ownerMembers: [
+    {
+      uId: 1,
+      email: 'example@gmail.com',
+      nameFirst: 'Hayden',
+      nameLast: 'Jacobs',
+      andleStr: 'haydenjacobs',
+    }
+  ],
+  allMembers: [
+    {
+    uId: 1,
+    email: 'example@gmail.com',
+    nameFirst: 'Hayden',
+    nameLast: 'Jacobs',
+    handleStr: 'haydenjacobs',
+    }
+  ],
+}
+
