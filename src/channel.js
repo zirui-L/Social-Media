@@ -28,7 +28,7 @@ function channelDetailsV1(authUserId, channelId) {
     }
   ],
   allMembers: [
-    {s
+    {
     uId: 1,
     email: 'example@gmail.com',
     nameFirst: 'Hayden',
@@ -40,5 +40,9 @@ function channelDetailsV1(authUserId, channelId) {
 }
 
 function channelJoinV1(authUserId, channelId) {
+  return {}
+}
+
+function channelInviteV1(authUserId, channelId, uId) {
   return {}
 }
