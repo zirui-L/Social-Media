@@ -1,8 +1,6 @@
 // stub function for the channelsCreateV1 function
 function channelsCreateV1(authUserId, name, isPublic) {
-  return {
-    authUserId: 1,
-  };
+  return { channelId: 1 };
 }
 
 // stub function for the channelsListV1 function
@@ -11,10 +9,10 @@ function channelsListV1(authUserId) {
     channels: [
       {
         channelId: 1,
-        name: 'My Channel',
-      }
+        name: "My Channel",
+      },
     ],
-  }
+  };
 }
 
 // stub function for the channelsListAllV1 function
@@ -23,11 +21,8 @@ function channelsListAllV1(authUserId) {
     channels: [
       {
         channelId: 1,
-        name: 'My Channel',
-	    }
+        name: "My Channel",
+      },
     ],
-  }
+  };
 }
-
-
-
