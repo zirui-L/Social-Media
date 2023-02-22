@@ -1,18 +1,3 @@
-function channelMessagesV1(authUserId, channelId, start) {
-  return {
-    messages: [
-      {
-        messageId: 1,
-        uId: 1,
-        message: "Hello world",
-        timeSent: 1582426789,
-      },
-    ],
-    start: 0,
-    end: 50,
-  };
-}
-
 function channelDetailsV1(authUserId, channelId) {
   return {
     name: "Hayden",
@@ -22,7 +7,7 @@ function channelDetailsV1(authUserId, channelId) {
         email: "example@gmail.com",
         nameFirst: "Hayden",
         nameLast: "Jacobs",
-        andleStr: "haydenjacobs",
+        handleStr: "haydenjacobs",
       },
     ],
     allMembers: [
@@ -37,10 +22,21 @@ function channelDetailsV1(authUserId, channelId) {
   };
 }
 
-function channelJoinV1(authUserId, channelId) {
-  return {};
-}
+function channelJoinV1(authUserId, channelId) {}
 
-function channelInviteV1(authUserId, channelId, uId) {
-  return {};
+function channelInviteV1(authUserId, channelId, uId) {}
+
+function channelMessagesV1(authUserId, channelId, start) {
+  return {
+    messages: [
+      {
+        messageId: 1,
+        uId: 1,
+        message: "Hello world",
+        timeSent: 1582426789,
+      },
+    ],
+    start: 0,
+    end: 50,
+  };
 }
