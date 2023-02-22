@@ -22,9 +22,13 @@ function channelDetailsV1(authUserId, channelId) {
   };
 }
 
-function channelJoinV1(authUserId, channelId) {}
+function channelJoinV1(authUserId, channelId) {
+  return {};
+}
 
-function channelInviteV1(authUserId, channelId, uId) {}
+function channelInviteV1(authUserId, channelId, uId) {
+  return {};
+}
 
 function channelMessagesV1(authUserId, channelId, start) {
   return {
