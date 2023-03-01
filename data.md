@@ -37,4 +37,36 @@ let data = {
 };
 ```
 
+// User data
+
+{
+'authUserId': 202,
+'uId': 12345678,
+'nameFirst': 'Jeff',
+'nameLast': 'Zhang',
+'handleStr': 'jeffzhang',
+'email': 'Jeff_Zhang@gmail.com',
+'password': 'password',
+'channels': [1, 2],
+'permissionId': '1',
+}
+
+// Channel data
+
+{
+'name': 'jeffchannel',
+'channelId': 404,
+'isPublic': true,
+'allMembers': [201, 202, 203],
+'ownerMembers': [201, 202, 203],
+'message': [],
+}
+
+// Database
+
+{
+'usersList': [201, 202, 203, 204, 205],
+'channelList': [101, 102],
+}
+
 [Optional] short description: We have implemented the users and channel data object using a conbination of lists and object. By incorporating lists inside the object, new information and data (such as users and channel) can be populated while the programe is running. Also, from the iteration0 iterface, we have also included lists for chat member within each channel object, which can also populate (add or remove member) while running the program.
