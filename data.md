@@ -40,12 +40,12 @@ let data = {
 // User data
 
 {
-'authUserId': 202,
+'authUserId': 100,
 'uId': 12345678,
 'nameFirst': 'Jeff',
 'nameLast': 'Zhang',
 'handleStr': 'jeffzhang',
-'email': 'Jeff_Zhang@gmail.com',
+'email': 'jeffzhang@gmail.com',
 'password': 'password',
 'channels': [1, 2],
 'permissionId': '1',
