@@ -6,7 +6,11 @@ import {
 
 import {
   authRegisterV1
-} from './auth.js'
+} from './auth'
+
+import {
+  channelJoinV1
+} from './channel'
 
 describe("channelsCreateV1 function testing", () => {
 	beforeEach(() => {
@@ -39,8 +43,14 @@ describe("channelsCreateV1 function testing", () => {
 	});
 
 	test("Test-3: Invalid authUserId", () =>{
+    const user = authRegisterV1(
+			"test@gmail.com",
+			"123455",
+			"firstName",
+			"lastName"
+	);
 	const name = "valid_name";
-		expect(channelsCreateV1(Infinity, name, true)).toStrictEqual({
+		expect(channelsCreateV1(user.uId + 1, name, true)).toStrictEqual({
 			error: "error",
 		});
 	});
@@ -76,3 +86,136 @@ describe("channelsCreateV1 function testing", () => {
 	});
 });   
 
+describe("channelsListV1 function testing", () => {
+	beforeEach(() => {
+    clearV1();
+  });
+	test("Test-1: Invalid authUserId", () =>{
+    const user1 = authRegisterV1(
+			"ricky@gmail.com",
+			"123455",
+			"Ricky",
+			"Li"
+    );
+		expect(channelsListV1(user1.uId + 1)).toStrictEqual({
+			error: "error",
+		});
+	});
+
+	test("Test-2: Successful function implementation", () =>{
+		const user1 = authRegisterV1(
+			"ricky@gmail.com",
+			"123455",
+			"Ricky",
+			"Li"
+    );
+
+    const user2 = authRegisterV1(
+			"libro@gmail.com",
+			"123455",
+			"libro",
+			"Zhang"
+    );
+    const channel1 = channelsCreateV1(user1.uId, "Rickychannel", true);
+    channelJoinV1(user2.uId, channel1.channelId);
+    const channel2 = channelsCreateV1(user2.uId, "Librochannel", true);
+    const channel3 = channelsCreateV1(user2.uId, "Henrychannel", false);
+
+
+		expect(
+			channelsListV1(user2.uID)
+			).toEqual(
+				{
+          'name': 'Rickychannel',
+          'channelId': expect.any(Number),
+          'isPublic': true,
+          'allMembers': [user1.uId, user2.uId],
+          'ownerMembers': [user1.uId],
+          'message': [],
+        },
+        {
+          'name': 'Librochannel',
+          'channelId': expect.any(Number),
+          'isPublic': true,
+          'allMembers': [user2.uId],
+          'ownerMembers': [user2.uId],
+          'message': [],
+        },
+        {
+          'name': 'Henrychannel',
+          'channelId': expect.any(Number),
+          'isPublic': false,
+          'allMembers': [user2.uId],
+          'ownerMembers': [user2.uId3],
+          'message': [],
+        }
+		  );
+  })
+});
+
+describe("channelsListAllV1 function testing", () => {
+	beforeEach(() => {
+    clearV1();
+  });
+	test("Test-1: Invalid authUserId", () =>{
+    const user1 = authRegisterV1(
+			"ricky@gmail.com",
+			"123455",
+			"Ricky",
+			"Li"
+    );
+		expect(channelsListAllV1(user1.uId + 1)).toStrictEqual({
+			error: "error",
+		});
+	});
+
+	test("Test-2: Successful function implementation", () =>{
+		const user1 = authRegisterV1(
+			"ricky@gmail.com",
+			"123455",
+			"Ricky",
+			"Li"
+    );
+
+    const user2 = authRegisterV1(
+			"libro@gmail.com",
+			"123455",
+			"libro",
+			"Zhang"
+    );
+    const channel1 = channelsCreateV1(user1.uId, "Rickychannel", true);
+    channelJoinV1(user2.uId, channel1.channelId);
+    const channel2 = channelsCreateV1(user2.uId, "Librochannel", true);
+    const channel3 = channelsCreateV1(user2.uId, "Henrychannel", false);
+
+
+		expect(
+			channelsListV1(user1.uID)
+			).toEqual(
+				{
+          'name': 'Rickychannel',
+          'channelId': expect.any(Number),
+          'isPublic': true,
+          'allMembers': [user1.uId, user2.uId],
+          'ownerMembers': [user1.uId],
+          'message': [],
+        },
+        {
+          'name': 'Librochannel',
+          'channelId': expect.any(Number),
+          'isPublic': true,
+          'allMembers': [user2.uId],
+          'ownerMembers': [user2.uId],
+          'message': [],
+        },
+        {
+          'name': 'Henrychannel',
+          'channelId': expect.any(Number),
+          'isPublic': false,
+          'allMembers': [user2.uId],
+          'ownerMembers': [user2.uId3],
+          'message': [],
+        }
+		  );
+  })
+});
