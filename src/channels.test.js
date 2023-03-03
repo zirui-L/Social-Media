@@ -12,6 +12,10 @@ import {
   channelJoinV1
 } from './channel'
 
+import {
+  clearV1
+} from './other'
+
 describe("channelsCreateV1 function testing", () => {
 	beforeEach(() => {
     clearV1();
