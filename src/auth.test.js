@@ -200,7 +200,7 @@ describe("authRegisterV1 function testing - generating handle string / email dup
       "lastName"
     );
     expect(
-      userProfileV1(detail2.authUserId, detail2.authUserId).user.handleStr
+      userProfileV1(detail1.authUserId, detail2.authUserId).user.handleStr
     ).toBe("firstname314lastname0");
   });
 
