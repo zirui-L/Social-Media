@@ -4,6 +4,253 @@ import {
   channelInviteV1,
   channelMessagesV1,
 } from './channel';
+import {
+    authRegisterV1,
+} from './auth';
+import {
+    channelsCreateV1,
+} from './channels';
+
+const ERROR = {error: "error"};
+
+describe("channelDetailsV1 function testing", () =>{
+    beforeEach(() => {
+      clearV1();
+    });
+
+    test("Test-1: invalid channelId", () =>{    
+        const channel_owner = authRegisterV1(
+            "owner@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+        const new_channel = channelsCreateV1 (
+            channel_owner.uId, 
+            "create_channel",
+            true,
+        );
+        expect(channelDetailsV1(channel_owner.uId,(new_channel.channelId)+1)).toStrictEqual(ERROR) ;
+    });
+
+    test("Test2: uId does not refer to a valid user", () => {
+        const channel_owner = authRegisterV1(
+            "owner@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+        const new_channel = channelsCreateV1 (
+            channel_owner.uId, 
+            "create_channel",
+            true,
+        );
+        
+        expect(channelDetailsV1(channel_owner.uId + 1,new_channel.channelId)).toStrictEqual(ERROR);
+    });
+
+    test("Test3: uId does not refer to a exist member of channel", () => {
+        const channel_member = authRegisterV1(
+            "member@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+    
+        const channel_owner = authRegisterV1(
+            "owner@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+    
+        const new_channel = channelsCreateV1 (
+            channel_owner.uId, 
+            "create_channel",
+            true,
+        );
+        
+        expect(channelDetailsV1(channel_member.uId, new_channel.channelId)).toStrictEqual(ERROR);
+    });
+
+
+    test("Test4: checking return with right input", () => {
+        const channel_member = authRegisterV1(
+            "member@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+    
+        const channel_owner = authRegisterV1(
+            "owner@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+    
+        const new_channel = channelsCreateV1 (
+            channel_owner.uId, 
+            "create_channel",
+            true,
+        );
+
+        channelJoinV1(channel_member.uId, new_channel.channelId);
+        
+        expect(channelDetailsV1(channel_member.uId, new_channel.channelId)).toStrictEqual({
+            name: "create_channel",
+            isPublic: true,
+            ownerMembers: [{
+                uId: channel_owner.uId,
+                email: "owner@gmail.com",
+                nameFirst: "firstName",
+                nameLast: "lastName",
+                handleStr: "firstnamelastname0",
+            }],
+            allMembers: [
+                {
+                    uId: channel_owner.uId,
+                    email: "owner@gmail.com",
+                    nameFirst: "firstName",
+                    nameLast: "lastName",
+                    handleStr: "firstnamelastname0",
+                },
+                {
+                    uId: channel_member.uId,
+                    email: "member@gmail.com",
+                    nameFirst: "firstName",
+                    nameLast: "lastName",
+                    handleStr: "firstnamelastname",
+                }
+            ],
+        });
+      });
+});
+
+describe("channelJoinV1 function testing", () =>{
+    beforeEach(() => {
+      clearV1();
+    });
+
+    test("Test-1: invalid channelId", () =>{    
+        const channel_owner = authRegisterV1(
+            "owner@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+        const new_channel = channelsCreateV1 (
+            channel_owner.uId, 
+            "create_channel",
+            true,
+        );
+        expect(channelJoinV1(channel_owner.uId,(new_channel.channelId)+1)).toStrictEqual(ERROR) ;
+    });
+
+    test("Test2: user with given uId already in channel", () => {
+        const channel_owner = authRegisterV1(
+            "owner@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+        const new_channel = channelsCreateV1 (
+            channel_owner.uId, 
+            "create_channel",
+            true,
+        );
+        
+        expect(channelJoinV1(channel_owner.uId, new_channel.channelId)).toStrictEqual(ERROR);
+    });
+
+    test("Test3: private channel, user not in the channel and is not a global owner", () => {
+        const channel_owner = authRegisterV1(
+            "owner@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+        
+        const channel_member = authRegisterV1(
+            "member@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+    
+        const new_channel = channelsCreateV1 (
+            channel_owner.uId, 
+            "create_channel",
+            false,
+        );
+        
+        expect(channelJoinV1(channel_member.uId, new_channel.channelId)).toStrictEqual(ERROR);
+    });
+
+    test("Test4: uId does not refer to a valid user", () => {
+        const channel_owner = authRegisterV1(
+            "owner@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+        const new_channel = channelsCreateV1 (
+            channel_owner.uId, 
+            "create_channel",
+            true,
+        );
+        
+        expect(channelJoinV1(channel_owner.uId + 1,new_channel.channelId)).toStrictEqual(ERROR);
+    });
+
+    test("Test5: successful join", () => {
+        const channel_owner = authRegisterV1(
+            "owner@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+        
+        const channel_member = authRegisterV1(
+            "member@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+    
+        const new_channel = channelsCreateV1 (
+            channel_owner.uId, 
+            "create_channel",
+            true,
+        );
+        
+        expect(channelJoinV1(channel_member.uId, new_channel.channelId)).toStrictEqual({});
+    });
+
+    test("Test6: successful join with global owner", () => {
+        const channel_member = authRegisterV1(
+            "member@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+
+        const channel_owner = authRegisterV1(
+            "owner@gmail.com",
+            "123455",
+            "firstName",
+            "lastName"
+        );
+    
+        const new_channel = channelsCreateV1 (
+            channel_owner.uId, 
+            "create_channel",
+            false,
+        );
+        
+        expect(channelJoinV1(channel_member.uId, new_channel.channelId)).toStrictEqual({});
+    });
+});
 
 
 
