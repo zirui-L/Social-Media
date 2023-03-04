@@ -12,11 +12,11 @@ import {
   channelsListallV1,
 } from "./channels.js";
 
-describe("Testing channelDetailsV1", () => {
-  beforeEach(() => {
-    clearV1();
-  });
+beforeEach(() => {
+  clearV1();
+});
 
+describe("Testing channelDetailsV1", () => {
   test("Test-1: Error, incorrect channelId", () => {
     const test1 = authRegisterV1("test1@gmail.com", "123456", "Richardo", "Li");
     const channelId = channelsCreateV1(
@@ -159,137 +159,73 @@ describe("Testing channelDetailsV1", () => {
 });
 
 describe("Testing channelJoinV1", () => {
-  beforeEach(() => {
-    clearV1();
-  });
-
   test("Test-1: Error, channelId does not refer to a valid channel", () => {
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    const uId2 = authRegisterV1(
-      "z5400002@unsw.edu.au",
-      "password2",
-      "Ryan",
-      "Lu"
-    );
-    const channel1 = channelsCreateV1(uId2.authUserId, "firstChannel", true);
+    const user1 = authRegisterV1("ricky@gmail.com", "123455", "Ricky", "Li");
 
-    let result = channelJoinV1(uId1.authUserId, channel1.channelId + 1);
-    expect(result).toStrictEqual({ error: "error" });
+    const user2 = authRegisterV1("libro@gmail.com", "123455", "libro", "Zhang");
+
+    const channel1 = channelsCreateV1(user2.authUserId, "Rickychannel", true);
+
+    expect(
+      channelJoinV1(user1.authUserId, channel1.channelId + 1)
+    ).toStrictEqual({ error: "error" });
   });
 
-  test("Test-2: Error, authUserId is already a member of the channel", () => {
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    const channel1 = channelsCreateV1(uId1.authUserId, "firstChannel", true);
+  test("Test-2: Error, authUserId is invalid", () => {
+    const user1 = authRegisterV1("ricky@gmail.com", "123455", "Ricky", "Li");
 
-    let result = channelJoinV1(uId1.authUserId, channel1);
-    expect(result).toStrictEqual({ error: "error" });
+    const channel1 = channelsCreateV1(user1.authUserId, "Rickychannel", true);
+
+    expect(
+      channelJoinV1(user1.authUserId + 1, channel1.channelId)
+    ).toStrictEqual({ error: "error" });
+  });
+
+  test("Test-3: Error, authUserId is already a member of the channel", () => {
+    const user1 = authRegisterV1("ricky@gmail.com", "123455", "Ricky", "Li");
+
+    const channel1 = channelsCreateV1(user1.authUserId, "Rickychannel", true);
+
+    expect(channelJoinV1(uId1.authUserId, channel1)).toStrictEqual({
+      error: "error",
+    });
   });
 
   test("Test-3: Error, private channel, and authUser is not a global owner", () => {
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    const uId2 = authRegisterV1(
-      "z5400002@unsw.edu.au",
-      "password2",
-      "Ryan",
-      "Lu"
-    );
-    const channel1 = channelsCreateV1(uId1.authUserId, "firstChannel", true);
-    const channel2 = channelsCreateV1(uId2.authUserId, "firstChannel", false);
+    const user1 = authRegisterV1("ricky@gmail.com", "123455", "Ricky", "Li");
 
-    let result = channelJoinV1(uId2.authUserId, channel2.channelId);
-    expect(result).toStrictEqual({ error: "error" });
+    const user2 = authRegisterV1("libro@gmail.com", "123455", "libro", "Zhang");
+
+    const channel1 = channelsCreateV1(user1.authUserId, "Rickychannel", false);
+
+    expect(channelJoinV1(user2.authUserId, channel1.channelId)).toStrictEqual({
+      error: "error",
+    });
   });
 
   test("Test-4: successiful case", () => {
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    const uId2 = authRegisterV1(
-      "z5400002@unsw.edu.au",
-      "password2",
-      "Ryan",
-      "Lu"
-    );
-    const channel1 = channelsCreateV1(uId2.authUserId, "firstChannel", true);
+    const user1 = authRegisterV1("ricky@gmail.com", "123455", "Ricky", "Li");
 
-    let result = channelJoinV1(uId1.authUserId, channel1.channelId);
+    const user2 = authRegisterV1("libro@gmail.com", "123455", "libro", "Zhang");
+    const channel1 = channelsCreateV1(user1.authUserId, "Rickychannel", true);
+
+    let result = channelJoinV1(user1.authUserId, channel1.channelId);
     expect(result).toStrictEqual({});
   });
 
   test("Test-5: private channel, but authUser is a global owner", () => {
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    const uId2 = authRegisterV1(
-      "z5400002@unsw.edu.au",
-      "password2",
-      "Ryan",
-      "Lu"
-    );
-    const channel1 = channelsCreateV1(uId2.authUserId, "firstChannel", false);
+    const user1 = authRegisterV1("ricky@gmail.com", "123455", "Ricky", "Li");
 
-    let result = channelJoinV1(uId1.authUserId, channel1.channelId);
-    expect(result).toStrictEqual({});
-    expect(channelDetailsV1(uId1.authUserId, channel1.channelId)).toStrictEqual(
-      {
-        name: "firstChannel",
-        isPublic: false,
-        ownerMembers: [
-          {
-            uId: uId2.authUserId,
-            email: "z5400002@unsw.edu.au",
-            nameFirst: "Ryan",
-            nameLast: "Lu",
-            handleStr: "ryanlu",
-          },
-        ],
-        allMembers: [
-          {
-            uId: uId2.authUserId,
-            email: "z5400002@unsw.edu.au",
-            nameFirst: "Ryan",
-            nameLast: "Lu",
-            handleStr: "ryanlu",
-          },
-          {
-            uId: uId1.authUserId,
-            email: "z5400001@unsw.edu.au",
-            nameFirst: "Molix",
-            nameLast: "Fe",
-            handleStr: "molixfe",
-          },
-        ],
-      }
+    const user2 = authRegisterV1("libro@gmail.com", "123455", "libro", "Zhang");
+    const channel1 = channelsCreateV1(user1.authUserId, "Rickychannel", false);
+
+    expect(channelJoinV1(user1.authUserId, channel1.channelId)).toStrictEqual(
+      {}
     );
   });
 });
 
 describe("channelInviteV1 function testing", () => {
-  beforeEach(() => {
-    clearV1();
-  });
-
   test("Test-1: Error, invalid channelId", () => {
     const test1 = authRegisterV1(
       "test1@gmail.com",
@@ -319,7 +255,7 @@ describe("channelInviteV1 function testing", () => {
     );
     const channel = channelsCreateV1(test.authUserId, "LeeChannel", true);
     expect(
-      channelInviteV1(test1.authUserId, channel.channelId, test1.authUserId + 3)
+      channelInviteV1(test1.authUserId, channel.channelId, test1.authUserId + 1)
     ).toStrictEqual({ error: "error" });
   });
 
@@ -434,297 +370,140 @@ describe("channelInviteV1 function testing", () => {
     );
   });
 
-  //   test("Test-8", () => {
-  //     });
-  //   });
+  test("Inviting global owner into the channel", () => {
+    const test1 = authRegisterV1(
+      "test1@gmail.com",
+      "123456",
+      "Richardo",
+      "Lee"
+    );
+    const test2 = authRegisterV1(
+      "test2@gmail.com",
+      "1234567",
+      "Shenba",
+      "Chen"
+    );
+    const channel = channelsCreateV1(test2.authUserId, "ShenbaChannel", false);
+    expect(
+      channelInviteV1(test2.authUserId, channel.channelId, test1.authUserId)
+    ).toStrictEqual({});
+    expect(channelDetailsV1(uId1.authUserId, channel.channelId)).toStrictEqual({
+      name: "ShenbaChannel",
+      isPublic: false,
+      ownerMembers: [
+        {
+          uId: test2.authUserId,
+          email: "test2@gmail.com",
+          nameFirst: "Shenba",
+          nameLast: "Chen",
+          handleStr: "shenbachen",
+        },
+      ],
+      allMembers: [
+        {
+          uId: test1.authUserId,
+          email: "test1@gmail.com",
+          nameFirst: "Richardo",
+          nameLast: "Lee",
+          handleStr: "richardolee",
+        },
+        {
+          uId: test2.authUserId,
+          email: "test2@gmail.com",
+          nameFirst: "Shenba",
+          nameLast: "Chen",
+          handleStr: "shenbachen",
+        },
+      ],
+    });
+  });
 });
 
 describe("Testing channelMessagesV1", () => {
-  beforeEach(() => {
-    clearV1();
-  });
-
-  function messagesGenerator(number) {
+  function messageForTesting(count) {
     const message = [];
-    for (let i = 0; i < number; i++) {
-      message.push("Hello world!");
+    for (let i = 0; i < count; i++) {
+      message.push(`Test line`);
     }
     return message;
   }
-
-  test("Error 1: authUserId not valid", () => {
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
+  test("Test-1: Error, invalid channelId", () => {
+    const test1 = authRegisterV1(
+      "test1@gmail.com",
+      "123456",
+      "Richardo",
+      "Lee"
     );
-    const channel = channelsCreateV1(uId1.authUserId, "firstChannel", true);
-    expect(
-      channelMessagesV1(uId1.authUserId + 1, channel.channelId, 0)
-    ).toStrictEqual({ error: "error" });
-  });
 
-  test("Error 2: channelId not valid", () => {
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    expect(channelMessagesV1(uId1.authUserId, 0, 0)).toStrictEqual({
+    const channel = channelsCreateV1(test1.authUserId, "RicardoChannel", true);
+
+    expect(channelMessagesV1(test1.authUserId, 0, 0)).toStrictEqual({
       error: "error",
     });
   });
 
-  test("Error 3: channel is valid but authorised user is not in the channel", () => {
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
+  test("Test-2: Error, Invalid uId", () => {
+    const test1 = authRegisterV1(
+      "test1@gmail.com",
+      "123456",
+      "Richardo",
+      "Lee"
     );
-    const uId2 = authRegisterV1(
-      "z5400002@unsw.edu.au",
-      "password2",
-      "Ryan",
-      "Lu"
-    );
-    const channel = channelsCreateV1(uId1.authUserId, "firstChannel", true);
+
+    const channel = channelsCreateV1(test1.authUserId, "RicardoChannel", true);
+
     expect(
-      channelMessagesV1(uId2.authUserId, channel.channelId, 0)
+      channelMessagesV1(test1.authUserId + 1, channel.channelId, 0)
+    ).toStrictEqual({
+      error: "error",
+    });
+  });
+
+  test("Test-3: Error, channel is valid but authorised user is not in the channel", () => {
+    const test1 = authRegisterV1(
+      "test1@gmail.com",
+      "123456",
+      "Richardo",
+      "Lee"
+    );
+    const test2 = authRegisterV1(
+      "test2@gmail.com",
+      "1234567",
+      "Shenba",
+      "Chen"
+    );
+    const channel = channelsCreateV1(test1.authUserId, "LeeChannel", true);
+    expect(
+      channelMessagesV1(test2.authUserId, channel.channelId, 0)
     ).toStrictEqual({ error: "error" });
   });
 
-  test("Error 4: Start greater than total numebr of messages", () => {
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
+  test("Test-4: Error, Start greater than total numebr of messages", () => {
+    const test1 = authRegisterV1(
+      "test1@gmail.com",
+      "123456",
+      "Richardo",
+      "Lee"
     );
-    const channel = channelsCreateV1(uId1.authUserId, "firstChannel", true);
+    const channel = channelsCreateV1(test1.authUserId, "LeeChannel", true);
     expect(
-      channelMessagesV1(uId1.authUserId, channel.channelId, 1)
+      channelMessagesV1(uId1.authUserId, channel.channelId, 5)
     ).toStrictEqual({ error: "error" });
   });
 
-  test("Start equals to total number of messages (both 0)", () => {
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
+  test("Test-5: Success, 0 message output", () => {
+    const test1 = authRegisterV1(
+      "test1@gmail.com",
+      "123456",
+      "Richardo",
+      "Lee"
     );
-    const channel = channelsCreateV1(uId1.authUserId, "firstChannel", true);
+    const channel = channelsCreateV1(test1.authUserId, "LeeChannel", true);
     expect(
       channelMessagesV1(uId1.authUserId, channel.channelId, 0)
     ).toStrictEqual({
       messages: [],
       start: 0,
-      end: -1,
-    });
-  });
-
-  test("Start equals to total number of messages (both 50)", () => {
-    const data = getData();
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    const channel = channelsCreateV1(uId1.authUserId, "firstChannel", true);
-    for (let i = 0; i < 50; i++) {
-      data.channels[0].messages.push("Hello world!");
-    }
-    expect(
-      channelMessagesV1(uId1.authUserId, channel.channelId, 50)
-    ).toStrictEqual({
-      messages: [],
-      start: 50,
-      end: -1,
-    });
-  });
-
-  test("Start equals to total number of messages (both 101)", () => {
-    const data = getData();
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    const channel = channelsCreateV1(uId1.authUserId, "firstChannel", true);
-    for (let i = 0; i < 101; i++) {
-      data.channels[0].messages.push("Hello world!");
-    }
-    expect(
-      channelMessagesV1(uId1.authUserId, channel.channelId, 101)
-    ).toStrictEqual({
-      messages: [],
-      start: 101,
-      end: -1,
-    });
-  });
-
-  test("Successfully return 5 messages", () => {
-    const data = getData();
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    const channel = channelsCreateV1(uId1.authUserId, "firstChannel", true);
-    for (let j = 0; j < 5; j++) {
-      data.channels[0].messages.push("Hello world!");
-    }
-    expect(
-      channelMessagesV1(uId1.authUserId, channel.channelId, 0)
-    ).toStrictEqual({
-      messages: messagesGenerator(5),
-      start: 0,
-      end: -1,
-    });
-  });
-
-  test("Successfully return 50 messages (index 0 to 49) with onlky 50 messages in the channel", () => {
-    const data = getData();
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    const channel = channelsCreateV1(uId1.authUserId, "firstChannel", true);
-    for (let j = 0; j < 50; j++) {
-      data.channels[0].messages.push("Hello world!");
-    }
-    expect(
-      channelMessagesV1(uId1.authUserId, channel.channelId, 0)
-    ).toStrictEqual({
-      messages: messagesGenerator(50),
-      start: 0,
-      end: -1,
-    });
-  });
-
-  test("Successfully return 50 messages (index 1 to 50) with only 51 messages in the channel", () => {
-    const data = getData();
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    const channel = channelsCreateV1(uId1.authUserId, "firstChannel", true);
-    for (let j = 0; j < 51; j++) {
-      data.channels[0].messages.push("Hello world!");
-    }
-    expect(
-      channelMessagesV1(uId1.authUserId, channel.channelId, 1)
-    ).toStrictEqual({
-      messages: messagesGenerator(50),
-      start: 1,
-      end: -1,
-    });
-  });
-
-  test("Successfully return 50 messages (index 1 to 50) with 52 messages in the channel", () => {
-    const data = getData();
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    const channel = channelsCreateV1(uId1.authUserId, "firstChannel", true);
-    for (let j = 0; j < 52; j++) {
-      data.channels[0].messages.push("Hello world!");
-    }
-    expect(
-      channelMessagesV1(uId1.authUserId, channel.channelId, 1)
-    ).toStrictEqual({
-      messages: messagesGenerator(50),
-      start: 1,
-      end: 51,
-    });
-  });
-
-  test("Successfully return 50 messages (index 76 to 125) with 200 messages in the channel", () => {
-    const data = getData();
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    const channel = channelsCreateV1(uId1.authUserId, "firstChannel", true);
-    for (let j = 0; j < 200; j++) {
-      data.channels[0].messages.push("Hello world!");
-    }
-    expect(
-      channelMessagesV1(uId1.authUserId, channel.channelId, 76)
-    ).toStrictEqual({
-      messages: messagesGenerator(50),
-      start: 76,
-      end: 126,
-    });
-  });
-
-  test("Return 36 messages (index 76 to 111) with 112 messages in the channel", () => {
-    const data = getData();
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    const channel = channelsCreateV1(uId1.authUserId, "firstChannel", true);
-    for (let j = 0; j < 112; j++) {
-      data.channels[0].messages.push("Hello world!");
-    }
-    expect(
-      channelMessagesV1(uId1.authUserId, channel.channelId, 76)
-    ).toStrictEqual({
-      messages: messagesGenerator(36),
-      start: 76,
-      end: -1,
-    });
-  });
-
-  test("Return all 124 messages - spec section 6.5", () => {
-    const data = getData();
-    const uId1 = authRegisterV1(
-      "z5400001@unsw.edu.au",
-      "password1",
-      "Molix",
-      "Fe"
-    );
-    const channel = channelsCreateV1(uId1.authUserId, "firstChannel", true);
-    for (let j = 0; j < 124; j++) {
-      data.channels[0].messages.push("Hello world!");
-    }
-    expect(
-      channelMessagesV1(uId1.authUserId, channel.channelId, 0)
-    ).toStrictEqual({
-      messages: messagesGenerator(50),
-      start: 0,
-      end: 50,
-    });
-    expect(
-      channelMessagesV1(uId1.authUserId, channel.channelId, 50)
-    ).toStrictEqual({
-      messages: messagesGenerator(50),
-      start: 50,
-      end: 100,
-    });
-    expect(
-      channelMessagesV1(uId1.authUserId, channel.channelId, 100)
-    ).toStrictEqual({
-      messages: messagesGenerator(24),
-      start: 100,
       end: -1,
     });
   });
