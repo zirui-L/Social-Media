@@ -1,15 +1,14 @@
 
 
 
-
 const ERROR = {error: 'error'};
 
 /**
   * Given a channel with ID channelId that the authorised user 
   * is a member of, provides basic details about the channel.
   * 
-  * @param {integer} authUserId - description of paramter
-  * @param {integer} channelId - description of parameter
+  * @param {integer} authUserId - userId
+  * @param {integer} channelId - channelId
   * ...
   * @returns {{name, isPublic, ownerMembers, allMembers}} - object
   * @returns {{error: 'error'}} - when channelId/authUserId 
@@ -47,10 +46,12 @@ function channelDetailsV1(authUserId, channelId) {
         ownerMembers: [],
         allMembers: [],
       }
-      /* for (const owners of channel.ownerMembers) {
-        channelDetail.ownerMembers.push(userProfileV1(authUserId,uId));
-      } */
-
+      for (const ownerId of channel.ownerMembers) {
+        channelDetail.ownerMembers.push(userProfileV1(ownerId,ownerId));
+      }
+      for (const memberId of channel.allMembers) {
+        channelDetail.allMembers.push(userProfileV1(memberId,memberId));
+      }
       return channelDetail;
     }
   }
@@ -61,8 +62,8 @@ function channelDetailsV1(authUserId, channelId) {
   * Given a channelId of a channel that the authorised user 
   * can join, adds them to that channel.
   * 
-  * @param {integer} authUserId - description of paramter
-  * @param {integer} channelId - description of parameter
+  * @param {integer} authUserId - userId
+  * @param {integer} channelId - channelId
   * ...
   * @returns {{}} - return empty object
   * @returns {{error: 'error'}} - when channelId/authUserId 
