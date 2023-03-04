@@ -1,5 +1,4 @@
 import { clearV1 } from "./other.js";
-import { getData, setData } from "./dataStore.js";
 import {
   channelDetailsV1,
   channelJoinV1,
