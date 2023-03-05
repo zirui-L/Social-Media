@@ -131,7 +131,7 @@ describe("channelsListV1 function testing", () => {
       "nameLast2"
     );
     const channel1 = channelsCreateV1(test2.authUserId, "channel1", true);
-    expect(channelsListV1(person1.authUserId)).toStrictEqual({
+    expect(channelsListV1(test1.authUserId)).toStrictEqual({
       channels: [],
     });
   });
@@ -213,25 +213,27 @@ describe("channelsListAllV1 function testing", () => {
     const channel2 = channelsCreateV1(user2.authUserId, "Librochannel", true);
     const channel3 = channelsCreateV1(user2.authUserId, "Henrychannel", false);
 
-    expect(channelsListV1(user1.authUserId)).toEqual(
-      {
-        name: "Rickychannel",
-        channelId: channel1.channelId,
-      },
-      {
-        name: "Librochannel",
-        channelId: channel2.channelId,
-      },
-      {
-        name: "Henrychannel",
-        channelId: channel3.channelId,
-      }
-    );
+    expect(channelsListAllV1(user1.authUserId)).toEqual({
+      channels: [
+        {
+          name: "Rickychannel",
+          channelId: channel1.channelId,
+        },
+        {
+          name: "Librochannel",
+          channelId: channel2.channelId,
+        },
+        {
+          name: "Henrychannel",
+          channelId: channel3.channelId,
+        },
+      ],
+    });
   });
 
   test("Test-3: no channels", () => {
     const user1 = authRegisterV1("ricky@gmail.com", "123455", "Ricky", "Li");
-    expect(channelsListallV1(user1.authUserId)).toStrictEqual({
+    expect(channelsListAllV1(user1.authUserId)).toStrictEqual({
       channels: [],
     });
   });

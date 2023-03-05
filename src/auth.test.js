@@ -1,3 +1,7 @@
+import { authLoginV1, authRegisterV1 } from "./auth.js";
+import { userProfileV1 } from "./users.js";
+import { clearV1 } from "./other.js";
+
 describe("authLoginV1 function testing", () => {
   beforeEach(() => {
     clearV1();
@@ -10,7 +14,7 @@ describe("authLoginV1 function testing", () => {
       "firstName",
       "lastName"
     );
-    const loginAuthUserId = authLoginV1("test@gmail.com", "password");
+    const loginAuthUserId = authLoginV1("test@gmail.com", "123455");
     expect(registerAuthUserId).toStrictEqual(loginAuthUserId);
   });
 
@@ -160,7 +164,7 @@ describe("authRegisterV1 function testing - generating handle string / email dup
     const detail = authRegisterV1(
       "test@gmail.com",
       "password",
-      "R****i^^^^^c%%%%%h$$$$#r#####d",
+      "R****i^^^^^c%%%%%ha$$$$#r#####d",
       "L######i"
     );
     expect(

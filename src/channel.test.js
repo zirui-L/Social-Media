@@ -36,7 +36,7 @@ describe("Testing channelDetailsV1", () => {
       true
     );
     const channelDetails = channelDetailsV1(
-      uId1.authUserId + 3,
+      test1.authUserId + 3,
       channelId.channelId
     );
     expect(channelDetails).toStrictEqual({ error: "error" });
@@ -186,7 +186,7 @@ describe("Testing channelJoinV1", () => {
 
     const channel1 = channelsCreateV1(user1.authUserId, "Rickychannel", true);
 
-    expect(channelJoinV1(uId1.authUserId, channel1)).toStrictEqual({
+    expect(channelJoinV1(user1.authUserId, channel1)).toStrictEqual({
       error: "error",
     });
   });
@@ -209,7 +209,7 @@ describe("Testing channelJoinV1", () => {
     const user2 = authRegisterV1("libro@gmail.com", "123455", "libro", "Zhang");
     const channel1 = channelsCreateV1(user1.authUserId, "Rickychannel", true);
 
-    let result = channelJoinV1(user1.authUserId, channel1.channelId);
+    let result = channelJoinV1(user2.authUserId, channel1.channelId);
     expect(result).toStrictEqual({});
   });
 
@@ -217,7 +217,7 @@ describe("Testing channelJoinV1", () => {
     const user1 = authRegisterV1("ricky@gmail.com", "123455", "Ricky", "Li");
 
     const user2 = authRegisterV1("libro@gmail.com", "123455", "libro", "Zhang");
-    const channel1 = channelsCreateV1(user1.authUserId, "Rickychannel", false);
+    const channel1 = channelsCreateV1(user2.authUserId, "Rickychannel", false);
 
     expect(channelJoinV1(user1.authUserId, channel1.channelId)).toStrictEqual(
       {}
@@ -387,35 +387,37 @@ describe("channelInviteV1 function testing", () => {
     expect(
       channelInviteV1(test2.authUserId, channel.channelId, test1.authUserId)
     ).toStrictEqual({});
-    expect(channelDetailsV1(uId1.authUserId, channel.channelId)).toStrictEqual({
-      name: "ShenbaChannel",
-      isPublic: false,
-      ownerMembers: [
-        {
-          uId: test2.authUserId,
-          email: "test2@gmail.com",
-          nameFirst: "Shenba",
-          nameLast: "Chen",
-          handleStr: "shenbachen",
-        },
-      ],
-      allMembers: [
-        {
-          uId: test1.authUserId,
-          email: "test1@gmail.com",
-          nameFirst: "Richardo",
-          nameLast: "Lee",
-          handleStr: "richardolee",
-        },
-        {
-          uId: test2.authUserId,
-          email: "test2@gmail.com",
-          nameFirst: "Shenba",
-          nameLast: "Chen",
-          handleStr: "shenbachen",
-        },
-      ],
-    });
+    expect(channelDetailsV1(test1.authUserId, channel.channelId)).toStrictEqual(
+      {
+        name: "ShenbaChannel",
+        isPublic: false,
+        ownerMembers: [
+          {
+            uId: test2.authUserId,
+            email: "test2@gmail.com",
+            nameFirst: "Shenba",
+            nameLast: "Chen",
+            handleStr: "shenbachen",
+          },
+        ],
+        allMembers: [
+          {
+            uId: test2.authUserId,
+            email: "test2@gmail.com",
+            nameFirst: "Shenba",
+            nameLast: "Chen",
+            handleStr: "shenbachen",
+          },
+          {
+            uId: test1.authUserId,
+            email: "test1@gmail.com",
+            nameFirst: "Richardo",
+            nameLast: "Lee",
+            handleStr: "richardolee",
+          },
+        ],
+      }
+    );
   });
 });
 
@@ -435,7 +437,11 @@ describe("Testing channelMessagesV1", () => {
       "Lee"
     );
 
-    const channel = channelsCreateV1(test1.authUserId, "RicardoChannel", true);
+    const channel = channelsCreateV1(
+      test1.authUserId + 1,
+      "RicardoChannel",
+      true
+    );
 
     expect(channelMessagesV1(test1.authUserId, 0, 0)).toStrictEqual({
       error: "error",
@@ -487,7 +493,7 @@ describe("Testing channelMessagesV1", () => {
     );
     const channel = channelsCreateV1(test1.authUserId, "LeeChannel", true);
     expect(
-      channelMessagesV1(uId1.authUserId, channel.channelId, 5)
+      channelMessagesV1(test1.authUserId, channel.channelId, 5)
     ).toStrictEqual({ error: "error" });
   });
 
@@ -500,7 +506,7 @@ describe("Testing channelMessagesV1", () => {
     );
     const channel = channelsCreateV1(test1.authUserId, "LeeChannel", true);
     expect(
-      channelMessagesV1(uId1.authUserId, channel.channelId, 0)
+      channelMessagesV1(test1.authUserId, channel.channelId, 0)
     ).toStrictEqual({
       messages: [],
       start: 0,
