@@ -8,4 +8,4 @@ function clearV1() {
   return {};
 }
 
-export default clearV1;
+export { clearV1 };

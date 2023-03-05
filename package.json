@@ -1,17 +1,22 @@
 {
-    "scripts": {
-        "test": "jest"
-    },
-    "dependencies": {
-        "rewire": "^6.0.0",
-        "validator": "^13.9.0"
-    },
-    "devDependencies": {
-        "@babel/cli": "^7.18.10",
-        "@babel/core": "^7.19.1",
-        "@babel/preset-env": "^7.19.1",
-        "eslint": "^8.35.0",
-        "jest": "^28.1.0"
-    },
-    "type": "module"
+  "scripts": {
+    "test:auth": "jest src/auth.test.js",
+    "test:channel": "jest src/channel.test.js",
+    "test:channels": "jest src/channels.test.js",
+    "test:other": "jest src/other.test.js",
+    "test:users": "jest src/users.test.js",
+    "test:all": "jest"
+  },
+  "dependencies": {
+    "rewire": "^6.0.0",
+    "validator": "^13.9.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.18.10",
+    "@babel/core": "^7.19.1",
+    "@babel/preset-env": "^7.19.1",
+    "eslint": "^8.35.0",
+    "jest": "^28.1.0"
+  },
+  "type": "module"
 }
