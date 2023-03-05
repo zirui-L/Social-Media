@@ -15,7 +15,7 @@ const ERROR = { error: "error" };
 export function userProfileV1(authUserId, uId) {
   const data = getData();
 
-  if (!isUserValid(data, authUserId) || !isUserValid(data, uId)) return ERR;
+  if (!isUserValid(data, authUserId) || !isUserValid(data, uId)) return ERROR;
 
   for (const user of data.users) {
     if (user.authUserId === uId) {
