@@ -164,7 +164,7 @@ describe("authRegisterV1 function testing - generating handle string / email dup
     const detail = authRegisterV1(
       "test@gmail.com",
       "password",
-      "R****i^^^^^c%%%%%h$$$$#r#####d",
+      "R****i^^^^^c%%%%%ha$$$$#r#####d",
       "L######i"
     );
     expect(
