@@ -102,6 +102,7 @@ export function channelJoinV1(authUserId, channelId) {
 
 /**
  * <Brief description of what the function does>
+ * function:channelInvite1
  *
  * @param {integer} authUserId - userId
  * @param {integer} channelId - inviting channelId
@@ -115,6 +116,7 @@ export function channelJoinV1(authUserId, channelId) {
  *                               3. channel Id is valid but the authorised user is not a member of the channel 
  *                               4. uId refers to a user who is already a member of the channel 
  */
+
 
 export function channelInviteV1(authUserId, channelId, uId) {
   const data = getData();
@@ -139,7 +141,7 @@ export function channelInviteV1(authUserId, channelId, uId) {
 
 /**
  * <Brief description of what the function does>
- *
+ *function: channelMessageV1
  * @param {integer} authuserId - userId 
  * @param {integer} channelId - channelId
  * @param {integer} start -- index of starting message 
@@ -152,6 +154,8 @@ export function channelInviteV1(authUserId, channelId, uId) {
  *                                3. channelId is valid but autherorised user is not a member of channel
  *                                4. autherId is invalid 
  */
+
+
 
 export function channelMessagesV1(authUserId, channelId, start) {
   const data = getData();
