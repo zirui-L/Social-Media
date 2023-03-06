@@ -2,15 +2,16 @@ import { getData, setData } from "./dataStore.js";
 const ERROR = { error: "error" };
 
 /**
- * <Brief description of what the function does>
+ * channelsCreateV1 creates a new channel and returns its channel Id.
  *
- * @param {integer} authUserId - description of paramter
- * @param {string} name - description of parameter
- * @param {boolean} isPublic - description of parameter
+ * @param {integer} authUserId - The Id of the owner of the channel to be created
+ * @param {string} name - The name of channel to be created
+ * @param {boolean} isPublic - Whether the channel will be public
  * ...
  *
- * @returns {{error: "error"}} - description of condition for return
- * @returns {{channelId}} - description of condition for return
+ * @returns {{error: "error"}} - Error case: Either the length of channel name is non-compliant
+ *                                           or the authUserId is invalid
+ * @returns {{channelId}} - Returns the Id of the created channel
  */
 
 export function channelsCreateV1(authUserId, name, isPublic) {
@@ -44,14 +45,15 @@ export function channelsCreateV1(authUserId, name, isPublic) {
 }
 
 /**
- * <Brief description of what the function does>
+ * channelsListV1 returns an array of all channels (and their associated details) that 
+ * the input authorised user is part of
  *
- * @param {data type} name - description of paramter
- * @param {data type} name - description of parameter
+ * @param {integer} authUserId - The Id of the user that participates in the returned channels
+
  * ...
  *
- * @returns {data type} - description of condition for return
- * @returns {data type} - description of condition for return
+ * @returns {{error: "error"}} - Error case when the input user Id is invalid
+ * @returns {{channels}} - A array of channels and their details that the user is part of
  */
 
 export function channelsListV1(authUserId) {
@@ -78,14 +80,13 @@ export function channelsListV1(authUserId) {
 }
 
 /**
- * <Brief description of what the function does>
+ * Provides an array of all channels, including private channels (and their associated details)
  *
- * @param {data type} name - description of paramter
- * @param {data type} name - description of parameter
+ * @param {integer} authUserId - The user Id
  * ...
  *
- * @returns {data type} - description of condition for return
- * @returns {data type} - description of condition for return
+ * @returns {{error : "error"}}} - Error case when the input user Id is invalid
+ * @returns {{channels}} - A array of all channels and their details
  */
 
 export function channelsListAllV1(authUserId) {
