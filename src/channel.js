@@ -1,6 +1,4 @@
 const ERROR = { error: "error" };
-
-import { channel } from "diagnostics_channel";
 import { getData, setData } from "./dataStore.js";
 
 /**
@@ -106,17 +104,16 @@ export function channelJoinV1(authUserId, channelId) {
  *
  * @param {integer} authUserId - userId
  * @param {integer} channelId - inviting channelId
- * @param {integer} uId -- userId of the user being invited 
+ * @param {integer} uId -- userId of the user being invited
  * ...
  *
- * @returns {} - return empty object is no error occurs 
- * @returns {{error: 'error'}} - error is being returned if 
+ * @returns {} - return empty object is no error occurs
+ * @returns {{error: 'error'}} - error is being returned if
  *                               1.  channelId does not exist
  *                               2. uid/autherId is not valid
- *                               3. channel Id is valid but the authorised user is not a member of the channel 
- *                               4. uId refers to a user who is already a member of the channel 
+ *                               3. channel Id is valid but the authorised user is not a member of the channel
+ *                               4. uId refers to a user who is already a member of the channel
  */
-
 
 export function channelInviteV1(authUserId, channelId, uId) {
   const data = getData();
@@ -142,20 +139,18 @@ export function channelInviteV1(authUserId, channelId, uId) {
 /**
  * <Brief description of what the function does>
  *function: channelMessageV1
- * @param {integer} authuserId - userId 
+ * @param {integer} authuserId - userId
  * @param {integer} channelId - channelId
- * @param {integer} start -- index of starting message 
+ * @param {integer} start -- index of starting message
  * ...
  *
- * @returns {message,start,end} - all message between index start and end. If return end equals to -1, user has reached end of message  
- * @returns  {{error: 'error'}} - error returned if 
+ * @returns {message,start,end} - all message between index start and end. If return end equals to -1, user has reached end of message
+ * @returns  {{error: 'error'}} - error returned if
  *                                1. channelId does not refer to a valid channel
  *                                2. start is greater than the total number of messages in the channel
  *                                3. channelId is valid but autherorised user is not a member of channel
- *                                4. autherId is invalid 
+ *                                4. autherId is invalid
  */
-
-
 
 export function channelMessagesV1(authUserId, channelId, start) {
   const data = getData();
