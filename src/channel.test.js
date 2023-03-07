@@ -6,11 +6,7 @@ import {
   channelMessagesV1,
 } from "./channel.js";
 import { authLoginV1, authRegisterV1 } from "./auth.js";
-import {
-  channelsCreateV1,
-  channelsListV1,
-  channelsListallV1,
-} from "./channels.js";
+import { channelsCreateV1 } from "./channels.js";
 
 beforeEach(() => {
   clearV1();
