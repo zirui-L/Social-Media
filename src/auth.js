@@ -1,6 +1,5 @@
 import { getData, setData } from "./dataStore.js";
 import validator from "validator";
-import { copyFileSync } from "fs";
 const ERROR = { error: "error" };
 
 /**
