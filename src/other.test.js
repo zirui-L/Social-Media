@@ -1,95 +1,55 @@
-import { getData } from "./dataStore";
 import { clearV1 } from "./other.js";
+import { authRegisterV1 } from "./auth.js";
+import { channelsCreateV1 } from "./channels.js";
+import { getData } from "./dataStore.js";
+
+beforeEach(() => {
+  clearV1();
+});
 
 test("clear all register channels", () => {
-  const data = getData();
-
-  data.channels.push({
-    name: "jeffchannel",
-    channelId: 404,
-    isPublic: true,
-    allMembers: [201, 202, 203],
-    ownerMembers: [201, 202, 203],
-    message: [
-      {
-        messageId: 9000,
-        uId: 100,
-        message: "I Love COMP1531",
-        timeSent: 1677712906,
-      },
-      {
-        messageId: 8999,
-        uId: 200,
-        message: "I Love COMP1531 very much",
-        timeSent: 1677712922,
-      },
-    ],
-  });
+  const test1 = authRegisterV1("test1@gmail.com", "123456", "Richardo", "Li");
+  const channelId = channelsCreateV1(test1.authUserId, "RicardoChannel", true);
+  const channelId2 = channelsCreateV1(
+    test1.authUserId,
+    "RicardoChannel2",
+    true
+  );
 
   clearV1();
 
-  expect(data.users).toStrictEqual([]);
-  expect(data.channels).toStrictEqual([]);
+  expect(getData().users).toStrictEqual([]);
+  expect(getData().channels).toStrictEqual([]);
 });
 
 test("clear all register users", () => {
-  const data = getData();
-
-  data.users.push({
-    authUserId: 100,
-    nameFirst: "Jeff",
-    nameLast: "Zhang",
-    handleStr: "jeffzhang",
-    email: "jeffzhang@gmail.com",
-    password: "password",
-    channels: [1, 2],
-    permissionId: "1",
-  });
+  const test1 = authRegisterV1("test1@gmail.com", "123456", "Richardo", "Li");
+  const test2 = authRegisterV1("test2@gmail.com", "1234567", "Shenba", "Chen");
+  const test3 = authRegisterV1("test3@gmail.com", "12345678", "Kunda", "Yu");
 
   clearV1();
 
-  expect(data.users).toStrictEqual([]);
-  expect(data.channels).toStrictEqual([]);
+  expect(getData().users).toStrictEqual([]);
+  expect(getData().channels).toStrictEqual([]);
 });
 
-test("clear created channels and users", () => {
-  const data = getData();
-
-  data.users.push({
-    authUserId: 100,
-    nameFirst: "Jeff",
-    nameLast: "Zhang",
-    handleStr: "jeffzhang",
-    email: "jeffzhang@gmail.com",
-    password: "password",
-    channels: [1, 2],
-    permissionId: "1",
-  });
-
-  data.channels.push({
-    name: "jeffchannel",
-    channelId: 404,
-    isPublic: true,
-    allMembers: [201, 202, 203],
-    ownerMembers: [201, 202, 203],
-    message: [
-      {
-        messageId: 9000,
-        uId: 100,
-        message: "I Love COMP1531",
-        timeSent: 1677712906,
-      },
-      {
-        messageId: 8999,
-        uId: 200,
-        message: "I Love COMP1531 very much",
-        timeSent: 1677712922,
-      },
-    ],
-  });
+test("clear created channels and multiple users", () => {
+  const test1 = authRegisterV1("test1@gmail.com", "123456", "Richardo", "Li");
+  const test2 = authRegisterV1("test2@gmail.com", "1234567", "Shenba", "Chen");
+  const test3 = authRegisterV1("test3@gmail.com", "12345678", "Kunda", "Yu");
+  const channelId1 = channelsCreateV1(test1.authUserId, "RicardoChannel", true);
+  const channelId2 = channelsCreateV1(test2.authUserId, "ShenbaChannel", true);
+  const channelId3 = channelsCreateV1(test3.authUserId, "KundaChannel", true);
 
   clearV1();
 
-  expect(data.users).toStrictEqual([]);
-  expect(data.channels).toStrictEqual([]);
+  expect(getData().users).toStrictEqual([]);
+  expect(getData().channels).toStrictEqual([]);
+});
+
+test("clear empty channels and users", () => {
+  clearV1();
+
+  expect(getData().users).toStrictEqual([]);
+  expect(getData().channels).toStrictEqual([]);
 });
