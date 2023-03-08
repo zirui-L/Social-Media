@@ -1,7 +1,7 @@
 import { clearV1 } from "./other.js";
-import { authRegisterV1 } from "./auth.js";
-import { channelsCreateV1 } from "./channels.js";
-import { getData } from "./dataStore.js";
+import { authRegisterV1, authLoginV1 } from "./auth.js";
+import { channelsCreateV1, channelsListAllV1 } from "./channels.js";
+const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
   clearV1();
@@ -18,8 +18,9 @@ test("clear all register channels", () => {
 
   clearV1();
 
-  expect(getData().users).toStrictEqual([]);
-  expect(getData().channels).toStrictEqual([]);
+  expect(channelsListAllV1(test1)).toStrictEqual(ERROR);
+  expect(channelsCreateV1(test1, "COMP1531", true)).toStrictEqual(ERROR);
+  expect(authLoginV1("test1@gmail.com", "123456")).toStrictEqual(ERROR);
 });
 
 test("clear all register users", () => {
@@ -29,8 +30,9 @@ test("clear all register users", () => {
 
   clearV1();
 
-  expect(getData().users).toStrictEqual([]);
-  expect(getData().channels).toStrictEqual([]);
+  expect(channelsListAllV1(test1)).toStrictEqual(ERROR);
+  expect(channelsCreateV1(test1, "COMP1531", true)).toStrictEqual(ERROR);
+  expect(authLoginV1("test1@gmail.com", "123456")).toStrictEqual(ERROR);
 });
 
 test("clear created channels and multiple users", () => {
@@ -43,13 +45,15 @@ test("clear created channels and multiple users", () => {
 
   clearV1();
 
-  expect(getData().users).toStrictEqual([]);
-  expect(getData().channels).toStrictEqual([]);
+  expect(channelsListAllV1(test1)).toStrictEqual(ERROR);
+  expect(channelsCreateV1(test1, "COMP1531", true)).toStrictEqual(ERROR);
+  expect(authLoginV1("test1@gmail.com", "123456")).toStrictEqual(ERROR);
 });
 
 test("clear empty channels and users", () => {
   clearV1();
 
-  expect(getData().users).toStrictEqual([]);
-  expect(getData().channels).toStrictEqual([]);
+  expect(channelsListAllV1("test1")).toStrictEqual(ERROR);
+  expect(channelsCreateV1("test1", "COMP1531", true)).toStrictEqual(ERROR);
+  expect(authLoginV1("test1@gmail.com", "123456")).toStrictEqual(ERROR);
 });

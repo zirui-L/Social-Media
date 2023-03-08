@@ -37,22 +37,18 @@ Assume a global owner with a valid user id can join any private channels of whic
 
 Assumption 7
 
-Assume that the channelMessagesV1 wourld return an empty array if the input start is strictly equal to the end of the message.
-
-i.e.
-
-{
-messages: [],
-start: start,
-end: end
-}
-
-(with start === end)
+Assume no global owner would have their permission removed or changed.
 
 ////////////////////////////////////////////////////////////////////////////////
 
 Assumption 8
 
 If the handler string is already taken by someone, and need concatination of number from 0, its is assumed that there are at most 9 repeated handler string (from 0 to 9).
+
+////////////////////////////////////////////////////////////////////////////////
+
+Assumption 9
+
+Assume that the channelMessagesV1 wourld return an empty array if the input start is strictly equal to the end of the message.
 
 ////////////////////////////////////////////////////////////////////////////////
