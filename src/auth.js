@@ -67,6 +67,8 @@ export function authRegisterV1(email, password, nameFirst, nameLast) {
     permissionId: permissionId,
   });
 
+  setData(data);
+
   return {
     authUserId: newId,
   };

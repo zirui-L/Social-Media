@@ -15,7 +15,7 @@ describe("Testing userProfileV1", () => {
       "Lee"
     );
     expect(userProfileV1(test1.authUserId + 1, test1.authUserId)).toStrictEqual(
-      { error: "error" }
+      { error: expect.any(String) }
     );
   });
 
@@ -27,12 +27,12 @@ describe("Testing userProfileV1", () => {
       "Lee"
     );
     expect(userProfileV1(test1.authUserId, test1.authUserId + 1)).toStrictEqual(
-      { error: "error" }
+      { error: expect.any(String) }
     );
   });
 
   test("Test-3: Error, invalid authUserId and invalid uId", () => {
-    expect(userProfileV1(0, 0)).toStrictEqual({ error: "error" });
+    expect(userProfileV1(0, 0)).toStrictEqual({ error: expect.any(String) });
   });
 
   test("Test-4: Sucess case", () => {

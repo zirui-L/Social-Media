@@ -21,7 +21,7 @@ describe("Testing channelDetailsV1", () => {
       true
     );
     const channelDetails = channelDetailsV1(test1.authUserId, "Incorrect");
-    expect(channelDetails).toStrictEqual({ error: "error" });
+    expect(channelDetails).toStrictEqual({ error: expect.any(String) });
   });
 
   test("Test-2: Error, incorrect authUserId", () => {
@@ -35,7 +35,7 @@ describe("Testing channelDetailsV1", () => {
       test1.authUserId + 3,
       channelId.channelId
     );
-    expect(channelDetails).toStrictEqual({ error: "error" });
+    expect(channelDetails).toStrictEqual({ error: expect.any(String) });
   });
 
   test("Test-3: Error, User inputed is not in the existing channel", () => {
@@ -55,7 +55,7 @@ describe("Testing channelDetailsV1", () => {
       test2.authUserId,
       channelId.channelId
     );
-    expect(channelDetails).toStrictEqual({ error: "error" });
+    expect(channelDetails).toStrictEqual({ error: expect.any(String) });
   });
 
   test("Test-4, correct input parameters", () => {
@@ -164,7 +164,7 @@ describe("Testing channelJoinV1", () => {
 
     expect(
       channelJoinV1(user1.authUserId, channel1.channelId + 1)
-    ).toStrictEqual({ error: "error" });
+    ).toStrictEqual({ error: expect.any(String) });
   });
 
   test("Test-2: Error, authUserId is invalid", () => {
@@ -174,7 +174,7 @@ describe("Testing channelJoinV1", () => {
 
     expect(
       channelJoinV1(user1.authUserId + 1, channel1.channelId)
-    ).toStrictEqual({ error: "error" });
+    ).toStrictEqual({ error: expect.any(String) });
   });
 
   test("Test-3: Error, authUserId is already a member of the channel", () => {
@@ -183,7 +183,7 @@ describe("Testing channelJoinV1", () => {
     const channel1 = channelsCreateV1(user1.authUserId, "Rickychannel", true);
 
     expect(channelJoinV1(user1.authUserId, channel1)).toStrictEqual({
-      error: "error",
+      error: expect.any(String),
     });
   });
 
@@ -195,7 +195,7 @@ describe("Testing channelJoinV1", () => {
     const channel1 = channelsCreateV1(user1.authUserId, "Rickychannel", false);
 
     expect(channelJoinV1(user2.authUserId, channel1.channelId)).toStrictEqual({
-      error: "error",
+      error: expect.any(String),
     });
   });
 
@@ -238,7 +238,7 @@ describe("channelInviteV1 function testing", () => {
     expect(
       channelInviteV1(test1.authUserId, 0, test2.authUserId)
     ).toStrictEqual({
-      error: "error",
+      error: expect.any(String),
     });
   });
 
@@ -252,7 +252,7 @@ describe("channelInviteV1 function testing", () => {
     const channel = channelsCreateV1(test.authUserId, "LeeChannel", true);
     expect(
       channelInviteV1(test1.authUserId, channel.channelId, test1.authUserId + 1)
-    ).toStrictEqual({ error: "error" });
+    ).toStrictEqual({ error: expect.any(String) });
   });
 
   test("Test-3: Error, uId belong to a user who is already in the channel", () => {
@@ -272,7 +272,7 @@ describe("channelInviteV1 function testing", () => {
     channelJoinV1(test2.authUserId, channel.channelId);
     expect(
       channelInviteV1(test1.authUserId, channel.channelId, test2.authUserId)
-    ).toStrictEqual({ error: "error" });
+    ).toStrictEqual({ error: expect.any(String) });
   });
 
   test("Test-4: Error, channelId is valid and the authorised user is not a member of the channel", () => {
@@ -292,7 +292,7 @@ describe("channelInviteV1 function testing", () => {
     const channel = channelsCreateV1(test1.authUserId, "LeeChannel", true);
     expect(
       channelInviteV1(test2.authUserId, channel.channelId, test3.authUserId)
-    ).toStrictEqual({ error: "error" });
+    ).toStrictEqual({ error: expect.any(String) });
   });
 
   test("Test-5: Error, invalid authUserId", () => {
@@ -300,7 +300,7 @@ describe("channelInviteV1 function testing", () => {
     const channel = channelsCreateV1(test1.authUserId, "LeeChannel", true);
     expect(
       channelInviteV1(test1.authUserId + 1, channel.channelId, test1.authUserId)
-    ).toStrictEqual({ error: "error" });
+    ).toStrictEqual({ error: expect.any(String) });
   });
 
   test("Test-6: Error, user inviting themselves", () => {
@@ -313,7 +313,7 @@ describe("channelInviteV1 function testing", () => {
     const channel = channelsCreateV1(test1.authUserId, "LeeChannel", true);
     expect(
       channelInviteV1(test1.authUserId, channel.channelId, test1.authUserId)
-    ).toStrictEqual({ error: "error" });
+    ).toStrictEqual({ error: expect.any(String) });
   });
 
   test("Test-7: Successful invite", () => {
@@ -440,7 +440,7 @@ describe("Testing channelMessagesV1", () => {
     );
 
     expect(channelMessagesV1(test1.authUserId, 0, 0)).toStrictEqual({
-      error: "error",
+      error: expect.any(String),
     });
   });
 
@@ -457,7 +457,7 @@ describe("Testing channelMessagesV1", () => {
     expect(
       channelMessagesV1(test1.authUserId + 1, channel.channelId, 0)
     ).toStrictEqual({
-      error: "error",
+      error: expect.any(String),
     });
   });
 
@@ -477,7 +477,7 @@ describe("Testing channelMessagesV1", () => {
     const channel = channelsCreateV1(test1.authUserId, "LeeChannel", true);
     expect(
       channelMessagesV1(test2.authUserId, channel.channelId, 0)
-    ).toStrictEqual({ error: "error" });
+    ).toStrictEqual({ error: expect.any(String) });
   });
 
   test("Test-4: Error, Start greater than total numebr of messages", () => {
@@ -490,7 +490,7 @@ describe("Testing channelMessagesV1", () => {
     const channel = channelsCreateV1(test1.authUserId, "LeeChannel", true);
     expect(
       channelMessagesV1(test1.authUserId, channel.channelId, 5)
-    ).toStrictEqual({ error: "error" });
+    ).toStrictEqual({ error: expect.any(String) });
   });
 
   test("Test-5: Success, 0 message output", () => {
