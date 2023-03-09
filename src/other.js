@@ -1,4 +1,4 @@
-import { getData, setData } from "./dataStore";
+import { getData, setData } from "./dataStore.js";
 
 /**
  * <Create a new user with input email, password, first and last names. Create unique authUserId and handle string for each user, and store all informations>
