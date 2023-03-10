@@ -6,8 +6,6 @@ import {
 
 import { authRegisterV1 } from "./auth";
 
-import { channelJoinV1 } from "./channel";
-
 import { clearV1 } from "./other";
 
 beforeEach(() => {
@@ -22,8 +20,8 @@ describe("channelsCreateV1 function testing", () => {
       "firstName",
       "lastName"
     );
-    const long_name = "some_name_that_exceed_lenth_of_20";
-    const channelId = channelsCreateV1(user.authUserId, long_name, true);
+    const longName = "someNameThatExceedLenthOf20";
+    const channelId = channelsCreateV1(user.authUserId, longName, true);
     expect(channelId).toStrictEqual({
       error: expect.any(String),
     });
@@ -36,8 +34,8 @@ describe("channelsCreateV1 function testing", () => {
       "firstName",
       "lastName"
     );
-    const short_name = "";
-    const channelId = channelsCreateV1(user.authUserId, short_name, true);
+    const shortName = "";
+    const channelId = channelsCreateV1(user.authUserId, shortName, true);
     expect(channelId).toStrictEqual({
       error: expect.any(String),
     });
@@ -50,7 +48,7 @@ describe("channelsCreateV1 function testing", () => {
       "firstName",
       "lastName"
     );
-    const name = "valid_name";
+    const name = "validName";
     const channelId = channelsCreateV1(user.authUserId + 1, name, true);
     expect(channelId).toStrictEqual({
       error: expect.any(String),
@@ -64,7 +62,7 @@ describe("channelsCreateV1 function testing", () => {
       "firstName",
       "lastName"
     );
-    const name = "valid_name";
+    const name = "validName";
     const channelId = channelsCreateV1(user.authUserId, name, false);
     expect(channelId).toEqual(
       expect.objectContaining({
@@ -80,7 +78,7 @@ describe("channelsCreateV1 function testing", () => {
       "firstName",
       "lastName"
     );
-    const name = "valid_name";
+    const name = "validName";
     const channelId = channelsCreateV1(user.authUserId, name, true);
     expect(channelId).toEqual(
       expect.objectContaining({

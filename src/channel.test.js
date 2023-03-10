@@ -5,7 +5,7 @@ import {
   channelInviteV1,
   channelMessagesV1,
 } from "./channel.js";
-import { authLoginV1, authRegisterV1 } from "./auth.js";
+import { authRegisterV1 } from "./auth.js";
 import { channelsCreateV1 } from "./channels.js";
 
 beforeEach(() => {

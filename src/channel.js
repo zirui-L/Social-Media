@@ -1,5 +1,13 @@
-const ERROR = { error: "error" };
 import { getData, setData } from "./dataStore.js";
+import {
+  isAuthUserIdValid,
+  isChannelValid,
+  isMember,
+  findUser,
+  findChannel,
+} from "./helperFunctions.js";
+
+const ERROR = { error: "error" };
 
 /**
  * Given a channel with ID channelId that the authorised user
@@ -66,7 +74,7 @@ export function channelDetailsV1(authUserId, channelId) {
  *
  * @param {integer} authUserId - userId
  * @param {integer} channelId - channelId
- * ...
+ *
  * @returns {{}} - return empty object if channelId/authUserId are valid, authorised is
  * not a member of the public channel. (or global owner joining a private channel)
  * @returns {{error: 'error'}} - when channelId/authUserId
@@ -106,7 +114,6 @@ export function channelJoinV1(authUserId, channelId) {
  * @param {integer} authUserId - userId
  * @param {integer} channelId - inviting channelId
  * @param {integer} uId -- userId of the user being invited
- * ...
  *
  * @returns {} - return empty object is no error occurs
  * @returns {{error: 'error'}} - error is being returned if
@@ -145,7 +152,6 @@ export function channelInviteV1(authUserId, channelId, uId) {
  * @param {integer} authuserId - userId
  * @param {integer} channelId - channelId
  * @param {integer} start -- index of starting message
- * ...
  *
  * @returns {{message,start,end}} - all message between index start and end.
  * If return end equals to -1, user has reached end of message. (return if no
@@ -191,40 +197,4 @@ export function channelMessagesV1(authUserId, channelId, start) {
     start: start,
     end: end,
   };
-}
-
-function isAuthUserIdValid(data, authUserId) {
-  for (const user of data.users) {
-    if (user.authUserId === authUserId) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-function isChannelValid(data, channelId) {
-  for (const channel of data.channels) {
-    if (channel.channelId === channelId) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-function isMember(data, authUserId, channelId) {
-  const channelIndex = data.channels.findIndex(
-    (channel) => channel.channelId === channelId
-  );
-
-  return data.channels[channelIndex].allMembers.includes(authUserId);
-}
-
-function findUser(data, authUserId) {
-  return data.users.find((user) => user.authUserId === authUserId);
-}
-
-function findChannel(data, channelId) {
-  return data.channels.find((channel) => channel.channelId === channelId);
 }

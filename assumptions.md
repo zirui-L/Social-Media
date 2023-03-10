@@ -13,7 +13,7 @@ Assume that after the user has registered via authRegisterV1, it is assumed that
 
 Assumption 3
 
-The name of the user, including the first name and last name, don't include any speical charaters (e.g. !@#$%^\*+), since this would result in empty handler string.
+The name of the user, including the first name and last name, don't only consists of speical charaters (e.g. !@#$%^\*+), since this would result in empty handler string.
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -49,6 +49,6 @@ If the handler string is already taken by someone, and need concatination of num
 
 Assumption 9
 
-Assume that the channelMessagesV1 wourld return an empty array if the input start is strictly equal to the end of the message.
+Assume that the channelMessagesV1 would return an empty array if the input start is strictly equal to the end of the message.
 
 ////////////////////////////////////////////////////////////////////////////////
