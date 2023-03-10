@@ -6,8 +6,6 @@ import {
 
 import { authRegisterV1 } from "./auth";
 
-import { channelJoinV1 } from "./channel";
-
 import { clearV1 } from "./other";
 
 beforeEach(() => {
