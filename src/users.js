@@ -1,10 +1,11 @@
-import { getData } from "./dataStore";
+import { getData } from "./dataStore.js";
 import { isAuthUserIdValid } from "./helperFunctions.js";
 
 const ERROR = { error: "error" };
 
 /**
- * <Create a new user with input email, password, first and last names. Create unique authUserId and handle string for each user, and store all informations>
+ * <Create a new user with input email, password, first and last names. Create
+ * unique authUserId and handle string for each user, and store all informations>
  *
  * @param {string} integer - email address of the registered users
  * @param {string} integer - password of the registered users
