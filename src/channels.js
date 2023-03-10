@@ -1,4 +1,6 @@
 import { getData, setData } from "./dataStore.js";
+import { isAuthUserIdValid } from "./helperFunctions.js";
+
 const ERROR = { error: "error" };
 
 /**
@@ -7,16 +9,19 @@ const ERROR = { error: "error" };
  * @param {integer} authUserId - The Id of the owner of the channel to be created
  * @param {string} name - The name of channel to be created
  * @param {boolean} isPublic - Whether the channel will be public
- * ...
  *
- * @returns {{error: "error"}} - Error case: Either the length of channel name is non-compliant
- *                                           or the authUserId is invalid
+ * @returns {{error: "error"}} - Error case: Either the length of channel name
+ * is non-compliant or the authUserId is invalid
  * @returns {{channelId}} - Returns the Id of the created channel
  */
 
 export function channelsCreateV1(authUserId, name, isPublic) {
   const data = getData();
-  if (name.length < 1 || name.length > 20 || !isUserValid(data, authUserId)) {
+  if (
+    name.length < 1 ||
+    name.length > 20 ||
+    !isAuthUserIdValid(data, authUserId)
+  ) {
     return ERROR;
   }
 
@@ -45,21 +50,21 @@ export function channelsCreateV1(authUserId, name, isPublic) {
 }
 
 /**
- * channelsListV1 returns an array of all channels (and their associated details) that 
- * the input authorised user is part of
+ * channelsListV1 returns an array of all channels (and their associated
+ * details) that the input authorised user is part of
  *
- * @param {integer} authUserId - The Id of the user that participates in the returned channels
-
- * ...
+ * @param {integer} authUserId - The Id of the user that participates in the
+ * returned channels
  *
  * @returns {{error: "error"}} - Error case when the input user Id is invalid
- * @returns {{channels}} - A array of channels and their details that the user is part of
+ * @returns {{channels}} - A array of channels and their details that the user
+ * is part of
  */
 
 export function channelsListV1(authUserId) {
   const data = getData();
 
-  if (!isUserValid(data, authUserId)) {
+  if (!isAuthUserIdValid(data, authUserId)) {
     return ERROR;
   }
 
@@ -80,10 +85,10 @@ export function channelsListV1(authUserId) {
 }
 
 /**
- * Provides an array of all channels, including private channels (and their associated details)
+ * Provides an array of all channels, including private channels (and their
+ * associated details)
  *
  * @param {integer} authUserId - The user Id
- * ...
  *
  * @returns {{error : "error"}}} - Error case when the input user Id is invalid
  * @returns {{channels}} - A array of all channels and their details
@@ -92,7 +97,7 @@ export function channelsListV1(authUserId) {
 export function channelsListAllV1(authUserId) {
   const data = getData();
 
-  if (!isUserValid(data, authUserId)) {
+  if (!isAuthUserIdValid(data, authUserId)) {
     return ERROR;
   }
 
@@ -107,14 +112,4 @@ export function channelsListAllV1(authUserId) {
   return {
     channels: getChannels,
   };
-}
-
-function isUserValid(data, authUserId) {
-  for (const user of data.users) {
-    if (user.authUserId === authUserId) {
-      return true;
-    }
-  }
-
-  return false;
 }

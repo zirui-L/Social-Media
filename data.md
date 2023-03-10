@@ -20,7 +20,7 @@ let data = {
       isPublic: true,
       ownerMembers: [0],
       allMembers: [0, 1, 2],
-      messages: [0, 1, 2],
+      messages: [],
     },
   ],
 
@@ -28,13 +28,11 @@ let data = {
     {
       messageId: 1;
       uId: 100;
-      channelId: 201;
       message: 'hello henry';
+      timeSent:1678202929;
     }
   ],
 };
 ```
-
-}
 
 [Optional] short description: We have implemented the users and channel data object using a conbination of lists and object. By incorporating lists inside the object, new information and data (such as users and channel) can be populated while the programe is running. Also, from the iteration0 iterface, we have also included lists for chat member within each channel object, which can also populate (add or remove member) while running the program.

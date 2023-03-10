@@ -4,11 +4,9 @@ import {
   channelsListAllV1,
 } from "./channels";
 
-import { authRegisterV1 } from "./auth";
+import { authRegisterV1 } from "./auth.js";
 
-import { channelJoinV1 } from "./channel";
-
-import { clearV1 } from "./other";
+import { clearV1 } from "./other.js";
 
 beforeEach(() => {
   clearV1();
@@ -22,10 +20,10 @@ describe("channelsCreateV1 function testing", () => {
       "firstName",
       "lastName"
     );
-    const long_name = "some_name_that_exceed_lenth_of_20";
-    const channelId = channelsCreateV1(user.authUserId, long_name, true);
+    const longName = "someNameThatExceedLenthOf20";
+    const channelId = channelsCreateV1(user.authUserId, longName, true);
     expect(channelId).toStrictEqual({
-      error: "error",
+      error: expect.any(String),
     });
   });
 
@@ -36,10 +34,10 @@ describe("channelsCreateV1 function testing", () => {
       "firstName",
       "lastName"
     );
-    const short_name = "";
-    const channelId = channelsCreateV1(user.authUserId, short_name, true);
+    const shortName = "";
+    const channelId = channelsCreateV1(user.authUserId, shortName, true);
     expect(channelId).toStrictEqual({
-      error: "error",
+      error: expect.any(String),
     });
   });
 
@@ -50,10 +48,10 @@ describe("channelsCreateV1 function testing", () => {
       "firstName",
       "lastName"
     );
-    const name = "valid_name";
+    const name = "validName";
     const channelId = channelsCreateV1(user.authUserId + 1, name, true);
     expect(channelId).toStrictEqual({
-      error: "error",
+      error: expect.any(String),
     });
   });
 
@@ -64,7 +62,7 @@ describe("channelsCreateV1 function testing", () => {
       "firstName",
       "lastName"
     );
-    const name = "valid_name";
+    const name = "validName";
     const channelId = channelsCreateV1(user.authUserId, name, false);
     expect(channelId).toEqual(
       expect.objectContaining({
@@ -80,7 +78,7 @@ describe("channelsCreateV1 function testing", () => {
       "firstName",
       "lastName"
     );
-    const name = "valid_name";
+    const name = "validName";
     const channelId = channelsCreateV1(user.authUserId, name, true);
     expect(channelId).toEqual(
       expect.objectContaining({
@@ -94,7 +92,7 @@ describe("channelsListV1 function testing", () => {
   test("Test-1: Invalid authUserId", () => {
     const user1 = authRegisterV1("ricky@gmail.com", "123455", "Ricky", "Li");
     expect(channelsListV1(user1.authUserId + 1)).toStrictEqual({
-      error: "error",
+      error: expect.any(String),
     });
   });
 
@@ -201,7 +199,7 @@ describe("channelsListAllV1 function testing", () => {
   test("Test-1: Invalid authUserId", () => {
     const user1 = authRegisterV1("ricky@gmail.com", "123455", "Ricky", "Li");
     expect(channelsListAllV1(user1.authUserId + 1)).toStrictEqual({
-      error: "error",
+      error: expect.any(String),
     });
   });
 

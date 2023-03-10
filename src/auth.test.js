@@ -26,7 +26,7 @@ describe("authLoginV1 function testing", () => {
       "lastName"
     );
     expect(authLoginV1("test@gmail.com", "54321")).toStrictEqual({
-      error: "error",
+      error: expect.any(String),
     });
   });
 
@@ -37,14 +37,14 @@ describe("authLoginV1 function testing", () => {
       "firstName",
       "lastName"
     );
-    expect(authLoginV1("another@gmail.com", "12345")).toStrictEqual({
-      error: "error",
+    expect(authLoginV1("another@gmail.com", "123456")).toStrictEqual({
+      error: expect.any(String),
     });
   });
 
   test("Test4: log in with non-existing email and password", () => {
     expect(authLoginV1("test@gmail.com", "12345")).toStrictEqual({
-      error: "error",
+      error: expect.any(String),
     });
   });
 });
@@ -59,21 +59,21 @@ describe("authRegisterV1 function testing - generating authUserId", () => {
       password: "123456",
       nameFirst: "firstName",
       nameLast: "lastName",
-      expected: expect.objectContaining({ authUserId: expect.any(Number) }),
+      expected: { authUserId: expect.any(Number) },
     },
     {
       email: "###email_not_valid###",
       password: "123456",
       nameFirst: "firstName",
       nameLast: "lastName",
-      expected: { error: "error" },
+      expected: { error: expect.any(String) },
     },
     {
       email: "test@gmail.com",
       password: "123",
       nameFirst: "firstName",
       nameLast: "lastName",
-      expected: { error: "error" },
+      expected: { error: expect.any(String) },
     },
     {
       email: "test@gmail.com",
@@ -81,28 +81,28 @@ describe("authRegisterV1 function testing - generating authUserId", () => {
       nameFirst:
         "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679",
       nameLast: "lastName",
-      expected: { error: "error" },
+      expected: { error: expect.any(String) },
     },
     {
       email: "test@gmail.com",
       password: "123456",
       nameFirst: "",
       nameLast: "lastName",
-      expected: { error: "error" },
+      expected: { error: expect.any(String) },
     },
     {
       email: "test@gmail.com",
       password: "123456",
       nameFirst: "3",
       nameLast: "lastName",
-      expected: expect.objectContaining({ authUserId: expect.any(Number) }),
+      expected: { authUserId: expect.any(Number) },
     },
     {
       email: "test@gmail.com",
       password: "123456",
       nameFirst: "3.1415926535897932384626433832795028841971693993",
       nameLast: "lastName",
-      expected: expect.objectContaining({ authUserId: expect.any(Number) }),
+      expected: { authUserId: expect.any(Number) },
     },
     {
       email: "test@gmail.com",
@@ -110,28 +110,28 @@ describe("authRegisterV1 function testing - generating authUserId", () => {
       nameFirst: "firstName",
       nameLast:
         "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679",
-      expected: { error: "error" },
+      expected: { error: expect.any(String) },
     },
     {
       email: "test@gmail.com",
       password: "123456",
       nameFirst: "firstName",
       nameLast: "",
-      expected: { error: "error" },
+      expected: { error: expect.any(String) },
     },
     {
       email: "test@gmail.com",
       password: "123456",
       nameFirst: "firstName",
       nameLast: "3",
-      expected: expect.objectContaining({ authUserId: expect.any(Number) }),
+      expected: { authUserId: expect.any(Number) },
     },
     {
       email: "test@gmail.com",
       password: "123456",
       nameFirst: "firstName",
       nameLast: "3.1415926535897932384626433832795028841971693993",
-      expected: expect.objectContaining({ authUserId: expect.any(Number) }),
+      expected: { authUserId: expect.any(Number) },
     },
   ])(
     "authRegisterV1 function testing",
@@ -217,6 +217,6 @@ describe("authRegisterV1 function testing - generating handle string / email dup
     );
     expect(
       authRegisterV1("test@gmail.com", "1234561", "firstName#", "lastName#")
-    ).toStrictEqual({ error: "error" });
+    ).toStrictEqual({ error: expect.any(String) });
   });
 });
