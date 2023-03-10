@@ -1,5 +1,5 @@
 import { getData, setData } from "./dataStore.js";
-import validator from "validator";
+import { isRegisterValid, generateHandleStr } from "./helperFunctions.js";
 const ERROR = { error: "error" };
 
 /**
@@ -7,7 +7,6 @@ const ERROR = { error: "error" };
  *
  * @param {string} email - email address of the registered users
  * @param {string} password - password of the registered users
- * ...
  *
  * @returns {{authUserId}} - there exist an user with matching email and passwords
  * @returns {{ error: "error" }} - email or password non-exise or mismatch from the stored user informations
@@ -72,63 +71,4 @@ export function authRegisterV1(email, password, nameFirst, nameLast) {
   return {
     authUserId: newId,
   };
-}
-
-function isRegisterValid(email, password, nameFirst, nameLast, data) {
-  if (!validator.isEmail(email) || !isAvaliableEmail(email, data.users)) {
-    return false;
-  } else if (
-    password.length < 6 ||
-    !nameInRange(nameFirst) ||
-    !nameInRange(nameLast)
-  ) {
-    return false;
-  }
-
-  return true;
-}
-
-function nameInRange(name) {
-  if (name.length < 1 || name.length > 50) {
-    return false;
-  }
-
-  return true;
-}
-
-function isAvaliableEmail(email, users) {
-  for (const user of users) {
-    if (user.email === email) {
-      return false;
-    }
-  }
-  return true;
-}
-
-function generateHandleStr(nameFirst, nameLast, data) {
-  let handleString = nameFirst.toLowerCase() + nameLast.toLowerCase();
-
-  handleString = handleString.replace(/[^0-9a-z]/gi, "");
-
-  if (handleString.length > 20) {
-    handleString = handleString.substr(0, 20);
-  }
-
-  let numberCat = 0;
-
-  while (!isAvaliableHandleString(handleString, data.users)) {
-    handleString += numberCat.toString();
-    numberCat += 1;
-  }
-
-  return handleString;
-}
-
-function isAvaliableHandleString(newHandleStr, users) {
-  for (const user of users) {
-    if (user.handleStr === newHandleStr) {
-      return false;
-    }
-  }
-  return true;
 }

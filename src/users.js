@@ -1,4 +1,5 @@
 import { getData } from "./dataStore";
+import { isAuthUserIdValid } from "./helperFunctions.js";
 
 const ERROR = { error: "error" };
 
@@ -15,7 +16,8 @@ const ERROR = { error: "error" };
 export function userProfileV1(authUserId, uId) {
   const data = getData();
 
-  if (!isUserValid(data, authUserId) || !isUserValid(data, uId)) return ERROR;
+  if (!isAuthUserIdValid(data, authUserId) || !isAuthUserIdValid(data, uId))
+    return ERROR;
 
   for (const user of data.users) {
     if (user.authUserId === uId) {
@@ -30,14 +32,4 @@ export function userProfileV1(authUserId, uId) {
       };
     }
   }
-}
-
-function isUserValid(data, authUserId) {
-  for (const user of data.users) {
-    if (user.authUserId === authUserId) {
-      return true;
-    }
-  }
-
-  return false;
 }
