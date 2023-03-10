@@ -1,4 +1,3 @@
-const ERROR = { error: "error" };
 import { getData, setData } from "./dataStore.js";
 import {
   isAuthUserIdValid,
@@ -7,6 +6,8 @@ import {
   findUser,
   findChannel,
 } from "./helperFunctions.js";
+
+const ERROR = { error: "error" };
 
 /**
  * Given a channel with ID channelId that the authorised user
