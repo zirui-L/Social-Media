@@ -2,7 +2,7 @@ import {
   channelsCreateV1,
   channelsListV1,
   channelsListAllV1,
-} from "./channels";
+} from "./channels.js";
 
 import { authRegisterV1 } from "./auth.js";
 
