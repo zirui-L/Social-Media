@@ -16,7 +16,8 @@ const ERROR = { error: "error" };
  * @param {integer} authUserId - userId
  * @param {integer} channelId - channelId
  *
- * @returns {{name, isPublic, ownerMembers, allMembers}} - object return when hannelId/authUserId
+ * @returns {{name, isPublic, ownerMembers, allMembers}} - object return when
+ * hannelId/authUserId
  * is valid and authorised user is a member of the channel
  * @returns {{error: 'error'}} - when channelId/authUserId
  * is invalid or authorised user is not a member of the channel
@@ -75,8 +76,9 @@ export function channelDetailsV1(authUserId, channelId) {
  * @param {integer} authUserId - userId
  * @param {integer} channelId - channelId
  *
- * @returns {{}} - return empty object if channelId/authUserId are valid, authorised is
- * not a member of the public channel. (or global owner joining a private channel)
+ * @returns {{}} - return empty object if channelId/authUserId are valid,
+ * authorised is not a member of the public channel. (or global owner joining a
+ * private channel)
  * @returns {{error: 'error'}} - when channelId/authUserId
  * is invalid or authorised user is a member of the channel
  * or the channel is private and when the authorised user is

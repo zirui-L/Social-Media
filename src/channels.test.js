@@ -4,9 +4,9 @@ import {
   channelsListAllV1,
 } from "./channels";
 
-import { authRegisterV1 } from "./auth";
+import { authRegisterV1 } from "./auth.js";
 
-import { clearV1 } from "./other";
+import { clearV1 } from "./other.js";
 
 beforeEach(() => {
   clearV1();
