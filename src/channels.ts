@@ -15,7 +15,11 @@ const ERROR = { error: "error" };
  * @returns {{channelId}} - Returns the Id of the created channel
  */
 
-export function channelsCreateV1(authUserId, name, isPublic) {
+export const channelsCreateV1 = (
+  authUserId: number,
+  name: string,
+  isPublic: boolean
+) => {
   const data = getData();
   if (
     name.length < 1 ||
@@ -47,7 +51,7 @@ export function channelsCreateV1(authUserId, name, isPublic) {
   return {
     channelId: channelId,
   };
-}
+};
 
 /**
  * channelsListV1 returns an array of all channels (and their associated
@@ -61,7 +65,7 @@ export function channelsCreateV1(authUserId, name, isPublic) {
  * is part of
  */
 
-export function channelsListV1(authUserId) {
+export const channelsListV1 = (authUserId: number) => {
   const data = getData();
 
   if (!isAuthUserIdValid(data, authUserId)) {
@@ -82,7 +86,7 @@ export function channelsListV1(authUserId) {
   return {
     channels: getChannels,
   };
-}
+};
 
 /**
  * Provides an array of all channels, including private channels (and their
@@ -94,7 +98,7 @@ export function channelsListV1(authUserId) {
  * @returns {{channels}} - A array of all channels and their details
  */
 
-export function channelsListAllV1(authUserId) {
+export const channelsListAllV1 = (authUserId: number) => {
   const data = getData();
 
   if (!isAuthUserIdValid(data, authUserId)) {
@@ -112,4 +116,4 @@ export function channelsListAllV1(authUserId) {
   return {
     channels: getChannels,
   };
-}
+};

@@ -9,12 +9,12 @@ import { getData, setData } from "./dataStore.js";
  * @returns {{}} - if the function successifully clear the data stored
  */
 
-function clearV1() {
+const clearV1 = () => {
   const data = getData();
   data.channels.length = 0;
   data.users.length = 0;
   setData(data);
   return {};
-}
+};
 
 export { clearV1 };

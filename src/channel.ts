@@ -23,7 +23,7 @@ const ERROR = { error: "error" };
  * is invalid or authorised user is not a member of the channel
  */
 
-export function channelDetailsV1(authUserId, channelId) {
+export const channelDetailsV1 = (authUserId: number, channelId: number) => {
   const data = getData();
 
   if (
@@ -67,7 +67,7 @@ export function channelDetailsV1(authUserId, channelId) {
     ownerMembers: ownerMembers,
     allMembers: allMembers,
   };
-}
+};
 
 /**
  * Given a channelId of a channel that the authorised user
@@ -85,7 +85,7 @@ export function channelDetailsV1(authUserId, channelId) {
  * not a channel member and is not a global owner
  */
 
-export function channelJoinV1(authUserId, channelId) {
+export const channelJoinV1 = (authUserId: number, channelId: number) => {
   const data = getData();
   if (
     !isAuthUserIdValid(data, authUserId) ||
@@ -108,7 +108,7 @@ export function channelJoinV1(authUserId, channelId) {
   setData(data);
 
   return {};
-}
+};
 
 /**
  * Invites a user with ID uId to join a channel with ID channelId.
@@ -127,7 +127,11 @@ export function channelJoinV1(authUserId, channelId) {
  *                                  member of the channel
  */
 
-export function channelInviteV1(authUserId, channelId, uId) {
+export const channelInviteV1 = (
+  authUserId: number,
+  channelId: number,
+  uId: number
+) => {
   const data = getData();
   if (
     !isAuthUserIdValid(data, authUserId) ||
@@ -146,7 +150,7 @@ export function channelInviteV1(authUserId, channelId, uId) {
   setData(data);
 
   return {};
-}
+};
 
 /**
  * Given a channel with ID channelId that the authorised user is a member of,
@@ -167,7 +171,11 @@ export function channelInviteV1(authUserId, channelId, uId) {
  *                                4. autherId is invalid
  */
 
-export function channelMessagesV1(authUserId, channelId, start) {
+export const channelMessagesV1 = (
+  authUserId: number,
+  channelId: number,
+  start: number
+) => {
   const data = getData();
   if (
     !isAuthUserIdValid(data, authUserId) ||
@@ -199,4 +207,4 @@ export function channelMessagesV1(authUserId, channelId, start) {
     start: start,
     end: end,
   };
-}
+};

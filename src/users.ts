@@ -14,7 +14,7 @@ const ERROR = { error: "error" };
  *  @returns {{ error: "error" }} - return if there is invalid autherUserId or invalid uId
  */
 
-export function userProfileV1(authUserId, uId) {
+export const userProfileV1 = (authUserId: number, uId: number) => {
   const data = getData();
 
   if (!isAuthUserIdValid(data, authUserId) || !isAuthUserIdValid(data, uId))
@@ -33,4 +33,4 @@ export function userProfileV1(authUserId, uId) {
       };
     }
   }
-}
+};

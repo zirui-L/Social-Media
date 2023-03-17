@@ -16,7 +16,7 @@ const ERROR = { error: "error" };
  * the stored user informations
  */
 
-export function authLoginV1(email: string, password: string) {
+export const authLoginV1 = (email: string, password: string) => {
   const data = getData();
 
   for (const client of data.users) {
@@ -27,7 +27,7 @@ export function authLoginV1(email: string, password: string) {
     }
   }
   return ERROR;
-}
+};
 
 /**
  * <Create a new user with input email, password, first and last names. Create
@@ -46,12 +46,12 @@ export function authLoginV1(email: string, password: string) {
  * length of passwor is lower than 6, length of names is outside of the range [1,50]
  */
 
-export function authRegisterV1(
+export const authRegisterV1 = (
   email: string,
   password: string,
   nameFirst: string,
   nameLast: string
-) {
+) => {
   const data = getData();
 
   if (!isRegisterValid(email, password, nameFirst, nameLast, data)) {
@@ -84,4 +84,4 @@ export function authRegisterV1(
   return {
     authUserId: newId,
   };
-}
+};
