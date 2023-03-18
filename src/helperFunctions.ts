@@ -1,50 +1,49 @@
-import validator from "validator";
+import {
+  Channel,
+  Data,
+  storedUser,
+  Message,
+  Error,
+  getData,
+} from "./dataStore";
+import fs from "fs";
+
+export const storeData = () => {
+  const data = getData();
+  if (fs.existsSync("src/data.json")) {
+    fs.unlinkSync("src/data.json");
+  }
+  fs.writeFileSync("src/data.json", JSON.stringify(data), { flag: "w" });
+};
 
 /**
- * <Create a new user with input email, password, first and last names. Create
- * unique authUserId and handle string for each user, and store all
- * informations>
+ * <Create a unique id by utilise combination of timestampe and random number, which avoid repetition and collision>
  *
- * @param {string} email - email address of the registered users
- * @param {string} password - password of the registered users
- * @param {string} nameFirst - first name of the registered users
- * @param {string} nameLast - last name of the registered users
- * @param {{ users: [], channels: [],}} data - object that stores informations
- * about user and channels
+ * @param N/A
  *
- * @returns {true} - valid email, password with more than 6 characters, and the
- * length of name is between 1 and 50 inclusive
- * @returns {false} - returns false is one of the above argument is false
+ * @returns {number} - returns a unique id
  */
-
-export function isRegisterValid(email, password, nameFirst, nameLast, data) {
-  if (!validator.isEmail(email) || !isAvaliableEmail(email, data.users)) {
-    return false;
-  } else if (
-    password.length < 6 ||
-    !nameInRange(nameFirst) ||
-    !nameInRange(nameLast)
-  ) {
-    return false;
-  }
-
-  return true;
-}
+export const createUniqueId = (): number => {
+  const timestamp = Date.now();
+  const randomNum = Math.floor(Math.random() * 10000);
+  const id = parseInt(`${timestamp}${randomNum}`);
+  return id;
+};
 
 // Determine whether a name has length between 1 and 50 inclusive
-function nameInRange(name) {
+export const nameInRange = (name: string): boolean => {
   return !(name.length < 1 || name.length > 50);
-}
+};
 
-// Determine whether a email is email
-function isAvaliableEmail(email, users) {
+// Determine whether a email is registed in the system or not
+export const isAvaliableEmail = (email: string, users: any): boolean => {
   for (const user of users) {
     if (user.email === email) {
       return false;
     }
   }
   return true;
-}
+};
 
 /**
  * <Create a unique handler string according to user names>
@@ -56,7 +55,11 @@ function isAvaliableEmail(email, users) {
  *
  * @returns {handleString} - returns a unique handler string
  */
-export function generateHandleStr(nameFirst, nameLast, data) {
+export const generateHandleStr = (
+  nameFirst: string,
+  nameLast: string,
+  data: Data
+): string => {
   let handleString = nameFirst.toLowerCase() + nameLast.toLowerCase();
 
   handleString = handleString.replace(/[^0-9a-z]/gi, "");
@@ -67,35 +70,35 @@ export function generateHandleStr(nameFirst, nameLast, data) {
 
   let numberCat = 0;
 
-  while (!isAvaliableHandleString(handleString, data.users)) {
+  while (!isAvaliableHandleString(handleString, data)) {
     handleString += numberCat.toString();
     numberCat += 1;
   }
 
   return handleString;
-}
+};
 
 // Search up the dataStore to see if a handler string already exist or not
-function isAvaliableHandleString(newHandleStr, users) {
-  for (const user of users) {
+const isAvaliableHandleString = (newHandleStr: string, data: Data): boolean => {
+  for (const user of data.users) {
     if (user.handleStr === newHandleStr) {
       return false;
     }
   }
   return true;
-}
+};
 
 /**
  * <Check whether a user is registed>
  *
  * @param {{ users: [], channels: [],}} data - object that stores informations
  * about user and channels
- * @param {string} authUserId - user id of the enquiring user
+ * @param {number} authUserId - user id of the enquiring user
  *
  * @returns {true} - if user with such authUserId is registered
  * @returns {false} - if user with such authUserId is not registered
  */
-export function isAuthUserIdValid(data, authUserId) {
+export const isAuthUserIdValid = (data: Data, authUserId: number): boolean => {
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
       return true;
@@ -103,19 +106,39 @@ export function isAuthUserIdValid(data, authUserId) {
   }
 
   return false;
-}
+};
+
+/**
+ * <Check whether a token is valid or not>
+ *
+ * @param {Data} data - object that stores informations
+ * about user and channels
+ * @param {string} token - user id of the enquiring user
+ *
+ * @returns {true} - if user with such token is logged in
+ * @returns {false} - if user with such token is not logged in
+ */
+export const isTokenValid = (data: Data, token: string): boolean => {
+  for (const existingtoken of data.tokens) {
+    if (existingtoken.token === token) {
+      return true;
+    }
+  }
+
+  return false;
+};
 
 /**
  * <Check whether a channel is registed>
  *
- * @param {{ users: [], channels: [],}} data - object that stores informations
+ * @param {Data} data - object that stores informations
  * about user and channels
- * @param {string} channelId - channel id
+ * @param {number} channelId - channel id
  *
  * @returns {true} - if the channel with such channelId is registered
  * @returns {false} - if the channel with such channelId is not registered
  */
-export function isChannelValid(data, channelId) {
+export const isChannelValid = (data: Data, channelId: number): boolean => {
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
       return true;
@@ -123,12 +146,12 @@ export function isChannelValid(data, channelId) {
   }
 
   return false;
-}
+};
 
 /**
  * <Check if a specfoc user belong to a channel>
  *
- * @param {{ users: [], channels: [],}} data - object that stores informations
+ * @param {Data} data - object that stores informations
  * about user and channels
  * @param {string} authUserId - user id of the enquiring user
  * @param {string} channelId - channel id
@@ -138,33 +161,32 @@ export function isChannelValid(data, channelId) {
  * @returns {false} - invalid or alreade registered email, length of passwor is
  * lower than 6, length of names is outside of the range [1,50]
  */
-export function isMember(data, authUserId, channelId) {
+export const isMember = (data: Data, authUserId: number, channelId: number) => {
   const channelIndex = data.channels.findIndex(
     (channel) => channel.channelId === channelId
   );
 
   return data.channels[channelIndex].allMembers.includes(authUserId);
-}
+};
 
 /**
  * <Find a user object with given authUserId>
  *
- * @param {{ users: [], channels: [],}} data - object that stores informations
+ * @param {Data} data - object that stores informations
  * about user and channels
  * @param {string} authUserId - user id of the enquiring user
  *
  * @returns {{ user }} - if there exist a user with given authUserId
  * @returns { undefined } - if there doesn't exist a user with given authUserId
  */
-export function findUser(data, authUserId) {
+export const findUser = (data: Data, authUserId: number): storedUser => {
   return data.users.find((user) => user.authUserId === authUserId);
-}
+};
 
 /**
- * <Create a new user with input email, password, first and last names. Create
- * unique authUserId and handle string for each user, and store all informations>
+ * <Find a channel object with given channelId>
  *
- * @param {{ users: [], channels: [],}} data - object that stores informations
+ * @param {Data} data - object that stores informations
  * about user and channels
  * @param {string} channelId - channel id
  *
@@ -172,6 +194,52 @@ export function findUser(data, authUserId) {
  * @returns { undefined } - if there doesn't exist a channel with given
  * channelId
  */
-export function findChannel(data, channelId) {
+export const findChannel = (data: Data, channelId: number): Channel => {
   return data.channels.find((channel) => channel.channelId === channelId);
-}
+};
+
+/**
+ * <Find a user id with given token>
+ *
+ * @param {Data} data - object that stores informations
+ * about user and channels
+ * @param {string} token - token for the user
+ *
+ * @returns {{ channel }} - if there exist a user with given token
+ * @returns { undefined } - if there doesn't exist a user with given
+ * token
+ */
+export const findUserFromToken = (data: Data, token: string): number => {
+  return data.tokens.find((existingtoken) => existingtoken.token === token).uId;
+};
+
+/**
+ * <Find a message with given message id>
+ *
+ * @param {Data} data - object that stores informations
+ * about user and channels
+ * @param {number} messageId - id for the message
+ *
+ * @returns {Message} - if there exist a message with given id
+ * @returns {Error} - if there doesn't exist a message with given
+ * id
+ */
+export const findMessageFromId = (
+  data: Data,
+  messageId: number
+): Message | Error => {
+  const message = data.messages.find(
+    (existingMessage) => existingMessage.messageId === messageId
+  );
+
+  if (!message) {
+    return { error: "Message does not exist" };
+  }
+
+  return {
+    messageId: message.messageId,
+    uId: message.uId,
+    message: message.message,
+    timeSent: message.timeSent,
+  };
+};

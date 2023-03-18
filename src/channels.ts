@@ -1,7 +1,22 @@
-import { getData, setData } from "./dataStore.js";
-import { isAuthUserIdValid } from "./helperFunctions.js";
+import { getData, setData, Error } from "./dataStore.js";
+import {
+  isTokenValid,
+  createUniqueId,
+  findUserFromToken,
+} from "./helperFunctions.js";
 
-const ERROR = { error: "error" };
+type ChannelId = {
+  channelId: number;
+};
+
+type Channel = {
+  channelId: number;
+  name: string;
+};
+
+type Channels = {
+  channels: Array<Channel>;
+};
 
 /**
  * channelsCreateV1 creates a new channel and returns its channel Id.
@@ -15,22 +30,20 @@ const ERROR = { error: "error" };
  * @returns {{channelId}} - Returns the Id of the created channel
  */
 
-export const channelsCreateV1 = (
-  authUserId: number,
+export const channelsCreateV2 = (
+  token: string,
   name: string,
   isPublic: boolean
-) => {
+): ChannelId | Error => {
   const data = getData();
-  if (
-    name.length < 1 ||
-    name.length > 20 ||
-    !isAuthUserIdValid(data, authUserId)
-  ) {
-    return ERROR;
+  if (name.length < 1 || name.length > 20) {
+    return { error: "Invalid channel name length" };
+  } else if (!isTokenValid(data, token)) {
+    return { error: "Invalid token" };
   }
 
-  const channelId = data.channels.length * 5;
-
+  const channelId = createUniqueId();
+  const authUserId = findUserFromToken(data, token);
   const userIndex = data.users.findIndex(
     (user) => user.authUserId === authUserId
   );
@@ -38,7 +51,7 @@ export const channelsCreateV1 = (
   data.users[userIndex].channels.push(channelId);
 
   data.channels.push({
-    name: name,
+    channelName: name,
     channelId: channelId,
     isPublic: isPublic,
     ownerMembers: [authUserId],
@@ -65,20 +78,22 @@ export const channelsCreateV1 = (
  * is part of
  */
 
-export const channelsListV1 = (authUserId: number) => {
+export const channelsListV2 = (token: string): Channels | Error => {
   const data = getData();
 
-  if (!isAuthUserIdValid(data, authUserId)) {
-    return ERROR;
+  if (!isTokenValid(data, token)) {
+    {
+      error: "Invalid token";
+    }
   }
-
+  const authUserId = findUserFromToken(data, token);
   const getChannels = [];
 
   for (const channel of data.channels) {
     if (channel.allMembers.includes(authUserId)) {
       getChannels.push({
         channelId: channel.channelId,
-        name: channel.name,
+        name: channel.channelName,
       });
     }
   }
@@ -98,11 +113,13 @@ export const channelsListV1 = (authUserId: number) => {
  * @returns {{channels}} - A array of all channels and their details
  */
 
-export const channelsListAllV1 = (authUserId: number) => {
+export const channelsListAllV2 = (token: string): Channels | Error => {
   const data = getData();
 
-  if (!isAuthUserIdValid(data, authUserId)) {
-    return ERROR;
+  if (!isTokenValid(data, token)) {
+    {
+      error: "Invalid token";
+    }
   }
 
   const getChannels = [];
@@ -110,7 +127,7 @@ export const channelsListAllV1 = (authUserId: number) => {
   for (const channel of data.channels) {
     getChannels.push({
       channelId: channel.channelId,
-      name: channel.name,
+      name: channel.channelName,
     });
   }
   return {
