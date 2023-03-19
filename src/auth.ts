@@ -1,6 +1,13 @@
-import { getData, setData } from "./dataStore.js";
-import { isRegisterValid, generateHandleStr } from "./helperFunctions.js";
-const ERROR = { error: "error" };
+import { getData, setData, Error } from "./dataStore";
+import validator from "validator";
+import {
+  generateHandleStr,
+  createUniqueId,
+  nameInRange,
+  isAvaliableEmail,
+} from "./helperFunctions";
+
+type UIdAndToken = { token: string; authUserId: number };
 
 /**
  * <Allow the existing user to login to the system with their registered email
@@ -10,24 +17,33 @@ const ERROR = { error: "error" };
  * @param {string} email - email address of the registered users
  * @param {string} password - password of the registered users
  *
- * @returns {{authUserId}} - there exist an user with matching email and
+ * @returns {{ token, authUserId }} - there exist an user with matching email and
  * passwords
- * @returns {{ error: "error" }} - email or password non-exise or mismatch from
+ * @returns {{ error }} - email or password non-exise or mismatch from
  * the stored user informations
  */
 
-export function authLoginV1(email: string, password: string) {
+export const authLoginV2 = (
+  email: string,
+  password: string
+): UIdAndToken | Error => {
   const data = getData();
 
-  for (const client of data.users) {
-    if (client.email === email && client.password === password) {
+  for (const user of data.users) {
+    if (user.email === email && user.password === password) {
+      const token = `${createUniqueId()}`;
+      data.tokens.push({
+        uId: user.authUserId,
+        token: token,
+      });
       return {
-        authUserId: client.authUserId,
+        token: token,
+        authUserId: user.authUserId,
       };
     }
   }
-  return ERROR;
-}
+  return { error: "Incorrect emaill or password" };
+};
 
 /**
  * <Create a new user with input email, password, first and last names. Create
@@ -46,30 +62,32 @@ export function authLoginV1(email: string, password: string) {
  * length of passwor is lower than 6, length of names is outside of the range [1,50]
  */
 
-export function authRegisterV1(
+export const authRegisterV2 = (
   email: string,
   password: string,
   nameFirst: string,
   nameLast: string
-) {
+): UIdAndToken | Error => {
   const data = getData();
 
-  if (!isRegisterValid(email, password, nameFirst, nameLast, data)) {
-    return ERROR;
+  if (!validator.isEmail(email)) {
+    return { error: "Invalid email formate" };
+  } else if (!nameInRange(nameFirst) || !nameInRange(nameLast)) {
+    return { error: "Invalid user name length" };
+  } else if (!isAvaliableEmail(email, data.users)) {
+    return { error: "Email already used" };
+  } else if (password.length < 6) {
+    return {
+      error: "Invalid password length",
+    };
   }
 
-  let newId = data.users.length * 50;
+  let newUserId = createUniqueId();
 
-  let permissionId; // permissionId for owner is 1, for member is 2
-
-  if (data.users.length === 0) {
-    permissionId = 1;
-  } else {
-    permissionId = 2;
-  }
+  let permissionId = data.users.length === 0 ? 1 : 2; // permissionId for owner is 1, for member is 2 ?????????????????
 
   data.users.push({
-    authUserId: newId,
+    authUserId: newUserId,
     nameFirst: nameFirst,
     nameLast: nameLast,
     email: email,
@@ -77,11 +95,20 @@ export function authRegisterV1(
     password: password,
     channels: [],
     permissionId: permissionId,
+    dms: [],
+  });
+
+  const token = `${createUniqueId()}`;
+
+  data.tokens.push({
+    token: token,
+    uId: newUserId,
   });
 
   setData(data);
 
   return {
-    authUserId: newId,
+    token: token,
+    authUserId: newUserId,
   };
-}
+};

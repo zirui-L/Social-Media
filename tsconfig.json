@@ -7,7 +7,5 @@
     "allowJs": true,
     "suppressImplicitAnyIndexErrors": true
   },
-  "exclude": [
-    "**/**_broken.ts"
-  ]
+  "exclude": ["**/**_broken.ts"]
 }

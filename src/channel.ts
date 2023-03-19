@@ -1,37 +1,52 @@
-import { getData, setData } from "./dataStore.js";
+import { getData, setData, Error, paginatedMessage } from "./dataStore";
 import {
+  isTokenValid,
+  findUserFromToken,
   isAuthUserIdValid,
   isChannelValid,
   isMember,
   findUser,
   findChannel,
-} from "./helperFunctions.js";
+  findMessageFromId,
+} from "./helperFunctions";
 
-const ERROR = { error: "error" };
+type ChannelDetails = {
+  name: string;
+  isPublic: boolean;
+  ownerMembers: Array<number>;
+  allMembers: Array<number>;
+};
 
 /**
  * Given a channel with ID channelId that the authorised user
  * is a member of, provides basic details about the channel.
  *
- * @param {integer} authUserId - userId
+ * @param {string} token - token for the user
  * @param {integer} channelId - channelId
  *
- * @returns {{name, isPublic, ownerMembers, allMembers}} - object return when
+ * @returns {ChannelDetails} - object return when
  * hannelId/authUserId
  * is valid and authorised user is a member of the channel
- * @returns {{error: 'error'}} - when channelId/authUserId
+ * @returns {Error} - when channelId/authUserId
  * is invalid or authorised user is not a member of the channel
  */
 
-export function channelDetailsV1(authUserId, channelId) {
+export const channelDetailsV2 = (
+  token: string,
+  channelId: number
+): ChannelDetails | Error => {
   const data = getData();
 
-  if (
-    !isAuthUserIdValid(data, authUserId) ||
-    !isChannelValid(data, channelId) ||
-    !isMember(data, authUserId, channelId)
-  ) {
-    return ERROR;
+  if (!isTokenValid(data, token)) {
+    return { error: "Invalid token" };
+  } else if (!isChannelValid(data, channelId)) {
+    return { error: "Invalid channel" };
+  }
+
+  const authUserId = findUserFromToken(data, token);
+
+  if (!isMember(data, authUserId, channelId)) {
+    return { error: "User is not a member of the channel" };
   }
 
   const newChannel = findChannel(data, channelId);
@@ -62,18 +77,18 @@ export function channelDetailsV1(authUserId, channelId) {
   }
 
   return {
-    name: newChannel.name,
+    name: newChannel.channelName,
     isPublic: newChannel.isPublic,
     ownerMembers: ownerMembers,
     allMembers: allMembers,
   };
-}
+};
 
 /**
  * Given a channelId of a channel that the authorised user
  * can join, adds them to that channel.
  *
- * @param {integer} authUserId - userId
+ * @param {string} token - userId
  * @param {integer} channelId - channelId
  *
  * @returns {{}} - return empty object if channelId/authUserId are valid,
@@ -85,21 +100,26 @@ export function channelDetailsV1(authUserId, channelId) {
  * not a channel member and is not a global owner
  */
 
-export function channelJoinV1(authUserId, channelId) {
+export const channelJoinV2 = (token: string, channelId: number): {} | Error => {
   const data = getData();
-  if (
-    !isAuthUserIdValid(data, authUserId) ||
-    !isChannelValid(data, channelId) ||
-    isMember(data, authUserId, channelId)
-  ) {
-    return ERROR;
+
+  if (!isTokenValid(data, token)) {
+    return { error: "Invalid token" };
+  } else if (!isChannelValid(data, channelId)) {
+    return { error: "Invalid channel" };
+  }
+
+  const authUserId = findUserFromToken(data, token);
+
+  if (isMember(data, authUserId, channelId)) {
+    return { error: "User is already a member of the channel" };
   }
 
   const newUser = findUser(data, authUserId);
   const newChannel = findChannel(data, channelId);
 
   if (!newChannel.isPublic && newUser.permissionId !== 1) {
-    return ERROR;
+    return { error: "Private channel, and user is not global" };
   }
 
   newChannel.allMembers.push(authUserId);
@@ -108,17 +128,17 @@ export function channelJoinV1(authUserId, channelId) {
   setData(data);
 
   return {};
-}
+};
 
 /**
  * Invites a user with ID uId to join a channel with ID channelId.
  *
- * @param {integer} authUserId - userId
+ * @param {string} token - userId
  * @param {integer} channelId - inviting channelId
  * @param {integer} uId -- userId of the user being invited
  *
  * @returns {} - return empty object is no error occurs
- * @returns {{error: 'error'}} - error is being returned if
+ * @returns {Error} - error is being returned if
  *                               1.  channelId does not exist
  *                               2. uid/autherId is not valid
  *                               3. channel Id is valid but the authorised
@@ -127,17 +147,29 @@ export function channelJoinV1(authUserId, channelId) {
  *                                  member of the channel
  */
 
-export function channelInviteV1(authUserId, channelId, uId) {
+export const channelInviteV2 = (
+  token: string,
+  channelId: number,
+  uId: number
+): {} | Error => {
   const data = getData();
-  if (
-    !isAuthUserIdValid(data, authUserId) ||
-    !isChannelValid(data, channelId) ||
-    !isAuthUserIdValid(data, uId) ||
-    !isMember(data, authUserId, channelId) ||
-    isMember(data, uId, channelId)
-  ) {
-    return ERROR;
+
+  if (!isTokenValid(data, token)) {
+    return { error: "Invalid token" };
+  } else if (!isChannelValid(data, channelId)) {
+    return { error: "Invalid channel" };
+  } else if (!isAuthUserIdValid(data, uId)) {
+    return { error: "Invalid user id" };
+  } else if (isMember(data, uId, channelId)) {
+    return { error: "Invited user is already a member" };
   }
+
+  const authUserId = findUserFromToken(data, token);
+
+  if (!isMember(data, authUserId, channelId)) {
+    return { error: "Requested by a user with invalid token (not a member)" };
+  }
+
   const newUser = findUser(data, authUserId);
   const newChannel = findChannel(data, channelId);
   newUser.channels.push(channelId);
@@ -146,12 +178,12 @@ export function channelInviteV1(authUserId, channelId, uId) {
   setData(data);
 
   return {};
-}
+};
 
 /**
  * Given a channel with ID channelId that the authorised user is a member of,
  * returns up to 50 messages between index "start" and "start + 50".
- * @param {integer} authuserId - userId
+ * @param {string} token - userId
  * @param {integer} channelId - channelId
  * @param {integer} start -- index of starting message
  *
@@ -167,20 +199,29 @@ export function channelInviteV1(authUserId, channelId, uId) {
  *                                4. autherId is invalid
  */
 
-export function channelMessagesV1(authUserId, channelId, start) {
+export const channelMessagesV2 = (
+  token: string,
+  channelId: number,
+  start: number
+): paginatedMessage | Error => {
   const data = getData();
-  if (
-    !isAuthUserIdValid(data, authUserId) ||
-    !isChannelValid(data, channelId) ||
-    !isMember(data, authUserId, channelId)
-  ) {
-    return ERROR;
+
+  if (!isTokenValid(data, token)) {
+    return { error: "Invalid token" };
+  } else if (!isChannelValid(data, channelId)) {
+    return { error: "Invalid channel" };
+  }
+
+  const authUserId = findUserFromToken(data, token);
+
+  if (!isMember(data, authUserId, channelId)) {
+    return { error: "User is not a member of the channel" };
   }
 
   const newChannel = findChannel(data, channelId);
 
   if (newChannel.messages.length < start) {
-    return ERROR;
+    return { error: "start is greater than the total number of messages" };
   }
 
   let end;
@@ -194,9 +235,15 @@ export function channelMessagesV1(authUserId, channelId, start) {
     end = start + 50;
   }
 
+  const paginatedMessages = new Array();
+
+  for (let i = start; i < start + lengthOfMessage; i++) {
+    paginatedMessages.push(findMessageFromId(data, newChannel.messages[i]));
+  }
+
   return {
-    messages: newChannel.messages.slice(start, start + lengthOfMessage),
+    messages: paginatedMessages,
     start: start,
     end: end,
   };
-}
+};
