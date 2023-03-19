@@ -1,4 +1,4 @@
-import { getData, setData, Error, paginatedMessage } from "./dataStore.js";
+import { getData, setData, Error, paginatedMessage } from "./dataStore";
 import {
   isTokenValid,
   findUserFromToken,
@@ -8,7 +8,7 @@ import {
   findUser,
   findChannel,
   findMessageFromId,
-} from "./helperFunctions.js";
+} from "./helperFunctions";
 
 type ChannelDetails = {
   name: string;
@@ -37,13 +37,15 @@ export const channelDetailsV2 = (
 ): ChannelDetails | Error => {
   const data = getData();
 
-  const authUserId = findUserFromToken(data, token);
-
   if (!isTokenValid(data, token)) {
     return { error: "Invalid token" };
   } else if (!isChannelValid(data, channelId)) {
     return { error: "Invalid channel" };
-  } else if (!isMember(data, authUserId, channelId)) {
+  }
+
+  const authUserId = findUserFromToken(data, token);
+
+  if (!isMember(data, authUserId, channelId)) {
     return { error: "User is not a member of the channel" };
   }
 
@@ -101,13 +103,15 @@ export const channelDetailsV2 = (
 export const channelJoinV2 = (token: string, channelId: number): {} | Error => {
   const data = getData();
 
-  const authUserId = findUserFromToken(data, token);
-
   if (!isTokenValid(data, token)) {
     return { error: "Invalid token" };
   } else if (!isChannelValid(data, channelId)) {
     return { error: "Invalid channel" };
-  } else if (isMember(data, authUserId, channelId)) {
+  }
+
+  const authUserId = findUserFromToken(data, token);
+
+  if (isMember(data, authUserId, channelId)) {
     return { error: "User is already a member of the channel" };
   }
 
@@ -150,18 +154,20 @@ export const channelInviteV2 = (
 ): {} | Error => {
   const data = getData();
 
-  const authUserId = findUserFromToken(data, token);
-
   if (!isTokenValid(data, token)) {
     return { error: "Invalid token" };
   } else if (!isChannelValid(data, channelId)) {
     return { error: "Invalid channel" };
   } else if (!isAuthUserIdValid(data, uId)) {
     return { error: "Invalid user id" };
-  } else if (!isMember(data, authUserId, channelId)) {
-    return { error: "Requested by a user with invalid token (not a member)" };
   } else if (isMember(data, uId, channelId)) {
     return { error: "Invited user is already a member" };
+  }
+
+  const authUserId = findUserFromToken(data, token);
+
+  if (!isMember(data, authUserId, channelId)) {
+    return { error: "Requested by a user with invalid token (not a member)" };
   }
 
   const newUser = findUser(data, authUserId);
@@ -200,13 +206,15 @@ export const channelMessagesV2 = (
 ): paginatedMessage | Error => {
   const data = getData();
 
-  const authUserId = findUserFromToken(data, token);
-
   if (!isTokenValid(data, token)) {
     return { error: "Invalid token" };
   } else if (!isChannelValid(data, channelId)) {
     return { error: "Invalid channel" };
-  } else if (!isMember(data, authUserId, channelId)) {
+  }
+
+  const authUserId = findUserFromToken(data, token);
+
+  if (!isMember(data, authUserId, channelId)) {
     return { error: "User is not a member of the channel" };
   }
 

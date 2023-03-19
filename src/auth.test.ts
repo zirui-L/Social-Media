@@ -56,7 +56,7 @@ describe("requestAuthLoginV2 function testing", () => {
     expect(loginAuthUserId.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test4: log in with non-existing email and password", () => {
+  test("Test-4: log in with non-existing email and password", () => {
     const loginAuthUserId = requestAuthLoginV2("test@gmail.com", "12345");
     expect(loginAuthUserId.statusCode).toBe(OK);
     expect(loginAuthUserId.bodyObj).toStrictEqual(ERROR);

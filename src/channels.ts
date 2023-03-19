@@ -1,9 +1,9 @@
-import { getData, setData, Error } from "./dataStore.js";
+import { getData, setData, Error } from "./dataStore";
 import {
   isTokenValid,
   createUniqueId,
   findUserFromToken,
-} from "./helperFunctions.js";
+} from "./helperFunctions";
 
 type ChannelId = {
   channelId: number;
@@ -82,11 +82,13 @@ export const channelsListV2 = (token: string): Channels | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {
-    {
-      error: "Invalid token";
-    }
+    return {
+      error: "Invalid token",
+    };
   }
+
   const authUserId = findUserFromToken(data, token);
+
   const getChannels = [];
 
   for (const channel of data.channels) {
@@ -117,9 +119,9 @@ export const channelsListAllV2 = (token: string): Channels | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {
-    {
-      error: "Invalid token";
-    }
+    return {
+      error: "Invalid token",
+    };
   }
 
   const getChannels = [];

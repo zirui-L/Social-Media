@@ -1,12 +1,25 @@
 import { authRegisterV2, authLoginV2 } from "./auth";
-import { clearV1 } from "./other";
+import {
+  channelsCreateV2,
+  channelsListV2,
+  channelsListAllV2,
+} from "./channels";
+import {
+  channelDetailsV2,
+  channelJoinV2,
+  channelInviteV2,
+  channelMessagesV2,
+} from "./channel";
 import { userProfileV2 } from "./users";
+import { clearV1 } from "./other";
 import { storeData } from "./helperFunctions";
+import { setData } from "./dataStore";
 import express, { json, Request, Response } from "express";
 import { echo } from "./echo";
 import morgan from "morgan";
 import config from "./config.json";
 import cors from "cors";
+import fs from "fs";
 
 // Set up web app
 const app = express();
@@ -38,6 +51,51 @@ app.post("/auth/register/v2", (req: Request, res: Response) => {
   storeData();
 });
 
+app.post("/channels/create/v2", (req: Request, res: Response) => {
+  const { token, name, isPublic } = req.body;
+  res.json(channelsCreateV2(token, name, isPublic));
+  storeData();
+});
+
+app.get("/channels/list/v2", (req: Request, res: Response) => {
+  const token = String(req.query.token);
+  res.json(channelsListV2(token));
+  storeData();
+});
+
+app.get("/channels/listall/v2", (req: Request, res: Response) => {
+  const token = String(req.query.token);
+  res.json(channelsListAllV2(token));
+  storeData();
+});
+
+app.get("/channel/details/v2", (req: Request, res: Response) => {
+  const token = String(req.query.token);
+  const channelId = parseInt(String(req.query.channelId));
+  res.json(channelDetailsV2(token, channelId));
+  storeData();
+});
+
+app.post("/channel/join/v2", (req: Request, res: Response) => {
+  const { token, channelId } = req.body;
+  res.json(channelJoinV2(token, channelId));
+  storeData();
+});
+
+app.post("/channel/invite/v2", (req: Request, res: Response) => {
+  const { token, channelId, uId } = req.body;
+  res.json(channelInviteV2(token, channelId, uId));
+  storeData();
+});
+
+app.get("/channel/messages/v2", (req: Request, res: Response) => {
+  const token = String(req.query.token);
+  const channelId = parseInt(String(req.query.channelId));
+  const start = parseInt(String(req.query.start));
+  res.json(channelMessagesV2(token, channelId, start));
+  storeData();
+});
+
 app.get("/user/profile/v2", (req: Request, res: Response) => {
   const token = String(req.query.token);
   const uId = parseInt(String(req.query.uId));
@@ -49,6 +107,11 @@ app.delete("/clear/v1", (req: Request, res: Response) => {
   res.json(clearV1());
   storeData();
 });
+
+if (fs.existsSync("src/data.json")) {
+  const storedData = fs.readFileSync("src/data.json", { flag: "r" });
+  setData(JSON.parse(String(storedData)));
+}
 
 // start server
 const server = app.listen(PORT, HOST, () => {

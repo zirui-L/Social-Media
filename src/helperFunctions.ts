@@ -25,7 +25,7 @@ export const storeData = () => {
  */
 export const createUniqueId = (): number => {
   const timestamp = Date.now();
-  const randomNum = Math.floor(Math.random() * 10000);
+  const randomNum = Math.floor(Math.random() * 100);
   const id = parseInt(`${timestamp}${randomNum}`);
   return id;
 };

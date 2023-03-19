@@ -31,7 +31,7 @@ export const authLoginV2 = (
 
   for (const user of data.users) {
     if (user.email === email && user.password === password) {
-      const token = `${createUniqueId()}$`;
+      const token = `${createUniqueId()}`;
       data.tokens.push({
         uId: user.authUserId,
         token: token,
@@ -98,7 +98,7 @@ export const authRegisterV2 = (
     dms: [],
   });
 
-  const token = `${createUniqueId()}$`;
+  const token = `${createUniqueId()}`;
 
   data.tokens.push({
     token: token,
