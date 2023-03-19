@@ -5,6 +5,10 @@ type UserObject = {
   user: User;
 };
 
+type UsersObject = {
+  users: Array<User>;
+};
+
 /**
  * <Create a new user with input email, password, first and last names. Create
  * unique authUserId and handle string for each user, and store all informations>
@@ -41,4 +45,30 @@ export const userProfileV2 = (
       };
     }
   }
+};
+
+export const userAllV1 = (token: string): UsersObject | Error => {
+  return { users: [] };
+};
+
+export const userProfileSetNameV1 = (
+  token: string,
+  nameFirst: string,
+  nameLast: string
+): {} | Error => {
+  return {};
+};
+
+export const userProfileSetEmailV1 = (
+  token: string,
+  email: string
+): {} | Error => {
+  return {};
+};
+
+export const userProfileSetHandleV1 = (
+  token: string,
+  handleStr: string
+): {} | Error => {
+  return {};
 };
