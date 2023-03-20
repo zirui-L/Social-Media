@@ -5,6 +5,7 @@ import {
   createUniqueId,
   nameInRange,
   isAvaliableEmail,
+  isTokenValid,
 } from "./helperFunctions";
 
 type UIdAndToken = { token: string; authUserId: number };
@@ -19,7 +20,7 @@ type UIdAndToken = { token: string; authUserId: number };
  *
  * @returns {{ token, authUserId }} - there exist an user with matching email and
  * passwords
- * @returns {{ error }} - email or password non-exise or mismatch from
+ * @returns {Error} - email or password non-exise or mismatch from
  * the stored user informations
  */
 
@@ -50,16 +51,14 @@ export const authLoginV2 = (
  * unique authUserId and handle string for each user, and store all
  * informations>
  *
- *
  * @param {string} email - email address of the registered users
  * @param {string} password - password of the registered users
  * @param {string} nameFirst - first name of the registered users
  * @param {string} nameLast - last name of the registered users
- * ...
  *
- * @returns {{ authUserId }} - valid email, password with more than 6
+ * @returns {{ token, authUserId }} - valid email, password with more than 6
  * characters, and the length of name is between 1 and 50 inclusive
- *  @returns {{ error: "error" }} - invalid or alreade registered email,
+ *  @returns {Error} - invalid or alreade registered email,
  * length of passwor is lower than 6, length of names is outside of the range [1,50]
  */
 
@@ -114,6 +113,29 @@ export const authRegisterV2 = (
   };
 };
 
+/**
+ * <Given an active token, invalidates the token to log the user out>
+ *
+ * @param {string} token - token representing a session for an user
+ *
+ * @returns {{ token }} - valid email token, where the token would be logged out
+ *  @returns {Error} - invalid token
+ */
+
 export const authLogOutV1 = (token: string): {} | Error => {
+  const data = getData();
+
+  if (!isTokenValid(data, token)) {
+    return { error: "Invalid token" };
+  }
+
+  let indexToDelete = data.tokens.findIndex(
+    (existingToken) => existingToken.token === token
+  );
+
+  data.tokens.splice(indexToDelete, 1);
+
+  setData(data);
+
   return {};
 };
