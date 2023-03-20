@@ -112,3 +112,7 @@ export const authRegisterV2 = (
     authUserId: newUserId,
   };
 };
+
+export const authLogOutV1 = (token: string): {} | Error => {
+  return {};
+};

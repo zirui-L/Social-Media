@@ -3,6 +3,7 @@ import {
   requestAuthRegisterV2,
   requestUserProfileV2,
   requestClearV1,
+  requestAuthLogOutV1,
 } from "./helperServer";
 
 const OK = 200;
@@ -16,7 +17,7 @@ afterEach(() => {
   requestClearV1();
 });
 
-describe("requestAuthLoginV2 function testing", () => {
+describe("/auth/login/v2 testing", () => {
   test("Test-1: correct login email and password", () => {
     const registerAuthUserId = requestAuthRegisterV2(
       "test@gmail.com",
@@ -63,7 +64,7 @@ describe("requestAuthLoginV2 function testing", () => {
   });
 });
 
-describe("requestAuthRegisterV2 function testing - generating authUserId", () => {
+describe("/auth/register/v2 testing - generating authUserId", () => {
   test.each([
     {
       email: "test@gmail.com", //Success case
@@ -145,7 +146,7 @@ describe("requestAuthRegisterV2 function testing - generating authUserId", () =>
       expected: { authUserId: expect.any(Number), token: expect.any(String) },
     },
   ])(
-    "requestAuthRegisterV2 function testing",
+    "/auth/register/v2 testing",
     ({ email, password, nameFirst, nameLast, expected }) => {
       const loginDetails = requestAuthRegisterV2(
         email,
@@ -160,7 +161,7 @@ describe("requestAuthRegisterV2 function testing - generating authUserId", () =>
   );
 });
 
-describe("requestAuthRegisterV2 function testing - generating handle string / email duplication", () => {
+describe("/auth/register/v2 testing - generating handle string / email duplication", () => {
   test("Test-1: concatenation of casted-to-lowercase alphaumeric first/last name, and cut off if it is longer than 20", () => {
     const detail = requestAuthRegisterV2(
       "test@gmail.com",
@@ -239,7 +240,7 @@ describe("requestAuthRegisterV2 function testing - generating handle string / em
     );
   });
 
-  test("requestAuthRegisterV2 function testing with duplication in email", () => {
+  test("Test-5: /auth/register/v2 testing with duplication in email", () => {
     const detail1 = requestAuthRegisterV2(
       "test@gmail.com",
       "123456",
@@ -258,3 +259,91 @@ describe("requestAuthRegisterV2 function testing - generating handle string / em
     expect(detail2.bodyObj).toStrictEqual(ERROR);
   });
 });
+
+// describe("/auth/logout/v1 testing", () => {
+//   test("Test-1: Error, Invalid Token", () => {
+//     const registerAuthUserId = requestAuthRegisterV2(
+//       "test@gmail.com",
+//       "123455",
+//       "firstName",
+//       "lastName"
+//     );
+//     const logoutAuthUserId = requestAuthLogOutV1(
+//       registerAuthUserId.bodyObj.token + "1"
+//     );
+//     expect(logoutAuthUserId.statusCode).toBe(OK);
+//     expect(logoutAuthUserId.bodyObj).toStrictEqual(ERROR);
+//   });
+
+//   test("Test-2: Error, Log out twice with the same token", () => {
+//     const registerAuthUserId = requestAuthRegisterV2(
+//       "test@gmail.com",
+//       "123455",
+//       "firstName",
+//       "lastName"
+//     );
+//     const logoutAuthUserId1 = requestAuthLogOutV1(
+//       registerAuthUserId.bodyObj.token
+//     );
+//     expect(logoutAuthUserId1.statusCode).toBe(OK);
+//     expect(logoutAuthUserId1.bodyObj).toStrictEqual({});
+
+//     const logoutAuthUserId2 = requestAuthLogOutV1(
+//       registerAuthUserId.bodyObj.token
+//     );
+//     expect(logoutAuthUserId2.statusCode).toBe(OK);
+//     expect(logoutAuthUserId2.bodyObj).toStrictEqual(ERROR);
+//   });
+
+//   test("Test-3: Success, Logout 1 person", () => {
+//     const registerAuthUserId = requestAuthRegisterV2(
+//       "test@gmail.com",
+//       "123455",
+//       "firstName",
+//       "lastName"
+//     );
+//     const logoutAuthUserId = requestAuthLogOutV1(
+//       registerAuthUserId.bodyObj.token
+//     );
+//     expect(logoutAuthUserId.statusCode).toBe(OK);
+//     expect(logoutAuthUserId.bodyObj).toStrictEqual({});
+
+//     const userProfile = requestUserProfileV2(
+//       registerAuthUserId.bodyObj.token,
+//       registerAuthUserId.bodyObj.authUserId
+//     ).bodyObj;
+//     expect(userProfile).toStrictEqual(ERROR);
+//   });
+
+//   test("Test-4: Success, Logout with 3 people existing", () => {
+//     const registerAuthUserId1 = requestAuthRegisterV2(
+//       "test1@gmail.com",
+//       "123455",
+//       "firstName",
+//       "lastName"
+//     );
+//     const registerAuthUserId2 = requestAuthRegisterV2(
+//       "test2@gmail.com",
+//       "123455",
+//       "firstName",
+//       "lastName"
+//     );
+//     const registerAuthUserId3 = requestAuthRegisterV2(
+//       "test3@gmail.com",
+//       "123455",
+//       "firstName",
+//       "lastName"
+//     );
+//     const logoutAuthUserId = requestAuthLogOutV1(
+//       registerAuthUserId1.bodyObj.token
+//     );
+//     expect(logoutAuthUserId.statusCode).toBe(OK);
+//     expect(logoutAuthUserId.bodyObj).toStrictEqual({});
+
+//     const userProfile = requestUserProfileV2(
+//       registerAuthUserId1.bodyObj.token,
+//       registerAuthUserId1.bodyObj.authUserId
+//     ).bodyObj;
+//     expect(userProfile).toStrictEqual(ERROR);
+//   });
+// });

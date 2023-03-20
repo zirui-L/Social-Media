@@ -247,3 +247,26 @@ export const channelMessagesV2 = (
     end: end,
   };
 };
+
+export const channelLeaveV1 = (
+  token: string,
+  channelId: number
+): {} | Error => {
+  return {};
+};
+
+export const channelAddOwnerV1 = (
+  token: string,
+  channelId: number,
+  uId: number
+): {} | Error => {
+  return {};
+};
+
+export const channelRemoveOwnerV1 = (
+  token: string,
+  channelId: number,
+  uId: number
+): {} | Error => {
+  return {};
+};
