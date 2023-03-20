@@ -47,7 +47,7 @@ export const userProfileV2 = (
   }
 };
 
-export const userAllV1 = (token: string): UsersObject | Error => {
+export const usersAllV1 = (token: string): UsersObject | Error => {
   return { users: [] };
 };
 
