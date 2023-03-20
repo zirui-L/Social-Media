@@ -51,6 +51,7 @@ export const authLoginV2 = (
  * unique authUserId and handle string for each user, and store all
  * informations>
  *
+ *
  * @param {string} email - email address of the registered users
  * @param {string} password - password of the registered users
  * @param {string} nameFirst - first name of the registered users
