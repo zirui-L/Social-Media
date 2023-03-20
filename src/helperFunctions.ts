@@ -7,7 +7,6 @@ import {
   getData,
 } from "./dataStore";
 import fs from "fs";
-import { NumericLiteral } from "typescript";
 
 export const storeData = () => {
   const data = getData();
@@ -150,48 +149,24 @@ export const isChannelValid = (data: Data, channelId: number): boolean => {
 };
 
 /**
- * <Check if a specific user belong to a channel>
+ * <Check if a specfoc user belong to a channel>
  *
  * @param {Data} data - object that stores informations
  * about user and channels
  * @param {string} authUserId - user id of the enquiring user
  * @param {string} channelId - channel id
  *
- * @returns {true} - user belong to a channel (in allMember)
- * @returns {false} - user doesn't belong to a channel
- *
+ * @returns {true} - valid email, password with more than 6 characters, and the
+ * length of name is between 1 and 50 inclusive
+ * @returns {false} - invalid or alreade registered email, length of passwor is
+ * lower than 6, length of names is outside of the range [1,50]
  */
-export const isMember = (
-  data: Data,
-  authUserId: number,
-  channelId: number
-): boolean => {
+export const isMember = (data: Data, authUserId: number, channelId: number) => {
   const channelIndex = data.channels.findIndex(
     (channel) => channel.channelId === channelId
   );
 
   return data.channels[channelIndex].allMembers.includes(authUserId);
-};
-
-/**
- * <Check if a specific user is an owner of the channel>
- *
- * @param {Data} data - object that stores informations about user and channels
- * @param {string} authUserId - user id of the enquiring user
- * @param {string} channelId - channel id
- *
- * @returns {true} - user is a owner of the channel
- * @returns {false} - user doesn't belong to a channel
- *
- */
-export const isOwner = (
-  data: Data,
-  authUserId: number,
-  channelId: number
-): boolean => {
-  const channel = findChannel(data, channelId);
-
-  return channel.ownerMembers.includes(authUserId);
 };
 
 /**
