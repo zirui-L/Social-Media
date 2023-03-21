@@ -1448,9 +1448,9 @@ describe("Testing /channel/addowner/v1", () => {
     requestChannelJoinV2(member5.bodyObj.token, channel.bodyObj.channelId);
 
     // add member1, member3, member5 to owner
-    requestChannelAddownerV1(owner.bodyObj.token, channel.bodyObj.channelId, member1.bodyObj.autherId);
-    requestChannelAddownerV1(owner.bodyObj.token, channel.bodyObj.channelId, member3.bodyObj.autherId);
-    const multipleOwner = requestChannelAddownerV1(owner.bodyObj.token, channel.bodyObj.channelId, member5.bodyObj.autherId);
+    requestChannelAddOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member1.bodyObj.autherId);
+    requestChannelAddOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member3.bodyObj.autherId);
+    const multipleOwner = requestChannelAddOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member5.bodyObj.autherId);
     expect(multipleOwner.statusCode).toBe(OK);
     expect(multipleOwner.bodyObj).toStrictEqual({});
     const channelDetail = requestChannelDetailsV2(owner.bodyObj.token, channel.bodyObj.channelId);
@@ -1837,9 +1837,9 @@ describe("Testing /channel/removeowner/v1", () => {
     requestChannelAddownerV1(owner.bodyObj.token, channel.bodyObj.channelId, member4.bodyObj.autherId);
     requestChannelAddownerV1(owner.bodyObj.token, channel.bodyObj.channelId, member5.bodyObj.autherId);
     // remove member1, member3, member5 from owner 
-    requestChannelRemoveownerV1(owner.bodyObj.token, channel.bodyObj.channelId, member1.bodyObj.autherId);
-    requestChannelRemoveownerV1(owner.bodyObj.token, channel.bodyObj.channelId, member3.bodyObj.autherId);
-    const removeMultiple = requestChannelRemoveownerV1(owner.bodyObj.token, channel.bodyObj.channelId, member5.bodyObj.autherId);
+    requestChannelRemoveOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member1.bodyObj.autherId);
+    requestChannelRemoveOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member3.bodyObj.autherId);
+    const removeMultiple = requestChannelRemoveOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member5.bodyObj.autherId);
     expect(removeMultiple.statusCode).toBe(OK);
     expect(removeMultiple.bodyObj).toStrictEqual({});
     const channelDetail = requestChannelDetailsV2(owner.bodyObj.token, channel.bodyObj.channelId);
