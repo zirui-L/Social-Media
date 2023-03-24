@@ -17,9 +17,10 @@ export const messageSendV1 = (
 ): messageIdObj | Error => {
   const data = getData(); 
   const uId = findUserFromToken(data, token);
+  const channel = findChannel(data, channelId);
   if (!isTokenValid(data, token)) {
     return { error: "Invalid token" };
-  } else if (findChannel(data, channelId) === undefined) {
+  } else if (channel === undefined) {
     return { error: "Invalid channelId" };
   } else if (message.length < 1 || message.length > 1000) {
     return { error: "Invalid message length" };
@@ -31,12 +32,12 @@ export const messageSendV1 = (
     messageId,
     uId,
     message,
-    timeSent: Date,
-    isChannelMessage: boolean;
-    dmOrChannelId: number;
+    timeSent: Date.now() / 1000,
+    isChannelMessage: true,
+    dmOrChannelId: createUniqueId()
   })
-
-  return { messageId: 0 };
+  channel.messages.unshift(messageId);
+  return { messageId };
 };
 
 export const messageEditV1 = (
