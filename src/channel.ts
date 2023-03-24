@@ -8,6 +8,7 @@ import {
   findUser,
   findChannel,
   findMessageFromId,
+  isOwner,
 } from "./helperFunctions";
 
 type ChannelDetails = {
@@ -18,10 +19,10 @@ type ChannelDetails = {
 };
 
 /**
- * Given a channel with ID channelId that the authorised user
- * is a member of, provides basic details about the channel.
+ * <Given a channel with ID channelId that the authorised user
+ * is a member of, provides basic details about the channel.>
  *
- * @param {string} token - token for the user
+ * @param {string} token - token for the requesting user
  * @param {integer} channelId - channelId
  *
  * @returns {ChannelDetails} - object return when
@@ -85,16 +86,16 @@ export const channelDetailsV2 = (
 };
 
 /**
- * Given a channelId of a channel that the authorised user
- * can join, adds them to that channel.
+ * <Given a channelId of a channel that the authorised user
+ * can join, adds them to that channel.>
  *
- * @param {string} token - userId
+ * @param {string} token - token for the requesting user
  * @param {integer} channelId - channelId
  *
  * @returns {{}} - return empty object if channelId/authUserId are valid,
  * authorised is not a member of the public channel. (or global owner joining a
  * private channel)
- * @returns {{error: 'error'}} - when channelId/authUserId
+ * @returns {Error} - when channelId/authUserId
  * is invalid or authorised user is a member of the channel
  * or the channel is private and when the authorised user is
  * not a channel member and is not a global owner
@@ -131,9 +132,9 @@ export const channelJoinV2 = (token: string, channelId: number): {} | Error => {
 };
 
 /**
- * Invites a user with ID uId to join a channel with ID channelId.
+ * <Invites a user with ID uId to join a channel with ID channelId.>
  *
- * @param {string} token - userId
+ * @param {string} token - token for the requesting user
  * @param {integer} channelId - inviting channelId
  * @param {integer} uId -- userId of the user being invited
  *
@@ -181,22 +182,23 @@ export const channelInviteV2 = (
 };
 
 /**
- * Given a channel with ID channelId that the authorised user is a member of,
- * returns up to 50 messages between index "start" and "start + 50".
- * @param {string} token - userId
+ * <Given a channel with ID channelId that the authorised user is a member of,
+ * returns up to 50 messages between index "start" and "start + 50".>
+ *
+ * @param {string} token - token for the requesting user
  * @param {integer} channelId - channelId
  * @param {integer} start -- index of starting message
  *
- * @returns {{message,start,end}} - all message between index start and end.
+ * @returns {paginatedMessage} - all message between index start and end.
  * If return end equals to -1, user has reached end of message. (return if no
  * error has occured)
- * @returns  {{error: 'error'}} - error returned if
- *                                1. channelId does not refer to a valid channel
- *                                2. start is greater than the total number of
- *                                   messages in the channel
- *                                3. channelId is valid but autherorised user is
- *                                   not a member of channel
- *                                4. autherId is invalid
+ *
+ * @returns  {Error} - error returned if
+ * 1. channelId does not refer to a valid channel
+ * 2. start is greater than the total number of messages in the channel
+ * 3. channelId is valid but autherorised user is not a member of channel
+ * 4. autherId is invalid
+ *
  */
 
 export const channelMessagesV2 = (
@@ -246,4 +248,167 @@ export const channelMessagesV2 = (
     start: start,
     end: end,
   };
+};
+
+/**
+ * <Given a channel with ID channelId that the authorised user is a member of,
+ * remove them as a member of the channel. Their messages should remain in the
+ * channel. If the only channel owner leaves, the channel will remain.>
+ *
+ * @param {string} token - token for a requesting user
+ * @param {integer} channelId - channelId
+ *
+ * @returns  {Error} -  Return eror object when any of:
+ * 1. channelId does not refer to a valid channel
+ * 2. channelId is valid and the authorised user is not a member of the channel
+ * 3. token is invalid
+ * @returns {{}} - Return {} upon success, when all error cases are avoided
+ *
+ */
+export const channelLeaveV1 = (
+  token: string,
+  channelId: number
+): {} | Error => {
+  const data = getData();
+
+  if (!isTokenValid(data, token)) {
+    return { error: "Invalid token" };
+  } else if (!isChannelValid(data, channelId)) {
+    return { error: "Invalid channel" };
+  }
+
+  const authUserId = findUserFromToken(data, token);
+
+  if (!isMember(data, authUserId, channelId)) {
+    return { error: "User is not a member of the channel" };
+  }
+
+  const channel = findChannel(data, channelId);
+
+  channel.allMembers = channel.allMembers.filter((user) => user !== authUserId);
+  channel.ownerMembers = channel.ownerMembers.filter(
+    (user) => user !== authUserId
+  );
+
+  const user = findUser(data, authUserId);
+
+  user.channels.filter((channel) => channel !== channelId);
+
+  setData(data);
+
+  return {};
+};
+
+/**
+ * <Given a channel with ID channelId that the authorised user is a member of,
+ * remove them as a member of the channel. Their messages should remain in the
+ * channel. If the only channel owner leaves, the channel will remain.>
+ *
+ * @param {string} token - token for a requesting user
+ * @param {integer} channelId - channelId
+ * @param {integer} uId - user Id that is added as a new owner of the channel
+ *
+ * @returns  {Error} -  Return eror object when any of:
+ * 1. channelId does not refer to a valid channel
+ * 2. uId does not refer to a valid user
+ * 3. token is invalid
+ * 4. uId refers to a user who is not a member of the channel
+ * 5. uId refers to a user who is already an owner of the channel
+ * 6. channelId is valid and the authorised user does not have owner permissions
+ *    in the channel
+ * @returns {{}} - Return {} upon success, when all error cases are avoided
+ *
+ */
+export const channelAddOwnerV1 = (
+  token: string,
+  channelId: number,
+  uId: number
+): {} | Error => {
+  const data = getData();
+
+  if (!isTokenValid(data, token)) {
+    return { error: "Invalid token" };
+  } else if (!isChannelValid(data, channelId)) {
+    return { error: "Invalid channel" };
+  } else if (!isAuthUserIdValid(data, uId)) {
+    return { error: "Invalid uId" };
+  } else if (!isMember(data, uId, channelId)) {
+    return { error: "UId refer to user that is not a member of the channel" };
+  }
+
+  if (isOwner(data, uId, channelId)) {
+    return { error: "User is already an owner" };
+  }
+
+  const authUserId = findUserFromToken(data, token);
+
+  if (!isOwner(data, authUserId, channelId)) {
+    return { error: "The authorised user is not an owner of the channel" };
+  }
+
+  const channel = findChannel(data, channelId);
+
+  channel.ownerMembers.push(uId);
+
+  setData(data);
+
+  return {};
+};
+
+/**
+ * <Given a channel with ID channelId that the authorised user is a member of,
+ * remove them as a member of the channel. Their messages should remain in the
+ * channel. If the only channel owner leaves, the channel will remain.>
+ *
+ * @param {string} token - token for a requesting user
+ * @param {integer} channelId - channelId
+ *
+ * @returns  {Error} -  Return eror object when any of:
+ * 1. channelId does not refer to a valid channel
+ * 2. uId does not refer to a valid user
+ * 3. token is invalid
+ * 4. uId refers to a user who is not an owner of the channel
+ * 5. uId refers to a user who is currently the only owner of the channel
+ * 6. channelId is valid and the authorised user does not have owner permissions
+ *    in the channel
+ * @returns {{}} - Return {} upon success, when all error cases are avoided
+ *
+ */
+
+export const channelRemoveOwnerV1 = (
+  token: string,
+  channelId: number,
+  uId: number
+): {} | Error => {
+  const data = getData();
+
+  if (!isTokenValid(data, token)) {
+    return { error: "Invalid token" };
+  } else if (!isChannelValid(data, channelId)) {
+    return { error: "Invalid channel" };
+  } else if (!isAuthUserIdValid(data, uId)) {
+    return { error: "Invalid uId" };
+  } else if (!isOwner(data, uId, channelId)) {
+    const channel = findChannel(data, channelId);
+    console.log(channel);
+    console.log(uId);
+    return { error: "User is not an owner of the channel" };
+  }
+
+  const authUserId = findUserFromToken(data, token);
+
+  if (!isOwner(data, authUserId, channelId)) {
+    return { error: "The authorised user is not an owner of the channel" };
+  }
+
+  const channel = findChannel(data, channelId);
+  if (channel.ownerMembers.length === 1) {
+    return { error: "Uer is the only owner of the channel" };
+  }
+
+  channel.ownerMembers = channel.ownerMembers.filter((user) => user !== uId);
+
+  setData(data);
+
+  return {};
 };
