@@ -4,17 +4,17 @@ export type Error = {
 
 export type storedMessage = {
   messageId: number;
-  uId: string;
+  uId: number;
   message: string;
-  timeSent: Date;
+  timeSent: number;
   isChannelMessage: boolean;
   dmOrChannelId: number;
 };
 export type Message = {
   messageId: number;
-  uId: string;
+  uId: number;
   message: string;
-  timeSent: Date;
+  timeSent: number;
 };
 
 export type Channel = {
