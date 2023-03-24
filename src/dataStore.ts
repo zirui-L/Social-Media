@@ -6,7 +6,7 @@ export type storedMessage = {
   messageId: number;
   uId: number;
   message: string;
-  timeSent: number;
+  timeSent: Date;
   isChannelMessage: boolean;
   dmOrChannelId: number;
 };
@@ -14,7 +14,7 @@ export type Message = {
   messageId: number;
   uId: number;
   message: string;
-  timeSent: number;
+  timeSent: Date;
 };
 
 export type Channel = {
