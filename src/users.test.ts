@@ -2,7 +2,7 @@ import {
   requestAuthRegisterV2,
   requestUserProfileV2,
   requestClearV1,
-} from "./helperServer";
+} from './helperServer';
 
 const OK = 200;
 const ERROR = { error: expect.any(String) };
@@ -15,13 +15,13 @@ afterEach(() => {
   requestClearV1();
 });
 
-describe("Testing requestUserProfileV2", () => {
-  test("Test-1: Error, invalid authUserId and valid uId", () => {
+describe('Testing requestUserProfileV2', () => {
+  test('Test-1: Error, invalid authUserId and valid uId', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123456",
-      "Richardo",
-      "Lee"
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
     );
 
     const userProfileObj = requestUserProfileV2(
@@ -32,12 +32,12 @@ describe("Testing requestUserProfileV2", () => {
     expect(userProfileObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-2: Error, valid authUserId and invalid uId", () => {
+  test('Test-2: Error, valid authUserId and invalid uId', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123456",
-      "Richardo",
-      "Lee"
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
     );
 
     const userProfileObj = requestUserProfileV2(
@@ -48,24 +48,24 @@ describe("Testing requestUserProfileV2", () => {
     expect(userProfileObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-3: Error, invalid authUserId and invalid uId", () => {
-    const userProfileObj = requestUserProfileV2("0", 0);
+  test('Test-3: Error, invalid authUserId and invalid uId', () => {
+    const userProfileObj = requestUserProfileV2('0', 0);
     expect(userProfileObj.statusCode).toBe(OK);
     expect(userProfileObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-4: Sucess case", () => {
+  test('Test-4: Sucess case', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123456",
-      "Richardo",
-      "Lee"
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
     );
     const test2 = requestAuthRegisterV2(
-      "test2@gmail.com",
-      "1234567",
-      "Shenba",
-      "Chen"
+      'test2@gmail.com',
+      '1234567',
+      'Shenba',
+      'Chen'
     );
 
     const userProfileObj = requestUserProfileV2(
@@ -77,20 +77,20 @@ describe("Testing requestUserProfileV2", () => {
     expect(userProfileObj.bodyObj).toStrictEqual({
       user: {
         uId: test2.bodyObj.authUserId,
-        email: "test2@gmail.com",
-        nameFirst: "Shenba",
-        nameLast: "Chen",
-        handleStr: "shenbachen",
+        email: 'test2@gmail.com',
+        nameFirst: 'Shenba',
+        nameLast: 'Chen',
+        handleStr: 'shenbachen',
       },
     });
   });
 
-  test("Test-5, Success with same authUserId and uId", () => {
+  test('Test-5, Success with same authUserId and uId', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123456",
-      "Richardo",
-      "Lee"
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
     );
 
     const userProfileObj = requestUserProfileV2(
@@ -102,10 +102,10 @@ describe("Testing requestUserProfileV2", () => {
     expect(userProfileObj.bodyObj).toStrictEqual({
       user: {
         uId: test1.bodyObj.authUserId,
-        email: "test1@gmail.com",
-        nameFirst: "Richardo",
-        nameLast: "Lee",
-        handleStr: "richardolee",
+        email: 'test1@gmail.com',
+        nameFirst: 'Richardo',
+        nameLast: 'Lee',
+        handleStr: 'richardolee',
       },
     });
   });

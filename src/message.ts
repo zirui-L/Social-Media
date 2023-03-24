@@ -1,4 +1,4 @@
-import { Error } from "./dataStore";
+import { Error } from './dataStore';
 
 type messageIdObj = {
   messageId: number;

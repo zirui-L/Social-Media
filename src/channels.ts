@@ -1,9 +1,9 @@
-import { getData, setData, Error } from "./dataStore";
+import { getData, setData, Error } from './dataStore';
 import {
   isTokenValid,
   createUniqueId,
   findUserFromToken,
-} from "./helperFunctions";
+} from './helperFunctions';
 
 type ChannelId = {
   channelId: number;
@@ -37,9 +37,9 @@ export const channelsCreateV2 = (
 ): ChannelId | Error => {
   const data = getData();
   if (name.length < 1 || name.length > 20) {
-    return { error: "Invalid channel name length" };
+    return { error: 'Invalid channel name length' };
   } else if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   }
 
   const channelId = createUniqueId();
@@ -83,7 +83,7 @@ export const channelsListV2 = (token: string): Channels | Error => {
 
   if (!isTokenValid(data, token)) {
     return {
-      error: "Invalid token",
+      error: 'Invalid token',
     };
   }
 
@@ -120,7 +120,7 @@ export const channelsListAllV2 = (token: string): Channels | Error => {
 
   if (!isTokenValid(data, token)) {
     return {
-      error: "Invalid token",
+      error: 'Invalid token',
     };
   }
 

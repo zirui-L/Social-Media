@@ -1,4 +1,4 @@
-import { Error, User, paginatedMessage } from "./dataStore";
+import { Error, User, paginatedMessage } from './dataStore';
 
 type DmIdObj = {
   dmId: number;
@@ -33,7 +33,7 @@ export const dmDetailsV1 = (
   token: string,
   dmId: number
 ): DmDetailsObj | Error => {
-  return { name: "void", members: [] };
+  return { name: 'void', members: [] };
 };
 
 export const dmLeaveV1 = (token: string, dmId: number): {} | Error => {

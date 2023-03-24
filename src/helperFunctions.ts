@@ -5,16 +5,16 @@ import {
   Message,
   Error,
   getData,
-} from "./dataStore";
-import fs from "fs";
-import { NumericLiteral } from "typescript";
+} from './dataStore';
+import fs from 'fs';
+import { NumericLiteral } from 'typescript';
 
 export const storeData = () => {
   const data = getData();
-  if (fs.existsSync("src/data.json")) {
-    fs.unlinkSync("src/data.json");
+  if (fs.existsSync('src/data.json')) {
+    fs.unlinkSync('src/data.json');
   }
-  fs.writeFileSync("src/data.json", JSON.stringify(data), { flag: "w" });
+  fs.writeFileSync('src/data.json', JSON.stringify(data), { flag: 'w' });
 };
 
 /**
@@ -63,7 +63,7 @@ export const generateHandleStr = (
 ): string => {
   let handleString = nameFirst.toLowerCase() + nameLast.toLowerCase();
 
-  handleString = handleString.replace(/[^0-9a-z]/gi, "");
+  handleString = handleString.replace(/[^0-9a-z]/gi, '');
 
   if (handleString.length > 20) {
     handleString = handleString.substr(0, 20);
@@ -258,7 +258,7 @@ export const findMessageFromId = (
   );
 
   if (!message) {
-    return { error: "Message does not exist" };
+    return { error: 'Message does not exist' };
   }
 
   return {

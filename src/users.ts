@@ -1,5 +1,5 @@
-import { getData, Error, User } from "./dataStore";
-import { isAuthUserIdValid, isTokenValid } from "./helperFunctions";
+import { getData, Error, User } from './dataStore';
+import { isAuthUserIdValid, isTokenValid } from './helperFunctions';
 
 type UserObject = {
   user: User;
@@ -27,9 +27,9 @@ export const userProfileV2 = (
   const data = getData();
 
   if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   } else if (!isAuthUserIdValid(data, uId)) {
-    return { error: "uId does not refer to a valid user" };
+    return { error: 'uId does not refer to a valid user' };
   }
 
   for (const user of data.users) {

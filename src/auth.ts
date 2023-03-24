@@ -1,12 +1,12 @@
-import { getData, setData, Error } from "./dataStore";
-import validator from "validator";
+import { getData, setData, Error } from './dataStore';
+import validator from 'validator';
 import {
   generateHandleStr,
   createUniqueId,
   nameInRange,
   isAvaliableEmail,
   isTokenValid,
-} from "./helperFunctions";
+} from './helperFunctions';
 
 type UIdAndToken = { token: string; authUserId: number };
 
@@ -43,7 +43,7 @@ export const authLoginV2 = (
       };
     }
   }
-  return { error: "Incorrect emaill or password" };
+  return { error: 'Incorrect emaill or password' };
 };
 
 /**
@@ -71,20 +71,20 @@ export const authRegisterV2 = (
   const data = getData();
 
   if (!validator.isEmail(email)) {
-    return { error: "Invalid email formate" };
+    return { error: 'Invalid email formate' };
   } else if (!nameInRange(nameFirst) || !nameInRange(nameLast)) {
-    return { error: "Invalid user name length" };
+    return { error: 'Invalid user name length' };
   } else if (!isAvaliableEmail(email, data.users)) {
-    return { error: "Email already used" };
+    return { error: 'Email already used' };
   } else if (password.length < 6) {
     return {
-      error: "Invalid password length",
+      error: 'Invalid password length',
     };
   }
 
-  let newUserId = createUniqueId();
+  const newUserId = createUniqueId();
 
-  let permissionId = data.users.length === 0 ? 1 : 2; // permissionId for owner is 1, for member is 2 ?????????????????
+  const permissionId = data.users.length === 0 ? 1 : 2; // permissionId for owner is 1, for member is 2 ?????????????????
 
   data.users.push({
     authUserId: newUserId,
@@ -126,10 +126,10 @@ export const authLogOutV1 = (token: string): {} | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   }
 
-  let indexToDelete = data.tokens.findIndex(
+  const indexToDelete = data.tokens.findIndex(
     (existingToken) => existingToken.token === token
   );
 
