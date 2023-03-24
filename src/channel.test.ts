@@ -1399,7 +1399,7 @@ describe("Testing /channel/addowner/v1", () => {
       ],
     });
   });
-  /*
+  
   test('Test-7: add multiple owners', () => {
     const owner = requestAuthRegisterV2(
       "test0@gmail.com",
@@ -1461,7 +1461,7 @@ describe("Testing /channel/addowner/v1", () => {
     ).toStrictEqual({
       name: 'channelName',
       isPublic: true,
-      OwnerMember: [
+      ownerMembers: [
         {
           uId: owner.bodyObj.authUserId,
           email: 'test0@gmail.com',
@@ -1537,7 +1537,7 @@ describe("Testing /channel/addowner/v1", () => {
       ],
     });
   });
-  */
+  
 });
 
 describe("Testing /channel/removeowner/v1", () => {
@@ -1798,7 +1798,7 @@ describe("Testing /channel/removeowner/v1", () => {
       ],
     });
   });
-  /*
+  
   test('Test-8: remove multiple owners', () => {
     const owner = requestAuthRegisterV2(
       "test0@gmail.com",
@@ -1862,7 +1862,7 @@ describe("Testing /channel/removeowner/v1", () => {
     expect(channelDetail.bodyObj).toStrictEqual({
       name: 'channelName',
       isPublic: true,
-      OwnerMember: [
+      ownerMembers: [
         {
           uId: owner.bodyObj.authUserId,
           email: 'test0@gmail.com',
@@ -1931,7 +1931,7 @@ describe("Testing /channel/removeowner/v1", () => {
       ],
     });
   });
-  */
+  
 });
 
 const createMessages = (
