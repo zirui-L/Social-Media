@@ -7,6 +7,7 @@ import {
   requestDmDetailsV1,
   requestDmLeaveV1,
   requestDmMessagesV1,
+  requestMessageSendDmV1,
 } from './helperServer';
 
 const OK = 200;
@@ -296,4 +297,56 @@ describe('Testing /dm/messages/v1', () => {
       end: -1,
     });
   });
+
+  test('Test-6: Success, start is 0, and there are in total 50 messages', () => {
+    const user1 = requestAuthRegisterV2('test1@gmail.com', '123456', 'Richardo', 'Li').bodyObj;
+    const user2 = requestAuthRegisterV2('test2@gmail.com', '1234567', 'Shenba', 'Chen').bodyObj;
+    const dmId = requestDmCreateV1(user1.token, [user2.authUserId]).bodyObj.dmId;
+    createMessages(user1.token, dmId, 50);
+    const DmMessages = requestDmMessagesV1(user1.token, dmId, 0);
+    expect(DmMessages.statusCode).toBe(OK);
+    expect(DmMessages.bodyObj).toStrictEqual({
+      messages: expect.anything,
+      start: 0,
+      end: -1,
+    });
+  });
+
+  test('Test-7: Success, start is 60, and there are in total 60 messages', () => {
+    const user1 = requestAuthRegisterV2('test1@gmail.com', '123456', 'Richardo', 'Li').bodyObj;
+    const user2 = requestAuthRegisterV2('test2@gmail.com', '1234567', 'Shenba', 'Chen').bodyObj;
+    const dmId = requestDmCreateV1(user1.token, [user2.authUserId]).bodyObj.dmId;
+    createMessages(user1.token, dmId, 60);
+    const DmMessages = requestDmMessagesV1(user1.token, dmId, 60);
+    expect(DmMessages.statusCode).toBe(OK);
+    expect(DmMessages.bodyObj).toStrictEqual({
+      messages: expect.anything,
+      start: 60,
+      end: -1,
+    });
+  });
+
+  test('Test-8: Success, start is 0, and there are in total 51 messages', () => {
+    const user1 = requestAuthRegisterV2('test1@gmail.com', '123456', 'Richardo', 'Li').bodyObj;
+    const user2 = requestAuthRegisterV2('test2@gmail.com', '1234567', 'Shenba', 'Chen').bodyObj;
+    const dmId = requestDmCreateV1(user1.token, [user2.authUserId]).bodyObj.dmId;
+    createMessages(user1.token, dmId, 51);
+    const DmMessages = requestDmMessagesV1(user1.token, dmId, 0);
+    expect(DmMessages.statusCode).toBe(OK);
+    expect(DmMessages.bodyObj).toStrictEqual({
+      messages: expect.anything,
+      start: 0,
+      end: 50,
+    });
+  });
 });
+
+const createMessages = (
+  token: string,
+  dmId: number,
+  repetition: number
+): void => {
+  for (let count = 0; count < repetition; count++) {
+    requestMessageSendDmV1(token, dmId, `Testing line ${count}`);
+  }
+};
