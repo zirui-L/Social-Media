@@ -230,7 +230,7 @@ export const findChannel = (data: Data, channelId: number): Channel => {
  * about user and channels
  * @param {string} token - token for the user
  *
- * @returns { user.uId } - if there exist a user with given token
+ * @returns {{ channel }} - if there exist a user with given token
  * @returns { undefined } - if there doesn't exist a user with given
  * token
  */
