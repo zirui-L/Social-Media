@@ -238,6 +238,26 @@ export const isOwner = (
 };
 
 /**
+ * <Check if a specific user is an owner of the Dm>
+ *
+ * @param {Data} data - object that stores informations about user and channels
+ * @param {string} authUserId - user id of the enquiring user
+ * @param {string} DmId - Dm id
+ *
+ * @returns {true} - user is a owner of the Dm
+ * @returns {false} - user doesn't belong to a Dm
+ *
+ */
+export const isDmOwner = (
+  data: Data,
+  authUserId: number,
+  DmId: number
+): boolean => {
+  const Dm = findDm(data, DmId);
+  return Dm.ownerMembers.includes(authUserId);
+};
+
+/**
  * <Find a user object with given authUserId>
  *
  * @param {Data} data - object that stores informations
@@ -288,7 +308,7 @@ export const findDm = (data: Data, dmId: number): Dm => {
  * about user and channels
  * @param {string} token - token for the user
  *
- * @returns { user.uId } - if there exist a user with given token
+ * @returns { uId } - if there exist a user with given token
  * @returns { undefined } - if there doesn't exist a user with given
  * token
  */
