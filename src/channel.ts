@@ -270,7 +270,7 @@ export const channelLeaveV1 = (
   channelId: number
 ): Record<string, never> | Error => {
   const data = getData();
-
+  // check validity of input
   if (!isTokenValid(data, token)) {
     return { error: 'Invalid token' };
   } else if (!isChannelValid(data, channelId)) {
@@ -282,14 +282,14 @@ export const channelLeaveV1 = (
   if (!isMember(data, authUserId, channelId)) {
     return { error: 'User is not a member of the channel' };
   }
-
+  // remove meember from channel 
   const channel = findChannel(data, channelId);
 
   channel.allMembers = channel.allMembers.filter((user) => user !== authUserId);
   channel.ownerMembers = channel.ownerMembers.filter(
     (user) => user !== authUserId
   );
-
+  // remove channel from user's detail
   const user = findUser(data, authUserId);
 
   user.channels.filter((channel) => channel !== channelId);
@@ -325,7 +325,7 @@ export const channelAddOwnerV1 = (
   uId: number
 ): Record<string, never> | Error => {
   const data = getData();
-
+  // check validity of input
   if (!isTokenValid(data, token)) {
     return { error: 'Invalid token' };
   } else if (!isChannelValid(data, channelId)) {
@@ -345,7 +345,7 @@ export const channelAddOwnerV1 = (
   if (!isOwner(data, authUserId, channelId)) {
     return { error: 'The authorised user is not an owner of the channel' };
   }
-
+  // add user to ownermember array
   const channel = findChannel(data, channelId);
 
   channel.ownerMembers.push(uId);
@@ -381,7 +381,7 @@ export const channelRemoveOwnerV1 = (
   uId: number
 ): Record<string, never> | Error => {
   const data = getData();
-
+  // check validity of input
   if (!isTokenValid(data, token)) {
     return { error: 'Invalid token' };
   } else if (!isChannelValid(data, channelId)) {
@@ -405,7 +405,7 @@ export const channelRemoveOwnerV1 = (
   if (channel.ownerMembers.length === 1) {
     return { error: 'User is the only owner of the channel' };
   }
-
+  // remove user from ownermember list
   channel.ownerMembers = channel.ownerMembers.filter((user) => user !== uId);
 
   setData(data);
