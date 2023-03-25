@@ -150,7 +150,7 @@ describe('requestChannelsListV2 function testing', () => {
       'nameFirst2',
       'nameLast2'
     );
-    const channel1 = requestChannelsCreateV2(
+    requestChannelsCreateV2(
       test2.bodyObj.token,
       'channel1',
       true
@@ -226,7 +226,7 @@ describe('requestChannelsListV2 function testing', () => {
       'channel1',
       true
     );
-    const channel2 = requestChannelsCreateV2(
+    requestChannelsCreateV2(
       test2.bodyObj.token,
       'channel2',
       true

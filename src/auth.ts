@@ -122,7 +122,7 @@ export const authRegisterV2 = (
  *  @returns {Error} - invalid token
  */
 
-export const authLogOutV1 = (token: string): {} | Error => {
+export const authLogOutV1 = (token: string): Record<string, never> | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {

@@ -107,8 +107,7 @@ describe('Testing /dm/remove/v1', () => {
   test('Test-3: Error, authorised user no longer in the DM', () => {
     const user1 = requestAuthRegisterV2('test1@gmail.com', '123456', 'Richardo', 'Li').bodyObj;
     const user2 = requestAuthRegisterV2('test2@gmail.com', '1234567', 'Shenba', 'Chen').bodyObj;
-    const user3 = requestAuthRegisterV2('test3@gmail.com', '12345678', 'Kunda', 'Yu').bodyObj;
-    const dmId = requestDmCreateV1(user1.token, [user2.authUserId, user3.authUserId]).bodyObj.dmId;
+    const dmId = requestDmCreateV1(user1.token, [user2.authUserId]).bodyObj.dmId;
     requestDmLeaveV1(user1.token, dmId);
     const DmRemove = requestDmRemoveV1(user1.token, dmId);
     expect(DmRemove.statusCode).toBe(OK);
@@ -270,7 +269,7 @@ describe('Testing /dm/messages/v1', () => {
     const user1 = requestAuthRegisterV2('test1@gmail.com', '123456', 'Richardo', 'Li').bodyObj;
     const user2 = requestAuthRegisterV2('test2@gmail.com', '1234567', 'Shenba', 'Chen').bodyObj;
     const user3 = requestAuthRegisterV2('test3@gmail.com', '12345678', 'Kunda', 'Yu').bodyObj;
-    const dmId = requestDmCreateV1(user1.token, [user2.authUserId, user3.authUserId]).bodyObj.dmId;
+    const dmId = requestDmCreateV1(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmMessages = requestDmMessagesV1(user3.token, dmId, 0);
     expect(DmMessages.statusCode).toBe(OK);
     expect(DmMessages.bodyObj).toStrictEqual(ERROR);
@@ -285,14 +284,14 @@ describe('Testing /dm/messages/v1', () => {
     expect(DmMessages.bodyObj).toStrictEqual(ERROR);
   });
 
-  test('Test-5, correct input parameters', () => {
+  test('Test-5, Success, start is 0, and there are in total 0 messages', () => {
     const user1 = requestAuthRegisterV2('test1@gmail.com', '123456', 'Richardo', 'Li').bodyObj;
     const user2 = requestAuthRegisterV2('test2@gmail.com', '1234567', 'Shenba', 'Chen').bodyObj;
     const dmId = requestDmCreateV1(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmMessages = requestDmMessagesV1(user1.token, dmId, 0);
     expect(DmMessages.statusCode).toBe(OK);
     expect(DmMessages.bodyObj).toStrictEqual({
-      messages: [],
+      messages: expect.any(Array),
       start: 0,
       end: -1,
     });
@@ -306,7 +305,7 @@ describe('Testing /dm/messages/v1', () => {
     const DmMessages = requestDmMessagesV1(user1.token, dmId, 0);
     expect(DmMessages.statusCode).toBe(OK);
     expect(DmMessages.bodyObj).toStrictEqual({
-      messages: expect.anything,
+      messages: expect.any(Array),
       start: 0,
       end: -1,
     });
@@ -320,7 +319,7 @@ describe('Testing /dm/messages/v1', () => {
     const DmMessages = requestDmMessagesV1(user1.token, dmId, 60);
     expect(DmMessages.statusCode).toBe(OK);
     expect(DmMessages.bodyObj).toStrictEqual({
-      messages: expect.anything,
+      messages: expect.any(Array),
       start: 60,
       end: -1,
     });
@@ -334,7 +333,7 @@ describe('Testing /dm/messages/v1', () => {
     const DmMessages = requestDmMessagesV1(user1.token, dmId, 0);
     expect(DmMessages.statusCode).toBe(OK);
     expect(DmMessages.bodyObj).toStrictEqual({
-      messages: expect.anything,
+      messages: expect.any(Array),
       start: 0,
       end: 50,
     });

@@ -1,4 +1,4 @@
-import { getData, setData, Error, paginatedMessage } from './dataStore';
+import { getData, setData, User, Error, paginatedMessage } from './dataStore';
 import {
   isTokenValid,
   findUserFromToken,
@@ -14,8 +14,8 @@ import {
 type ChannelDetails = {
   name: string;
   isPublic: boolean;
-  ownerMembers: Array<number>;
-  allMembers: Array<number>;
+  ownerMembers: Array<User>;
+  allMembers: Array<User>;
 };
 
 /**
@@ -101,7 +101,7 @@ export const channelDetailsV2 = (
  * not a channel member and is not a global owner
  */
 
-export const channelJoinV2 = (token: string, channelId: number): {} | Error => {
+export const channelJoinV2 = (token: string, channelId: number): Record<string, never> | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {
@@ -152,7 +152,7 @@ export const channelInviteV2 = (
   token: string,
   channelId: number,
   uId: number
-): {} | Error => {
+): Record<string, never> | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {
@@ -268,7 +268,7 @@ export const channelMessagesV2 = (
 export const channelLeaveV1 = (
   token: string,
   channelId: number
-): {} | Error => {
+): Record<string, never> | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {
@@ -323,7 +323,7 @@ export const channelAddOwnerV1 = (
   token: string,
   channelId: number,
   uId: number
-): {} | Error => {
+): Record<string, never> | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {
@@ -379,7 +379,7 @@ export const channelRemoveOwnerV1 = (
   token: string,
   channelId: number,
   uId: number
-): {} | Error => {
+): Record<string, never> | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {
@@ -403,7 +403,7 @@ export const channelRemoveOwnerV1 = (
 
   const channel = findChannel(data, channelId);
   if (channel.ownerMembers.length === 1) {
-    return { error: 'Uer is the only owner of the channel' };
+    return { error: 'User is the only owner of the channel' };
   }
 
   channel.ownerMembers = channel.ownerMembers.filter((user) => user !== uId);

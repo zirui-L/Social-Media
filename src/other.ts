@@ -9,7 +9,7 @@ import { getData, setData } from './dataStore';
  * @returns {{}} - if the function successifully clear the data stored
  */
 
-export const clearV1 = (): {} => {
+export const clearV1 = (): Record<string, never> => {
   const data = getData();
   data.channels.length = 0;
   data.users.length = 0;

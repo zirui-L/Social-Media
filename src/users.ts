@@ -55,20 +55,20 @@ export const userProfileSetNameV1 = (
   token: string,
   nameFirst: string,
   nameLast: string
-): {} | Error => {
+): Record<string, never> | Error => {
   return {};
 };
 
 export const userProfileSetEmailV1 = (
   token: string,
   email: string
-): {} | Error => {
+): Record<string, never> | Error => {
   return {};
 };
 
 export const userProfileSetHandleV1 = (
   token: string,
   handleStr: string
-): {} | Error => {
+): Record<string, never> | Error => {
   return {};
 };

@@ -32,7 +32,7 @@ describe('Testing /channel/details/v2', () => {
       'Richardo',
       'Li'
     );
-    const channelId = requestChannelsCreateV2(
+    requestChannelsCreateV2(
       test1.bodyObj.token,
       'RicardoChannel',
       true
@@ -769,145 +769,145 @@ describe('Testing /channel/messages/v2', () => {
     });
   });
 
-  // test("Test-6: Success, start is 0, and there are in total 50 messages", () => {
-  //   const test1 = requestAuthRegisterV2(
-  //     "test1@gmail.com",
-  //     "123456",
-  //     "Richardo",
-  //     "Lee"
-  //   );
-  //   const channel = requestChannelsCreateV2(
-  //     test1.bodyObj.token,
-  //     "LeeChannel",
-  //     true
-  //   );
+  test('Test-6: Success, start is 0, and there are in total 50 messages', () => {
+    const test1 = requestAuthRegisterV2(
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
+    );
+    const channel = requestChannelsCreateV2(
+      test1.bodyObj.token,
+      'LeeChannel',
+      true
+    );
 
-  //   createMessages(test1.bodyObj.token, channel.bodyObj.channelId, 50);
+    createMessages(test1.bodyObj.token, channel.bodyObj.channelId, 50);
 
-  //   const channelMessageObj = requestChannelMessagesV2(
-  //     test1.bodyObj.token,
-  //     channel.bodyObj.channelId,
-  //     0
-  //   );
+    const channelMessageObj = requestChannelMessagesV2(
+      test1.bodyObj.token,
+      channel.bodyObj.channelId,
+      0
+    );
 
-  //   expect(channelMessageObj.statusCode).toBe(OK);
-  //   expect(channelMessageObj.bodyObj).toStrictEqual({
-  //     messages: expect.anything,
-  //     start: 50,
-  //     end: -1,
-  //   });
-  // });
+    expect(channelMessageObj.statusCode).toBe(OK);
+    expect(channelMessageObj.bodyObj).toStrictEqual({
+      messages: expect.anything,
+      start: 50,
+      end: -1,
+    });
+  });
 
-  // test("Test-7: Success, start is 60, and there are in total 60 messages", () => {
-  //   const test1 = requestAuthRegisterV2(
-  //     "test1@gmail.com",
-  //     "123456",
-  //     "Richardo",
-  //     "Lee"
-  //   );
-  //   const channel = requestChannelsCreateV2(
-  //     test1.bodyObj.token,
-  //     "LeeChannel",
-  //     true
-  //   );
+  test('Test-7: Success, start is 60, and there are in total 60 messages', () => {
+    const test1 = requestAuthRegisterV2(
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
+    );
+    const channel = requestChannelsCreateV2(
+      test1.bodyObj.token,
+      'LeeChannel',
+      true
+    );
 
-  //   createMessages(test1.bodyObj.token, channel.bodyObj.channelId, 60);
+    createMessages(test1.bodyObj.token, channel.bodyObj.channelId, 60);
 
-  //   const channelMessageObj = requestChannelMessagesV2(
-  //     test1.bodyObj.token,
-  //     channel.bodyObj.channelId,
-  //     60
-  //   );
+    const channelMessageObj = requestChannelMessagesV2(
+      test1.bodyObj.token,
+      channel.bodyObj.channelId,
+      60
+    );
 
-  //   expect(channelMessageObj.statusCode).toBe(OK);
-  //   expect(channelMessageObj.bodyObj).toStrictEqual({
-  //     messages: [],
-  //     start: 60,
-  //     end: -1,
-  //   });
-  // });
+    expect(channelMessageObj.statusCode).toBe(OK);
+    expect(channelMessageObj.bodyObj).toStrictEqual({
+      messages: [],
+      start: 60,
+      end: -1,
+    });
+  });
 
-  // test("Test-8: Success, start is 0, and there are in total 51 messages", () => {
-  //   const test1 = requestAuthRegisterV2(
-  //     "test1@gmail.com",
-  //     "123456",
-  //     "Richardo",
-  //     "Lee"
-  //   );
-  //   const channel = requestChannelsCreateV2(
-  //     test1.bodyObj.token,
-  //     "LeeChannel",
-  //     true
-  //   );
+  test('Test-8: Success, start is 0, and there are in total 51 messages', () => {
+    const test1 = requestAuthRegisterV2(
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
+    );
+    const channel = requestChannelsCreateV2(
+      test1.bodyObj.token,
+      'LeeChannel',
+      true
+    );
 
-  //   createMessages(test1.bodyObj.token, channel.bodyObj.channelId, 51);
+    createMessages(test1.bodyObj.token, channel.bodyObj.channelId, 51);
 
-  //   const channelMessageObj = requestChannelMessagesV2(
-  //     test1.bodyObj.token,
-  //     channel.bodyObj.channelId,
-  //     60
-  //   );
+    const channelMessageObj = requestChannelMessagesV2(
+      test1.bodyObj.token,
+      channel.bodyObj.channelId,
+      60
+    );
 
-  //   expect(channelMessageObj.statusCode).toBe(OK);
-  //   expect(channelMessageObj.bodyObj).toStrictEqual({
-  //     messages: expect.anything,
-  //     start: 0,
-  //     end: 50,
-  //   });
-  // });
+    expect(channelMessageObj.statusCode).toBe(OK);
+    expect(channelMessageObj.bodyObj).toStrictEqual({
+      messages: expect.anything,
+      start: 0,
+      end: 50,
+    });
+  });
 
-  // test("Test-9: Success, 3 channel message request to a channel with 124 messages", () => {
-  //   const test1 = requestAuthRegisterV2(
-  //     "test1@gmail.com",
-  //     "123456",
-  //     "Richardo",
-  //     "Lee"
-  //   );
-  //   const channel = requestChannelsCreateV2(
-  //     test1.bodyObj.token,
-  //     "LeeChannel",
-  //     true
-  //   );
+  test('Test-9: Success, 3 channel message request to a channel with 124 messages', () => {
+    const test1 = requestAuthRegisterV2(
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
+    );
+    const channel = requestChannelsCreateV2(
+      test1.bodyObj.token,
+      'LeeChannel',
+      true
+    );
 
-  //   createMessages(test1.bodyObj.token, channel.bodyObj.channelId, 124);
+    createMessages(test1.bodyObj.token, channel.bodyObj.channelId, 124);
 
-  //   const channelMessageObj1 = requestChannelMessagesV2(
-  //     test1.bodyObj.token,
-  //     channel.bodyObj.channelId,
-  //     0
-  //   );
+    const channelMessageObj1 = requestChannelMessagesV2(
+      test1.bodyObj.token,
+      channel.bodyObj.channelId,
+      0
+    );
 
-  //   const channelMessageObj2 = requestChannelMessagesV2(
-  //     test1.bodyObj.token,
-  //     channel.bodyObj.channelId,
-  //     50
-  //   );
+    const channelMessageObj2 = requestChannelMessagesV2(
+      test1.bodyObj.token,
+      channel.bodyObj.channelId,
+      50
+    );
 
-  //   const channelMessageObj3 = requestChannelMessagesV2(
-  //     test1.bodyObj.token,
-  //     channel.bodyObj.channelId,
-  //     100
-  //   );
+    const channelMessageObj3 = requestChannelMessagesV2(
+      test1.bodyObj.token,
+      channel.bodyObj.channelId,
+      100
+    );
 
-  //   expect(channelMessageObj1.statusCode).toBe(OK);
-  //   expect(channelMessageObj2.statusCode).toBe(OK);
-  //   expect(channelMessageObj3.statusCode).toBe(OK);
-  //   expect(channelMessageObj1.bodyObj).toStrictEqual({
-  //     messages: expect.anything,
-  //     start: 0,
-  //     end: 50,
-  //   });
-  //   expect(channelMessageObj2.bodyObj).toStrictEqual({
-  //     messages: expect.anything,
-  //     start: 50,
-  //     end: 100,
-  //   });
-  //   expect(channelMessageObj3.bodyObj).toStrictEqual({
-  //     messages: expect.anything,
-  //     start: 100,
-  //     end: -1,
-  //   });
-  // });
+    expect(channelMessageObj1.statusCode).toBe(OK);
+    expect(channelMessageObj2.statusCode).toBe(OK);
+    expect(channelMessageObj3.statusCode).toBe(OK);
+    expect(channelMessageObj1.bodyObj).toStrictEqual({
+      messages: expect.anything,
+      start: 0,
+      end: 50,
+    });
+    expect(channelMessageObj2.bodyObj).toStrictEqual({
+      messages: expect.anything,
+      start: 50,
+      end: 100,
+    });
+    expect(channelMessageObj3.bodyObj).toStrictEqual({
+      messages: expect.anything,
+      start: 100,
+      end: -1,
+    });
+  });
 });
 
 describe('Testing /channel/leave/v1', () => {
@@ -984,79 +984,79 @@ describe('Testing /channel/leave/v1', () => {
     expect(channelLeaveObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  // test("Test-4: Success case of leave channel", () => {
-  //   const test1 = requestAuthRegisterV2(
-  //     "test1@gmail.com",
-  //     "123456",
-  //     "Richardo",
-  //     "Lee"
-  //   );
+  test('Test-4: Success case of leave channel', () => {
+    const test1 = requestAuthRegisterV2(
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
+    );
 
-  //   const test2 = requestAuthRegisterV2(
-  //     "test2@gmail.com",
-  //     "123456",
-  //     "firstName",
-  //     "lastName"
-  //   );
+    const test2 = requestAuthRegisterV2(
+      'test2@gmail.com',
+      '123456',
+      'firstName',
+      'lastName'
+    );
 
-  //   const channel = requestChannelsCreateV2(
-  //     test1.bodyObj.token,
-  //     "RicardoChannel",
-  //     true
-  //   );
+    const channel = requestChannelsCreateV2(
+      test1.bodyObj.token,
+      'RicardoChannel',
+      true
+    );
 
-  //   requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
-  //   const messageSendObj = requestMessageSendV1(
-  //     test2.bodyObj.token,
-  //     channel.bodyObj.channelId,
-  //     "Froot"
-  //   );
+    requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
+    const messageSendObj = requestMessageSendV1(
+      test2.bodyObj.token,
+      channel.bodyObj.channelId,
+      'Froot'
+    );
 
-  //   const channelLeaveObj = requestChannelLeaveV1(
-  //     test2.bodyObj.token,
-  //     channel.bodyObj.channelId
-  //   );
-  //   expect(channelLeaveObj.statusCode).toBe(OK);
-  //   expect(channelLeaveObj.bodyObj).toStrictEqual({});
+    const channelLeaveObj = requestChannelLeaveV1(
+      test2.bodyObj.token,
+      channel.bodyObj.channelId
+    );
+    expect(channelLeaveObj.statusCode).toBe(OK);
+    expect(channelLeaveObj.bodyObj).toStrictEqual({});
 
-  //   expect(
-  //     requestChannelDetailsV2(test1.bodyObj.token, channel.bodyObj.channelId)
-  //       .bodyObj
-  //   ).toStrictEqual({
-  //     name: "RicardoChannel",
-  //     isPublic: true,
-  //     ownerMembers: [
-  //       {
-  //         uId: test1.bodyObj.authUserId,
-  //         email: "test1@gmail.com",
-  //         nameFirst: "Richardo",
-  //         nameLast: "Lee",
-  //         handleStr: "richardolee",
-  //       },
-  //     ],
-  //     allMembers: [
-  //       {
-  //         uId: test1.bodyObj.authUserId,
-  //         email: "test1@gmail.com",
-  //         nameFirst: "Richardo",
-  //         nameLast: "Lee",
-  //         handleStr: "richardolee",
-  //       },
-  //     ],
-  //   });
+    expect(
+      requestChannelDetailsV2(test1.bodyObj.token, channel.bodyObj.channelId)
+        .bodyObj
+    ).toStrictEqual({
+      name: 'RicardoChannel',
+      isPublic: true,
+      ownerMembers: [
+        {
+          uId: test1.bodyObj.authUserId,
+          email: 'test1@gmail.com',
+          nameFirst: 'Richardo',
+          nameLast: 'Lee',
+          handleStr: 'richardolee',
+        },
+      ],
+      allMembers: [
+        {
+          uId: test1.bodyObj.authUserId,
+          email: 'test1@gmail.com',
+          nameFirst: 'Richardo',
+          nameLast: 'Lee',
+          handleStr: 'richardolee',
+        },
+      ],
+    });
 
-  //   const message = requestChannelMessagesV2(
-  //     test1.bodyObj.token,
-  //     channel.bodyObj.channelId,
-  //     0
-  //   );
-  //   expect(message.bodyObj.messages).toContain({
-  //     messageId: messageSendObj.bodyObj.messageId,
-  //     uId: test2.bodyObj.authUserId,
-  //     message: "Froot",
-  //     timeSent: expect.any(Number),
-  //   });
-  // });
+    const message = requestChannelMessagesV2(
+      test1.bodyObj.token,
+      channel.bodyObj.channelId,
+      0
+    );
+    expect(message.bodyObj.messages).toContain({
+      messageId: messageSendObj.bodyObj.messageId,
+      uId: test2.bodyObj.authUserId,
+      message: 'Froot',
+      timeSent: expect.any(Number),
+    });
+  });
 
   test('Test-5: Success case of the owner leave channel', () => {
     const test1 = requestAuthRegisterV2(
@@ -1612,7 +1612,7 @@ describe('Testing /channel/removeowner/v1', () => {
 
     requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
 
-    const channelAddOwnerObj = requestChannelAddOwnerV1(
+    requestChannelAddOwnerV1(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId

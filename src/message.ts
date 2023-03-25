@@ -16,14 +16,14 @@ export const messageEditV1 = (
   token: string,
   messageId: number,
   message: string
-): {} | Error => {
+): Record<string, never> | Error => {
   return {};
 };
 
 export const messageRemoveV1 = (
   token: string,
   messageId: number
-): {} | Error => {
+): Record<string, never> | Error => {
   return {};
 };
 

@@ -6,6 +6,7 @@
     "test:channels": "jest src/channels.test.ts",
     "test:other": "jest src/other.test.ts",
     "test:users": "jest src/users.test.ts",
+    "test:dm": "jest src/dm.test.ts",
     "tsc": "tsc --project tsconfig.json",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "eslint --fix src/**/*.ts",

@@ -3,12 +3,13 @@ import {
   Data,
   storedUser,
   Message,
-  Error,
+  Dm,
   getData,
 } from './dataStore';
 import fs from 'fs';
+/* eslint-disable */
 import { NumericLiteral } from 'typescript';
-
+/* eslint-enable */
 export const storeData = () => {
   const data = getData();
   if (fs.existsSync('src/data.json')) {
@@ -252,19 +253,54 @@ export const findUserFromToken = (data: Data, token: string): number => {
 export const findMessageFromId = (
   data: Data,
   messageId: number
-): Message | Error => {
+): Message => {
   const message = data.messages.find(
     (existingMessage) => existingMessage.messageId === messageId
   );
-
-  if (!message) {
-    return { error: 'Message does not exist' };
-  }
-
   return {
     messageId: message.messageId,
     uId: message.uId,
     message: message.message,
     timeSent: message.timeSent,
   };
+};
+
+export const findDm = (data: Data, dmId: number): Dm => {
+  return data.dms.find((dm) => dm.dmId === dmId);
+};
+
+export const isUIdsValid = (data: Data, uIds: Array<number>): boolean => {
+  for (const uId of uIds) {
+    if (!isAuthUserIdValid(data, uId)) {
+      return false;
+    }
+  }
+  return true;
+};
+
+export const isDmValid = (data: Data, dmId: number): boolean => {
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      return true;
+    }
+  }
+};
+
+export const isDuplicate = (uIds: Array<number>): boolean => {
+  for (let i = 0; i < uIds.length; i++) {
+    for (let j = i + 1; j < uIds.length; j++) {
+      if (uIds[i] === uIds[j]) return true;
+    }
+  }
+  return false;
+};
+
+export const isDmOwner = (data: Data, UId: number, dmId: number): boolean => {
+  const Dm = findDm(data, dmId);
+  return Dm.ownerMembers.includes(UId);
+};
+
+export const isDmMember = (data: Data, UId: number, dmId: number): boolean => {
+  const Dm = findDm(data, dmId);
+  return Dm.allMembers.includes(UId);
 };
