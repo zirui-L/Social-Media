@@ -265,27 +265,27 @@ describe('/auth/register/v2 testing - generating handle string / email duplicati
   });
 });
 
-describe("/auth/logout/v1 testing", () => {
-  test("Test-1: Error, Invalid Token", () => {
+describe('/auth/logout/v1 testing', () => {
+  test('Test-1: Error, Invalid Token', () => {
     const registerAuthUserId = requestAuthRegisterV2(
-      "test@gmail.com",
-      "123455",
-      "firstName",
-      "lastName"
+      'test@gmail.com',
+      '123455',
+      'firstName',
+      'lastName'
     );
     const logoutAuthUserId = requestAuthLogOutV1(
-      registerAuthUserId.bodyObj.token + "1"
+      registerAuthUserId.bodyObj.token + '1'
     );
     expect(logoutAuthUserId.statusCode).toBe(OK);
     expect(logoutAuthUserId.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-2: Error, Log out twice with the same token", () => {
+  test('Test-2: Error, Log out twice with the same token', () => {
     const registerAuthUserId = requestAuthRegisterV2(
-      "test@gmail.com",
-      "123455",
-      "firstName",
-      "lastName"
+      'test@gmail.com',
+      '123455',
+      'firstName',
+      'lastName'
     );
     const logoutAuthUserId1 = requestAuthLogOutV1(
       registerAuthUserId.bodyObj.token
@@ -300,12 +300,12 @@ describe("/auth/logout/v1 testing", () => {
     expect(logoutAuthUserId2.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-3: Success, Logout 1 person", () => {
+  test('Test-3: Success, Logout 1 person', () => {
     const registerAuthUserId = requestAuthRegisterV2(
-      "test@gmail.com",
-      "123455",
-      "firstName",
-      "lastName"
+      'test@gmail.com',
+      '123455',
+      'firstName',
+      'lastName'
     );
     const logoutAuthUserId = requestAuthLogOutV1(
       registerAuthUserId.bodyObj.token
@@ -320,24 +320,24 @@ describe("/auth/logout/v1 testing", () => {
     expect(userProfile).toStrictEqual(ERROR);
   });
 
-  test("Test-4: Success, Logout with 3 people existing", () => {
+  test('Test-4: Success, Logout with 3 people existing', () => {
     const registerAuthUserId1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123455",
-      "firstName",
-      "lastName"
+      'test1@gmail.com',
+      '123455',
+      'firstName',
+      'lastName'
     );
-    const registerAuthUserId2 = requestAuthRegisterV2(
-      "test2@gmail.com",
-      "123455",
-      "firstName",
-      "lastName"
+    requestAuthRegisterV2(
+      'test2@gmail.com',
+      '123455',
+      'firstName',
+      'lastName'
     );
-    const registerAuthUserId3 = requestAuthRegisterV2(
-      "test3@gmail.com",
-      "123455",
-      "firstName",
-      "lastName"
+    requestAuthRegisterV2(
+      'test3@gmail.com',
+      '123455',
+      'firstName',
+      'lastName'
     );
     const logoutAuthUserId = requestAuthLogOutV1(
       registerAuthUserId1.bodyObj.token

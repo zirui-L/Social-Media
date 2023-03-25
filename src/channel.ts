@@ -282,7 +282,7 @@ export const channelLeaveV1 = (
   if (!isMember(data, authUserId, channelId)) {
     return { error: 'User is not a member of the channel' };
   }
-  // remove meember from channel 
+  // remove meember from channel
   const channel = findChannel(data, channelId);
 
   channel.allMembers = channel.allMembers.filter((user) => user !== authUserId);

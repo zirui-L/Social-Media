@@ -19,8 +19,8 @@ afterEach(() => {
   requestClearV1();
 });
 
-describe("Testing /user/profile/v2 route", () => {
-  test("Test-1: Error, invalid token and valid uId", () => {
+describe('Testing /user/profile/v2 route', () => {
+  test('Test-1: Error, invalid token and valid uId', () => {
     const test1 = requestAuthRegisterV2(
       'test1@gmail.com',
       '123456',
@@ -36,7 +36,7 @@ describe("Testing /user/profile/v2 route", () => {
     expect(userProfileObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-2: Error, valid token and invalid uId", () => {
+  test('Test-2: Error, valid token and invalid uId', () => {
     const test1 = requestAuthRegisterV2(
       'test1@gmail.com',
       '123456',
@@ -52,8 +52,8 @@ describe("Testing /user/profile/v2 route", () => {
     expect(userProfileObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-3: Error, invalid token and invalid uId", () => {
-    const userProfileObj = requestUserProfileV2("0", 0);
+  test('Test-3: Error, invalid token and invalid uId', () => {
+    const userProfileObj = requestUserProfileV2('0', 0);
     expect(userProfileObj.statusCode).toBe(OK);
     expect(userProfileObj.bodyObj).toStrictEqual(ERROR);
   });
@@ -115,13 +115,13 @@ describe("Testing /user/profile/v2 route", () => {
   });
 });
 
-describe("Testing /users/all/v1 route", () => {
-  test("Test-1: Error, invalid token", () => {
+describe('Testing /users/all/v1 route', () => {
+  test('Test-1: Error, invalid token', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123456",
-      "Richardo",
-      "Lee"
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
     );
 
     const usersAllObj = requestUsersAllV1(test1.bodyObj.token + 1);
@@ -130,12 +130,12 @@ describe("Testing /users/all/v1 route", () => {
     expect(usersAllObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-2: Success, only one user", () => {
+  test('Test-2: Success, only one user', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123456",
-      "Richardo",
-      "Lee"
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
     );
 
     const usersAllObj = requestUsersAllV1(test1.bodyObj.token);
@@ -145,35 +145,35 @@ describe("Testing /users/all/v1 route", () => {
       users: [
         {
           uId: test1.bodyObj.authUserId,
-          email: "test1@gmail.com",
-          nameFirst: "Richardo",
-          nameLast: "Lee",
-          handleStr: "richardolee",
+          email: 'test1@gmail.com',
+          nameFirst: 'Richardo',
+          nameLast: 'Lee',
+          handleStr: 'richardolee',
         },
       ],
     });
   });
 
-  test("Test-3: Success, mutiple users", () => {
+  test('Test-3: Success, mutiple users', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
     const test2 = requestAuthRegisterV2(
-      "test2@gmail.com",
-      "password2",
-      "firstName2",
-      "lastName2"
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
     );
 
     const test3 = requestAuthRegisterV2(
-      "test3@gmail.com",
-      "password3",
-      "firstName3",
-      "lastName3"
+      'test3@gmail.com',
+      'password3',
+      'firstName3',
+      'lastName3'
     );
 
     const usersAllObj = requestUsersAllV1(test1.bodyObj.token);
@@ -183,118 +183,118 @@ describe("Testing /users/all/v1 route", () => {
       users: [
         {
           uId: test1.bodyObj.authUserId,
-          email: "test1@gmail.com",
-          nameFirst: "firstName1",
-          nameLast: "lastName1",
-          handleStr: "firstname1lastname1",
+          email: 'test1@gmail.com',
+          nameFirst: 'firstName1',
+          nameLast: 'lastName1',
+          handleStr: 'firstname1lastname1',
         },
         {
           uId: test2.bodyObj.authUserId,
-          email: "test2@gmail.com",
-          nameFirst: "firstName2",
-          nameLast: "lastName2",
-          handleStr: "firstname2lastname2",
+          email: 'test2@gmail.com',
+          nameFirst: 'firstName2',
+          nameLast: 'lastName2',
+          handleStr: 'firstname2lastname2',
         },
         {
           uId: test3.bodyObj.authUserId,
-          email: "test3@gmail.com",
-          nameFirst: "firstName3",
-          nameLast: "lastName3",
-          handleStr: "firstname3lastname3",
+          email: 'test3@gmail.com',
+          nameFirst: 'firstName3',
+          nameLast: 'lastName3',
+          handleStr: 'firstname3lastname3',
         },
       ],
     });
   });
 });
 
-describe("Testing /user/profile/setname/v1 route", () => {
-  test("Test-1: Error, invalid token", () => {
+describe('Testing /user/profile/setname/v1 route', () => {
+  test('Test-1: Error, invalid token', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
     const usersProfileSetnameObj = requestUserProfileSetNameV1(
       test1.bodyObj.token + 1,
-      "Richardo",
-      "Lee"
+      'Richardo',
+      'Lee'
     );
 
     expect(usersProfileSetnameObj.statusCode).toBe(OK);
     expect(usersProfileSetnameObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-2: Error, length of first name is not between 1 and 50", () => {
+  test('Test-2: Error, length of first name is not between 1 and 50', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
-    //first name length lower than 1
+    // first name length lower than 1
     const usersProfileSetnameObj = requestUserProfileSetNameV1(
       test1.bodyObj.token,
-      "",
-      "Lee"
+      '',
+      'Lee'
     );
 
     expect(usersProfileSetnameObj.statusCode).toBe(OK);
     expect(usersProfileSetnameObj.bodyObj).toStrictEqual(ERROR);
 
-    //first name length greater than 50
+    // first name length greater than 50
     const usersProfileSetnameObj1 = requestUserProfileSetNameV1(
       test1.bodyObj.token,
-      "3.1415926535897932384626433832795028841971693993751",
-      "Lee"
+      '3.1415926535897932384626433832795028841971693993751',
+      'Lee'
     );
 
     expect(usersProfileSetnameObj1.statusCode).toBe(OK);
     expect(usersProfileSetnameObj1.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-3: Error, length of last name is not between 1 and 50", () => {
+  test('Test-3: Error, length of last name is not between 1 and 50', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
-    //last name length lower than 1
+    // last name length lower than 1
     const usersProfileSetnameObj = requestUserProfileSetNameV1(
       test1.bodyObj.token,
-      "Richardo",
-      ""
+      'Richardo',
+      ''
     );
 
     expect(usersProfileSetnameObj.statusCode).toBe(OK);
     expect(usersProfileSetnameObj.bodyObj).toStrictEqual(ERROR);
 
-    //last name length greater than 50
+    // last name length greater than 50
     const usersProfileSetnameObj1 = requestUserProfileSetNameV1(
       test1.bodyObj.token,
-      "Richardo",
-      "3.1415926535897932384626433832795028841971693993751"
+      'Richardo',
+      '3.1415926535897932384626433832795028841971693993751'
     );
 
     expect(usersProfileSetnameObj1.statusCode).toBe(OK);
     expect(usersProfileSetnameObj1.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-4: Success in resetting name", () => {
+  test('Test-4: Success in resetting name', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
     const usersProfileSetnameObj = requestUserProfileSetNameV1(
       test1.bodyObj.token,
-      "Richardo",
-      "Lee"
+      'Richardo',
+      'Lee'
     );
 
     expect(usersProfileSetnameObj.statusCode).toBe(OK);
@@ -308,22 +308,22 @@ describe("Testing /user/profile/setname/v1 route", () => {
     expect(userProfileObj).toStrictEqual({
       user: {
         uId: test1.bodyObj.authUserId,
-        email: "test1@gmail.com",
-        nameFirst: "Richardo",
-        nameLast: "Lee",
-        handleStr: "richardolee",
+        email: 'test1@gmail.com',
+        nameFirst: 'Richardo',
+        nameLast: 'Lee',
+        handleStr: 'richardolee',
       },
     });
   });
 });
 
-describe("Testing /users/all/v1 route", () => {
-  test("Test-1: Error, invalid token", () => {
+describe('Testing /users/all/v1 route', () => {
+  test('Test-1: Error, invalid token', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123456",
-      "Richardo",
-      "Lee"
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
     );
 
     const usersAllObj = requestUsersAllV1(test1.bodyObj.token + 1);
@@ -332,12 +332,12 @@ describe("Testing /users/all/v1 route", () => {
     expect(usersAllObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-2: Success, only one user", () => {
+  test('Test-2: Success, only one user', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123456",
-      "Richardo",
-      "Lee"
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
     );
 
     const usersAllObj = requestUsersAllV1(test1.bodyObj.token);
@@ -347,35 +347,35 @@ describe("Testing /users/all/v1 route", () => {
       users: [
         {
           uId: test1.bodyObj.authUserId,
-          email: "test1@gmail.com",
-          nameFirst: "Richardo",
-          nameLast: "Lee",
-          handleStr: "richardolee",
+          email: 'test1@gmail.com',
+          nameFirst: 'Richardo',
+          nameLast: 'Lee',
+          handleStr: 'richardolee',
         },
       ],
     });
   });
 
-  test("Test-3: Success, mutiple users", () => {
+  test('Test-3: Success, mutiple users', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
     const test2 = requestAuthRegisterV2(
-      "test2@gmail.com",
-      "password2",
-      "firstName2",
-      "lastName2"
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
     );
 
     const test3 = requestAuthRegisterV2(
-      "test3@gmail.com",
-      "password3",
-      "firstName3",
-      "lastName3"
+      'test3@gmail.com',
+      'password3',
+      'firstName3',
+      'lastName3'
     );
 
     const usersAllObj = requestUsersAllV1(test1.bodyObj.token);
@@ -385,118 +385,118 @@ describe("Testing /users/all/v1 route", () => {
       users: [
         {
           uId: test1.bodyObj.authUserId,
-          email: "test1@gmail.com",
-          nameFirst: "firstName1",
-          nameLast: "lastName1",
-          handleStr: "firstname1lastname1",
+          email: 'test1@gmail.com',
+          nameFirst: 'firstName1',
+          nameLast: 'lastName1',
+          handleStr: 'firstname1lastname1',
         },
         {
           uId: test2.bodyObj.authUserId,
-          email: "test2@gmail.com",
-          nameFirst: "firstName2",
-          nameLast: "lastName2",
-          handleStr: "firstname2lastname2",
+          email: 'test2@gmail.com',
+          nameFirst: 'firstName2',
+          nameLast: 'lastName2',
+          handleStr: 'firstname2lastname2',
         },
         {
           uId: test3.bodyObj.authUserId,
-          email: "test3@gmail.com",
-          nameFirst: "firstName3",
-          nameLast: "lastName3",
-          handleStr: "firstname3lastname3",
+          email: 'test3@gmail.com',
+          nameFirst: 'firstName3',
+          nameLast: 'lastName3',
+          handleStr: 'firstname3lastname3',
         },
       ],
     });
   });
 });
 
-describe("Testing /user/profile/setname/v1 route", () => {
-  test("Test-1: Error, invalid token", () => {
+describe('Testing /user/profile/setname/v1 route', () => {
+  test('Test-1: Error, invalid token', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
     const usersProfileSetnameObj = requestUserProfileSetNameV1(
       test1.bodyObj.token + 1,
-      "Richardo",
-      "Lee"
+      'Richardo',
+      'Lee'
     );
 
     expect(usersProfileSetnameObj.statusCode).toBe(OK);
     expect(usersProfileSetnameObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-2: Error, length of first name is not between 1 and 50", () => {
+  test('Test-2: Error, length of first name is not between 1 and 50', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
-    //first name length lower than 1
+    // first name length lower than 1
     const usersProfileSetnameObj = requestUserProfileSetNameV1(
       test1.bodyObj.token,
-      "",
-      "Lee"
+      '',
+      'Lee'
     );
 
     expect(usersProfileSetnameObj.statusCode).toBe(OK);
     expect(usersProfileSetnameObj.bodyObj).toStrictEqual(ERROR);
 
-    //first name length greater than 50
+    // first name length greater than 50
     const usersProfileSetnameObj1 = requestUserProfileSetNameV1(
       test1.bodyObj.token,
-      "3.1415926535897932384626433832795028841971693993751",
-      "Lee"
+      '3.1415926535897932384626433832795028841971693993751',
+      'Lee'
     );
 
     expect(usersProfileSetnameObj1.statusCode).toBe(OK);
     expect(usersProfileSetnameObj1.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-3: Error, length of last name is not between 1 and 50", () => {
+  test('Test-3: Error, length of last name is not between 1 and 50', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
-    //last name length lower than 1
+    // last name length lower than 1
     const usersProfileSetnameObj = requestUserProfileSetNameV1(
       test1.bodyObj.token,
-      "Richardo",
-      ""
+      'Richardo',
+      ''
     );
 
     expect(usersProfileSetnameObj.statusCode).toBe(OK);
     expect(usersProfileSetnameObj.bodyObj).toStrictEqual(ERROR);
 
-    //last name length greater than 50
+    // last name length greater than 50
     const usersProfileSetnameObj1 = requestUserProfileSetNameV1(
       test1.bodyObj.token,
-      "Richardo",
-      "3.1415926535897932384626433832795028841971693993751"
+      'Richardo',
+      '3.1415926535897932384626433832795028841971693993751'
     );
 
     expect(usersProfileSetnameObj1.statusCode).toBe(OK);
     expect(usersProfileSetnameObj1.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-4: Success in resetting name", () => {
+  test('Test-4: Success in resetting name', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
     const usersProfileSetnameObj = requestUserProfileSetNameV1(
       test1.bodyObj.token,
-      "Richardo",
-      "Lee"
+      'Richardo',
+      'Lee'
     );
 
     expect(usersProfileSetnameObj.statusCode).toBe(OK);
@@ -510,84 +510,84 @@ describe("Testing /user/profile/setname/v1 route", () => {
     expect(userProfileObj).toStrictEqual({
       user: {
         uId: test1.bodyObj.authUserId,
-        email: "test1@gmail.com",
-        nameFirst: "Richardo",
-        nameLast: "Lee",
-        handleStr: "firstname1lastname1",
+        email: 'test1@gmail.com',
+        nameFirst: 'Richardo',
+        nameLast: 'Lee',
+        handleStr: 'firstname1lastname1',
       },
     });
   });
 });
 
-describe("Testing /user/profile/setemail/v1 route", () => {
-  test("Test-1: Error, invalid token", () => {
+describe('Testing /user/profile/setemail/v1 route', () => {
+  test('Test-1: Error, invalid token', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
     const usersProfileSetEmailObj = requestUserProfileSetEmailV1(
       test1.bodyObj.token + 1,
-      "test1@ad.unsw.edu.au"
+      'test1@ad.unsw.edu.au'
     );
 
     expect(usersProfileSetEmailObj.statusCode).toBe(OK);
     expect(usersProfileSetEmailObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-2: Error, email entered is not a valid email", () => {
+  test('Test-2: Error, email entered is not a valid email', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
     const usersProfileSetEmailObj = requestUserProfileSetEmailV1(
       test1.bodyObj.token,
-      "test1##ad.unsw.edu.au"
+      'test1##ad.unsw.edu.au'
     );
 
     expect(usersProfileSetEmailObj.statusCode).toBe(OK);
     expect(usersProfileSetEmailObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-3: Error, email address is already being used by another user", () => {
+  test('Test-3: Error, email address is already being used by another user', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
-    const test2 = requestAuthRegisterV2(
-      "test2@gmail.com",
-      "password2",
-      "firstName2",
-      "lastName2"
+    requestAuthRegisterV2(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
     );
 
     const usersProfileSetEmailObj = requestUserProfileSetEmailV1(
       test1.bodyObj.token,
-      "test2@gmail.com"
+      'test2@gmail.com'
     );
 
     expect(usersProfileSetEmailObj.statusCode).toBe(OK);
     expect(usersProfileSetEmailObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-4: Success in resetting email", () => {
+  test('Test-4: Success in resetting email', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
     const usersProfileSetEmailObj = requestUserProfileSetEmailV1(
       test1.bodyObj.token,
-      "test1@ad.unsw.edu.au"
+      'test1@ad.unsw.edu.au'
     );
 
     expect(usersProfileSetEmailObj.statusCode).toBe(OK);
@@ -601,44 +601,44 @@ describe("Testing /user/profile/setemail/v1 route", () => {
     expect(userProfileObj).toStrictEqual({
       user: {
         uId: test1.bodyObj.authUserId,
-        email: "test1@ad.unsw.edu.au",
-        nameFirst: "firstName1",
-        nameLast: "lastName1",
-        handleStr: "firstname1lastname1",
+        email: 'test1@ad.unsw.edu.au',
+        nameFirst: 'firstName1',
+        nameLast: 'lastName1',
+        handleStr: 'firstname1lastname1',
       },
     });
   });
 });
 
-describe("Testing /user/profile/sethandle/v1 route", () => {
-  test("Test-1: Error, invalid token", () => {
+describe('Testing /user/profile/sethandle/v1 route', () => {
+  test('Test-1: Error, invalid token', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
     const usersProfileSetHandleObj = requestUserProfileSetHandleV1(
       test1.bodyObj.token + 1,
-      "newhandlestring"
+      'newhandlestring'
     );
 
     expect(usersProfileSetHandleObj.statusCode).toBe(OK);
     expect(usersProfileSetHandleObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-2: Error, length of handleStr is not between 3 and 20 characters inclusive", () => {
+  test('Test-2: Error, length of handleStr is not between 3 and 20 characters inclusive', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
     // length of handleStr is less than 3
     const usersProfileSetHandleObj = requestUserProfileSetHandleV1(
       test1.bodyObj.token,
-      "12"
+      '12'
     );
 
     expect(usersProfileSetHandleObj.statusCode).toBe(OK);
@@ -647,7 +647,7 @@ describe("Testing /user/profile/sethandle/v1 route", () => {
     // length of handleStr is greater than 20
     const usersProfileSetHandleObj1 = requestUserProfileSetHandleV1(
       test1.bodyObj.token,
-      "314159265358979323846264338327"
+      '314159265358979323846264338327'
     );
 
     expect(usersProfileSetHandleObj1.statusCode).toBe(OK);
@@ -656,72 +656,72 @@ describe("Testing /user/profile/sethandle/v1 route", () => {
     // empty handle string
     const usersProfileSetHandleObj2 = requestUserProfileSetHandleV1(
       test1.bodyObj.token,
-      ""
+      ''
     );
 
     expect(usersProfileSetHandleObj2.statusCode).toBe(OK);
     expect(usersProfileSetHandleObj2.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-3: Error, handleStr contains characters that are not alphanumeric", () => {
+  test('Test-3: Error, handleStr contains characters that are not alphanumeric', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
     const usersProfileSetHandleObj = requestUserProfileSetHandleV1(
       test1.bodyObj.token,
-      "!@#$%%^&*()(*&^%$#@"
+      '!@#$%%^&*()(*&^%$#@'
     );
 
     expect(usersProfileSetHandleObj.statusCode).toBe(OK);
     expect(usersProfileSetHandleObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-4: Error, the handle is already used by another user", () => {
+  test('Test-4: Error, the handle is already used by another user', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
     const test2 = requestAuthRegisterV2(
-      "test2@gmail.com",
-      "password2",
-      "firstName2",
-      "lastName2"
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
     );
 
     const usersProfileSetHandleObj = requestUserProfileSetHandleV1(
       test1.bodyObj.token,
-      "12345"
+      '12345'
     );
 
     expect(usersProfileSetHandleObj.bodyObj).toStrictEqual({});
 
     const usersProfileSetHandleObj1 = requestUserProfileSetHandleV1(
       test2.bodyObj.token,
-      "12345"
+      '12345'
     );
 
     expect(usersProfileSetHandleObj1.statusCode).toBe(OK);
     expect(usersProfileSetHandleObj1.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-5: Success in resetting email", () => {
+  test('Test-5: Success in resetting email', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "password1",
-      "firstName1",
-      "lastName1"
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
     );
 
     const usersProfileSetHandleObj = requestUserProfileSetHandleV1(
       test1.bodyObj.token,
-      "12345"
+      '12345'
     );
 
     expect(usersProfileSetHandleObj.statusCode).toBe(OK);
@@ -735,10 +735,10 @@ describe("Testing /user/profile/sethandle/v1 route", () => {
     expect(userProfileObj).toStrictEqual({
       user: {
         uId: test1.bodyObj.authUserId,
-        email: "test1@gmail.com",
-        nameFirst: "firstName1",
-        nameLast: "lastName1",
-        handleStr: "12345",
+        email: 'test1@gmail.com',
+        nameFirst: 'firstName1',
+        nameLast: 'lastName1',
+        handleStr: '12345',
       },
     });
   });

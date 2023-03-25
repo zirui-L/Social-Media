@@ -6,8 +6,8 @@ import {
   getData,
   storedMessage,
   Dm,
-} from "./dataStore";
-import fs from "fs";
+} from './dataStore';
+import fs from 'fs';
 
 export const storeData = () => {
   const data = getData();

@@ -89,8 +89,7 @@ export const dmRemoveV1 = (token: string, dmId: number): Record<string, never> |
   const authUserId = findUserFromToken(data, token);
   if (!isDmOwner(data, authUserId, dmId)) {
     return { error: 'The authorised user is not the owner of the DM' };
-  } 
-  else if (!isDmMember(data, authUserId, dmId)) {
+  } else if (!isDmMember(data, authUserId, dmId)) {
     return { error: 'The authorised user is not in the DM' };
   }
   const Dm = findDm(data, dmId);

@@ -162,7 +162,7 @@ describe('Testing /dm/details/v1', () => {
     expect(DmDetails.bodyObj).toStrictEqual(ERROR);
   });
 
-  /*test('Test-4, correct input parameters', () => {
+  /* test('Test-4, correct input parameters', () => {
     const user1 = requestAuthRegisterV2('test1@gmail.com', '123456', 'Richardo', 'Li').bodyObj;
     const user2 = requestAuthRegisterV2('test2@gmail.com', '1234567', 'Shenba', 'Chen').bodyObj;
     const user3 = requestAuthRegisterV2('test3@gmail.com', '12345678', 'Kunda', 'Yu').bodyObj;
@@ -195,7 +195,7 @@ describe('Testing /dm/details/v1', () => {
         },
       ],
     });
-  });*/
+  }); */
 
   test('Test-5, calling dm details with different users', () => {
     const user1 = requestAuthRegisterV2('test1@gmail.com', '123456', 'Richardo', 'Li').bodyObj;

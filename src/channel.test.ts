@@ -933,24 +933,24 @@ describe('Testing /channel/leave/v1', () => {
     expect(channelLeaveObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-2: Error, channelId is valid and the authorised user is not a member of the channel", () => {
+  test('Test-2: Error, channelId is valid and the authorised user is not a member of the channel', () => {
     const ChannelMember = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123456",
-      "Richardo",
-      "Lee"
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
     );
 
     const NotChannelMmember = requestAuthRegisterV2(
-      "test2@gmail.com",
-      "123456",
-      "firstName",
-      "lastName"
+      'test2@gmail.com',
+      '123456',
+      'firstName',
+      'lastName'
     );
 
     const channel = requestChannelsCreateV2(
       ChannelMember.bodyObj.token,
-      "RicardoChannel",
+      'RicardoChannel',
       true
     );
 
@@ -962,46 +962,46 @@ describe('Testing /channel/leave/v1', () => {
     expect(channelLeaveObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-3: Error, token is invalid", () => {
+  test('Test-3: Error, token is invalid', () => {
     const user = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123456",
-      "Richardo",
-      "Lee"
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
     );
 
     const channel = requestChannelsCreateV2(
       user.bodyObj.token,
-      "RicardoChannel",
+      'RicardoChannel',
       true
     );
 
     const channelLeaveObj = requestChannelLeaveV1(
-      user.bodyObj.token + "1",
+      user.bodyObj.token + '1',
       channel.bodyObj.channelId
     );
     expect(channelLeaveObj.statusCode).toBe(OK);
     expect(channelLeaveObj.bodyObj).toStrictEqual(ERROR);
   });
   /*
-  test("Test-4: Success case of leave channel", () => {
+  test('Test-4: Success case of leave channel', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123456",
-      "Richardo",
-      "Lee"
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
     );
 
     const test2 = requestAuthRegisterV2(
-      "test2@gmail.com",
-      "123456",
-      "firstName",
-      "lastName"
+      'test2@gmail.com',
+      '123456',
+      'firstName',
+      'lastName'
     );
 
     const channel = requestChannelsCreateV2(
       test1.bodyObj.token,
-      "RicardoChannel",
+      'RicardoChannel',
       true
     );
 
@@ -1009,7 +1009,7 @@ describe('Testing /channel/leave/v1', () => {
     const messageSendObj = requestMessageSendV1(
       test2.bodyObj.token,
       channel.bodyObj.channelId,
-      "Froot"
+      'Froot'
     );
 
     const channelLeaveObj = requestChannelLeaveV1(
@@ -1023,24 +1023,24 @@ describe('Testing /channel/leave/v1', () => {
       requestChannelDetailsV2(test1.bodyObj.token, channel.bodyObj.channelId)
         .bodyObj
     ).toStrictEqual({
-      name: "RicardoChannel",
+      name: 'RicardoChannel',
       isPublic: true,
       ownerMembers: [
         {
           uId: test1.bodyObj.authUserId,
-          email: "test1@gmail.com",
-          nameFirst: "Richardo",
-          nameLast: "Lee",
-          handleStr: "richardolee",
+          email: 'test1@gmail.com',
+          nameFirst: 'Richardo',
+          nameLast: 'Lee',
+          handleStr: 'richardolee',
         },
       ],
       allMembers: [
         {
           uId: test1.bodyObj.authUserId,
-          email: "test1@gmail.com",
-          nameFirst: "Richardo",
-          nameLast: "Lee",
-          handleStr: "richardolee",
+          email: 'test1@gmail.com',
+          nameFirst: 'Richardo',
+          nameLast: 'Lee',
+          handleStr: 'richardolee',
         },
       ],
     });
@@ -1053,12 +1053,12 @@ describe('Testing /channel/leave/v1', () => {
     expect(message.bodyObj.messages).toContain({
       messageId: messageSendObj.bodyObj.messageId,
       uId: test2.bodyObj.authUserId,
-      message: "Froot",
+      message: 'Froot',
       timeSent: expect.any(Number),
     });
   });
   */
-  test("Test-5: Success case of the owner leave channel", () => {
+  test('Test-5: Success case of the owner leave channel', () => {
     const test1 = requestAuthRegisterV2(
       'test1@gmail.com',
       '123456',
@@ -1399,43 +1399,43 @@ describe('Testing /channel/addowner/v1', () => {
       ],
     });
   });
-  
+
   test('Test-7: add multiple owners', () => {
     const owner = requestAuthRegisterV2(
-      "test0@gmail.com",
-      "123456",
-      "firstname0",
-      "lastname0"
+      'test0@gmail.com',
+      '123456',
+      'firstname0',
+      'lastname0'
     );
     const member1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123456",
-      "firstname1",
-      "lastname1"
+      'test1@gmail.com',
+      '123456',
+      'firstname1',
+      'lastname1'
     );
     const member2 = requestAuthRegisterV2(
-      "test2@gmail.com",
-      "123456",
-      "firstname2",
-      "lastname2"
+      'test2@gmail.com',
+      '123456',
+      'firstname2',
+      'lastname2'
     );
     const member3 = requestAuthRegisterV2(
-      "test3@gmail.com",
-      "123456",
-      "firstname3",
-      "lastname3"
+      'test3@gmail.com',
+      '123456',
+      'firstname3',
+      'lastname3'
     );
     const member4 = requestAuthRegisterV2(
-      "test4@gmail.com",
-      "123456",
-      "firstname4",
-      "lastname4"
+      'test4@gmail.com',
+      '123456',
+      'firstname4',
+      'lastname4'
     );
     const member5 = requestAuthRegisterV2(
-      "test5@gmail.com",
-      "123456",
-      "firstname5",
-      "lastname5"
+      'test5@gmail.com',
+      '123456',
+      'firstname5',
+      'lastname5'
     );
     const channel = requestChannelsCreateV2(
       owner.bodyObj.token,
@@ -1537,16 +1537,15 @@ describe('Testing /channel/addowner/v1', () => {
       ],
     });
   });
-  
 });
 
-describe("Testing /channel/removeowner/v1", () => {
-  test("Test-1: Error, invalid channelId", () => {
+describe('Testing /channel/removeowner/v1', () => {
+  test('Test-1: Error, invalid channelId', () => {
     const test1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123456",
-      "Richardo",
-      "Lee"
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
     );
 
     const channel = requestChannelsCreateV2(
@@ -1728,7 +1727,7 @@ describe("Testing /channel/removeowner/v1", () => {
     expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(ERROR);
   });
 
-  test("Test-7: Success case with removing a owner", () => {
+  test('Test-7: Success case with removing a owner', () => {
     const test1 = requestAuthRegisterV2(
       'test1@gmail.com',
       '123456',
@@ -1798,43 +1797,43 @@ describe("Testing /channel/removeowner/v1", () => {
       ],
     });
   });
-  
+
   test('Test-8: remove multiple owners', () => {
     const owner = requestAuthRegisterV2(
-      "test0@gmail.com",
-      "123456",
-      "firstname0",
-      "lastname0"
+      'test0@gmail.com',
+      '123456',
+      'firstname0',
+      'lastname0'
     );
     const member1 = requestAuthRegisterV2(
-      "test1@gmail.com",
-      "123456",
-      "firstname1",
-      "lastname1"
+      'test1@gmail.com',
+      '123456',
+      'firstname1',
+      'lastname1'
     );
     const member2 = requestAuthRegisterV2(
-      "test2@gmail.com",
-      "123456",
-      "firstname2",
-      "lastname2"
+      'test2@gmail.com',
+      '123456',
+      'firstname2',
+      'lastname2'
     );
     const member3 = requestAuthRegisterV2(
-      "test3@gmail.com",
-      "123456",
-      "firstname3",
-      "lastname3"
+      'test3@gmail.com',
+      '123456',
+      'firstname3',
+      'lastname3'
     );
     const member4 = requestAuthRegisterV2(
-      "test4@gmail.com",
-      "123456",
-      "firstname4",
-      "lastname4"
+      'test4@gmail.com',
+      '123456',
+      'firstname4',
+      'lastname4'
     );
     const member5 = requestAuthRegisterV2(
-      "test5@gmail.com",
-      "123456",
-      "firstname5",
-      "lastname5"
+      'test5@gmail.com',
+      '123456',
+      'firstname5',
+      'lastname5'
     );
     const channel = requestChannelsCreateV2(
       owner.bodyObj.token,
@@ -1852,7 +1851,7 @@ describe("Testing /channel/removeowner/v1", () => {
     requestChannelAddOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member3.bodyObj.authUserId);
     requestChannelAddOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member4.bodyObj.authUserId);
     requestChannelAddOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member5.bodyObj.authUserId);
-    // remove member1, member3, member5 from owner 
+    // remove member1, member3, member5 from owner
     requestChannelRemoveOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member1.bodyObj.authUserId);
     requestChannelRemoveOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member3.bodyObj.authUserId);
     const removeMultiple = requestChannelRemoveOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member5.bodyObj.authUserId);
@@ -1931,7 +1930,6 @@ describe("Testing /channel/removeowner/v1", () => {
       ],
     });
   });
-  
 });
 
 const createMessages = (
