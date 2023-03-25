@@ -106,13 +106,17 @@ export const messageEditV1 = (
   !User.dms.includes(MessageToEdit.dmOrChannelId)) {
     return { error: "Message is not in user's chat" };
   }
-  if (uId !== MessageToEdit.uId &&
-      ((MessageToEdit.isChannelMessage &&
+  if (MessageToEdit.isChannelMessage) {
+    if (uId !== MessageToEdit.uId &&
       !isOwner(data, uId, MessageToEdit.dmOrChannelId) &&
-      findUser(data, uId).permissionId !== 1) ||
-      (!MessageToEdit.isChannelMessage &&
-      !isDmOwner(data, uId, MessageToEdit.dmOrChannelId)))) {
-    return { error: "User doesn't have permission" };
+      findUser(data, uId).permissionId !== 1) {
+      return { error: "User doesn't have permission" };
+    }
+  } else {
+    if (uId !== MessageToEdit.uId &&
+      !isDmOwner(data, uId, MessageToEdit.dmOrChannelId)) {
+      return { error: "User doesn't have permission" };
+    }
   }
 
   if (message.length === 0) {
@@ -160,14 +164,19 @@ export const messageRemoveV1 = (
   !storedUser.dms.includes(MessageToDelete.dmOrChannelId)) {
     return { error: "Message is not in user's chat" };
   }
-  if (uId !== MessageToDelete.uId &&
-      ((MessageToDelete.isChannelMessage &&
+  if (MessageToDelete.isChannelMessage) {
+    if (uId !== MessageToDelete.uId &&
       !isOwner(data, uId, MessageToDelete.dmOrChannelId) &&
-      findUser(data, uId).permissionId !== 1) ||
-      (!MessageToDelete.isChannelMessage &&
-      !isDmOwner(data, uId, MessageToDelete.dmOrChannelId)))) {
-    return { error: "User doesn't have permission" };
+      findUser(data, uId).permissionId !== 1) {
+      return { error: "User doesn't have permission" };
+    }
+  } else {
+    if (uId !== MessageToDelete.uId &&
+      !isDmOwner(data, uId, MessageToDelete.dmOrChannelId)) {
+      return { error: "User doesn't have permission" };
+    }
   }
+  
   if (MessageToDelete.isChannelMessage) {
     const channel = findChannel(data, MessageToDelete.dmOrChannelId);
     channel.messages = channel.messages.filter(
