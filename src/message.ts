@@ -176,7 +176,7 @@ export const messageRemoveV1 = (
       return { error: "User doesn't have permission" };
     }
   }
-  
+
   if (MessageToDelete.isChannelMessage) {
     const channel = findChannel(data, MessageToDelete.dmOrChannelId);
     channel.messages = channel.messages.filter(
@@ -233,7 +233,7 @@ export const messageSendDmV1 = (
     uId,
     message,
     timeSent: Date.now() / 1000,
-    isChannelMessage: true,
+    isChannelMessage: false,
     dmOrChannelId: dmId
   });
   Dm.messages.unshift(messageId);

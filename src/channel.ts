@@ -1,4 +1,4 @@
-import { getData, setData, Error, paginatedMessage } from "./dataStore";
+import { getData, setData, User, Error, paginatedMessage } from './dataStore';
 import {
   isTokenValid,
   findUserFromToken,
@@ -9,13 +9,13 @@ import {
   findChannel,
   findMessageFromId,
   isOwner,
-} from "./helperFunctions";
+} from './helperFunctions';
 
 type ChannelDetails = {
   name: string;
   isPublic: boolean;
-  ownerMembers: Array<number>;
-  allMembers: Array<number>;
+  ownerMembers: Array<User>;
+  allMembers: Array<User>;
 };
 
 /**
@@ -39,21 +39,21 @@ export const channelDetailsV2 = (
   const data = getData();
 
   if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   } else if (!isChannelValid(data, channelId)) {
-    return { error: "Invalid channel" };
+    return { error: 'Invalid channel' };
   }
 
   const authUserId = findUserFromToken(data, token);
 
   if (!isMember(data, authUserId, channelId)) {
-    return { error: "User is not a member of the channel" };
+    return { error: 'User is not a member of the channel' };
   }
 
   const newChannel = findChannel(data, channelId);
 
-  const ownerMembers = new Array();
-  const allMembers = new Array();
+  const ownerMembers = [];
+  const allMembers = [];
 
   for (const user of newChannel.ownerMembers) {
     const currentUser = findUser(data, user);
@@ -101,26 +101,26 @@ export const channelDetailsV2 = (
  * not a channel member and is not a global owner
  */
 
-export const channelJoinV2 = (token: string, channelId: number): {} | Error => {
+export const channelJoinV2 = (token: string, channelId: number): Record<string, never> | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   } else if (!isChannelValid(data, channelId)) {
-    return { error: "Invalid channel" };
+    return { error: 'Invalid channel' };
   }
 
   const authUserId = findUserFromToken(data, token);
 
   if (isMember(data, authUserId, channelId)) {
-    return { error: "User is already a member of the channel" };
+    return { error: 'User is already a member of the channel' };
   }
 
   const newUser = findUser(data, authUserId);
   const newChannel = findChannel(data, channelId);
 
   if (!newChannel.isPublic && newUser.permissionId !== 1) {
-    return { error: "Private channel, and user is not global" };
+    return { error: 'Private channel, and user is not global' };
   }
 
   newChannel.allMembers.push(authUserId);
@@ -152,23 +152,23 @@ export const channelInviteV2 = (
   token: string,
   channelId: number,
   uId: number
-): {} | Error => {
+): Record<string, never> | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   } else if (!isChannelValid(data, channelId)) {
-    return { error: "Invalid channel" };
+    return { error: 'Invalid channel' };
   } else if (!isAuthUserIdValid(data, uId)) {
-    return { error: "Invalid user id" };
+    return { error: 'Invalid user id' };
   } else if (isMember(data, uId, channelId)) {
-    return { error: "Invited user is already a member" };
+    return { error: 'Invited user is already a member' };
   }
 
   const authUserId = findUserFromToken(data, token);
 
   if (!isMember(data, authUserId, channelId)) {
-    return { error: "Requested by a user with invalid token (not a member)" };
+    return { error: 'Requested by a user with invalid token (not a member)' };
   }
 
   const newUser = findUser(data, authUserId);
@@ -209,21 +209,21 @@ export const channelMessagesV2 = (
   const data = getData();
 
   if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   } else if (!isChannelValid(data, channelId)) {
-    return { error: "Invalid channel" };
+    return { error: 'Invalid channel' };
   }
 
   const authUserId = findUserFromToken(data, token);
 
   if (!isMember(data, authUserId, channelId)) {
-    return { error: "User is not a member of the channel" };
+    return { error: 'User is not a member of the channel' };
   }
 
   const newChannel = findChannel(data, channelId);
 
   if (newChannel.messages.length < start) {
-    return { error: "start is greater than the total number of messages" };
+    return { error: 'start is greater than the total number of messages' };
   }
 
   let end;
@@ -237,7 +237,7 @@ export const channelMessagesV2 = (
     end = start + 50;
   }
 
-  const paginatedMessages = new Array();
+  const paginatedMessages = [];
 
   for (let i = start; i < start + lengthOfMessage; i++) {
     paginatedMessages.push(findMessageFromId(data, newChannel.messages[i]));
@@ -268,21 +268,21 @@ export const channelMessagesV2 = (
 export const channelLeaveV1 = (
   token: string,
   channelId: number
-): {} | Error => {
+): Record<string, never> | Error => {
   const data = getData();
   // check validity of input
   if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   } else if (!isChannelValid(data, channelId)) {
-    return { error: "Invalid channel" };
+    return { error: 'Invalid channel' };
   }
 
   const authUserId = findUserFromToken(data, token);
 
   if (!isMember(data, authUserId, channelId)) {
-    return { error: "User is not a member of the channel" };
+    return { error: 'User is not a member of the channel' };
   }
-  // remove meember from channel 
+  // remove meember from channel
   const channel = findChannel(data, channelId);
 
   channel.allMembers = channel.allMembers.filter((user) => user !== authUserId);
@@ -323,27 +323,27 @@ export const channelAddOwnerV1 = (
   token: string,
   channelId: number,
   uId: number
-): {} | Error => {
+): Record<string, never> | Error => {
   const data = getData();
   // check validity of input
   if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   } else if (!isChannelValid(data, channelId)) {
-    return { error: "Invalid channel" };
+    return { error: 'Invalid channel' };
   } else if (!isAuthUserIdValid(data, uId)) {
-    return { error: "Invalid uId" };
+    return { error: 'Invalid uId' };
   } else if (!isMember(data, uId, channelId)) {
-    return { error: "UId refer to user that is not a member of the channel" };
+    return { error: 'UId refer to user that is not a member of the channel' };
   }
 
   if (isOwner(data, uId, channelId)) {
-    return { error: "User is already an owner" };
+    return { error: 'User is already an owner' };
   }
 
   const authUserId = findUserFromToken(data, token);
 
   if (!isOwner(data, authUserId, channelId)) {
-    return { error: "The authorised user is not an owner of the channel" };
+    return { error: 'The authorised user is not an owner of the channel' };
   }
   // add user to ownermember array
   const channel = findChannel(data, channelId);
@@ -379,31 +379,31 @@ export const channelRemoveOwnerV1 = (
   token: string,
   channelId: number,
   uId: number
-): {} | Error => {
+): Record<string, never> | Error => {
   const data = getData();
   // check validity of input
   if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   } else if (!isChannelValid(data, channelId)) {
-    return { error: "Invalid channel" };
+    return { error: 'Invalid channel' };
   } else if (!isAuthUserIdValid(data, uId)) {
-    return { error: "Invalid uId" };
+    return { error: 'Invalid uId' };
   } else if (!isOwner(data, uId, channelId)) {
     const channel = findChannel(data, channelId);
     console.log(channel);
     console.log(uId);
-    return { error: "User is not an owner of the channel" };
+    return { error: 'User is not an owner of the channel' };
   }
 
   const authUserId = findUserFromToken(data, token);
 
   if (!isOwner(data, authUserId, channelId)) {
-    return { error: "The authorised user is not an owner of the channel" };
+    return { error: 'The authorised user is not an owner of the channel' };
   }
 
   const channel = findChannel(data, channelId);
   if (channel.ownerMembers.length === 1) {
-    return { error: "Uer is the only owner of the channel" };
+    return { error: 'User is the only owner of the channel' };
   }
   // remove user from ownermember list
   channel.ownerMembers = channel.ownerMembers.filter((user) => user !== uId);

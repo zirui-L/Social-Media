@@ -1,4 +1,4 @@
-import { getData, Error, User, setData } from "./dataStore";
+import { getData, Error, User, setData } from './dataStore';
 import {
   isAuthUserIdValid,
   isTokenValid,
@@ -7,9 +7,11 @@ import {
   isAvaliableHandleString,
   findUser,
   findUserFromToken,
-} from "./helperFunctions";
-import validator from "validator";
-import { toNamespacedPath } from "path";
+} from './helperFunctions';
+import validator from 'validator';
+/* eslint-disable */
+import { toNamespacedPath } from 'path';
+/* eslint-enable */
 
 type UserObject = {
   user: User;
@@ -37,9 +39,9 @@ export const userProfileV2 = (
   const data = getData();
 
   if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   } else if (!isAuthUserIdValid(data, uId)) {
-    return { error: "uId does not refer to a valid user" };
+    return { error: 'uId does not refer to a valid user' };
   }
 
   for (const user of data.users) {
@@ -71,10 +73,10 @@ export const usersAllV1 = (token: string): UsersObject | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   }
 
-  const usersArray = new Array();
+  const usersArray = [];
 
   for (const user of data.users) {
     usersArray.push({
@@ -107,13 +109,13 @@ export const userProfileSetNameV1 = (
   token: string,
   nameFirst: string,
   nameLast: string
-): {} | Error => {
+): Record<string, never> | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   } else if (!nameInRange(nameFirst) || !nameInRange(nameLast)) {
-    return { error: "Invalid name length" };
+    return { error: 'Invalid name length' };
   }
 
   const autherUserId = findUserFromToken(data, token);
@@ -143,15 +145,15 @@ export const userProfileSetNameV1 = (
 export const userProfileSetEmailV1 = (
   token: string,
   email: string
-): {} | Error => {
+): Record<string, never> | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   } else if (!validator.isEmail(email)) {
-    return { error: "Invalid email" };
+    return { error: 'Invalid email' };
   } else if (!isAvaliableEmail(email, data.users)) {
-    return { error: "Email already exist" };
+    return { error: 'Email already exist' };
   }
 
   const autherUserId = findUserFromToken(data, token);
@@ -182,18 +184,18 @@ export const userProfileSetEmailV1 = (
 export const userProfileSetHandleV1 = (
   token: string,
   handleStr: string
-): {} | Error => {
+): Record<string, never> | Error => {
   const data = getData();
 
   if (!isTokenValid(data, token)) {
-    return { error: "Invalid token" };
+    return { error: 'Invalid token' };
   } else if (handleStr.length < 3 || handleStr.length > 20) {
-    return { error: "Invalid handle string length" };
+    return { error: 'Invalid handle string length' };
   } else if (!/^[0-9a-zA-Z]+$/.test(handleStr)) {
     // test wether the string is alphanumerical using regular expression
-    return { error: "handleStr contains characters that are not alphanumeric" };
+    return { error: 'handleStr contains characters that are not alphanumeric' };
   } else if (!isAvaliableHandleString(handleStr, data)) {
-    return { error: "handle is already used by another user" };
+    return { error: 'handle is already used by another user' };
   }
 
   const autherUserId = findUserFromToken(data, token);

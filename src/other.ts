@@ -1,4 +1,4 @@
-import { getData, setData } from "./dataStore";
+import { getData, setData } from './dataStore';
 
 /**
  * <Create a new user with input email, password, first and last names. Create
@@ -9,7 +9,7 @@ import { getData, setData } from "./dataStore";
  * @returns {{}} - if the function successifully clear the data stored
  */
 
-export const clearV1 = (): {} => {
+export const clearV1 = (): Record<string, never> => {
   const data = getData();
   data.channels.length = 0;
   data.users.length = 0;

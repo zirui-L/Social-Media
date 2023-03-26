@@ -6,15 +6,15 @@ import {
   getData,
   storedMessage,
   Dm,
-} from "./dataStore";
-import fs from "fs";
+} from './dataStore';
+import fs from 'fs';
 
 export const storeData = () => {
   const data = getData();
-  if (fs.existsSync("src/data.json")) {
-    fs.unlinkSync("src/data.json");
+  if (fs.existsSync('src/data.json')) {
+    fs.unlinkSync('src/data.json');
   }
-  fs.writeFileSync("src/data.json", JSON.stringify(data), { flag: "w" });
+  fs.writeFileSync('src/data.json', JSON.stringify(data), { flag: 'w' });
 };
 
 /**
@@ -63,7 +63,7 @@ export const generateHandleStr = (
 ): string => {
   let handleString = nameFirst.toLowerCase() + nameLast.toLowerCase();
 
-  handleString = handleString.replace(/[^0-9a-z]/gi, "");
+  handleString = handleString.replace(/[^0-9a-z]/gi, '');
 
   if (handleString.length > 20) {
     handleString = handleString.substr(0, 20);
@@ -168,7 +168,6 @@ export const isDmValid = (data: Data, dmId: number): boolean => {
       return true;
     }
   }
-
   return false;
 };
 
@@ -336,6 +335,29 @@ export const findMessageFromId = (data: Data, messageId: number): Message => {
     message: message.message,
     timeSent: message.timeSent,
   };
+};
+
+export const isUIdsValid = (data: Data, uIds: Array<number>): boolean => {
+  for (const uId of uIds) {
+    if (!isAuthUserIdValid(data, uId)) {
+      return false;
+    }
+  }
+  return true;
+};
+
+export const isDuplicate = (uIds: Array<number>): boolean => {
+  for (let i = 0; i < uIds.length; i++) {
+    for (let j = i + 1; j < uIds.length; j++) {
+      if (uIds[i] === uIds[j]) return true;
+    }
+  }
+  return false;
+};
+
+export const isDmMember = (data: Data, UId: number, dmId: number): boolean => {
+  const Dm = findDm(data, dmId);
+  return Dm.allMembers.includes(UId);
 };
 
 /**

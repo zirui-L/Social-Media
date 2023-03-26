@@ -6,13 +6,26 @@ stages:
 before_script:
   - npm install
 
+cache:
+  paths:
+    - node_modules
+
 tests:
   stage: checks
   script:
     - SERVER_LOG=$(mktemp)
     - npm run start >& $SERVER_LOG &
-    - timeout 10s grep -q "⚡️ Server started on port" <(tail -f $SERVER_LOG) || exit 1
-    - timeout -s SIGINT 180s npm run test || (cat $SERVER_LOG && exit 1)
-    - kill -SIGINT %1
     - sleep 2
+    - npm run test src/**.ts
+    - kill -SIGINT %1
     - cat $SERVER_LOG
+
+typecheck:
+  stage: checks
+  script:
+    - npm run tsc
+
+linting:
+  stage: checks
+  script:
+    - npm run lint
