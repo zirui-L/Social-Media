@@ -19,12 +19,7 @@ afterEach(() => {
 
 describe('/auth/login/v2 testing', () => {
   test('Test-1: correct login email and password', () => {
-    requestAuthRegisterV2(
-      'test@gmail.com',
-      '123455',
-      'firstName',
-      'lastName'
-    );
+    requestAuthRegisterV2('test@gmail.com', '123455', 'firstName', 'lastName');
     const loginAuthUserId = requestAuthLoginV2('test@gmail.com', '123455');
     expect(loginAuthUserId.statusCode).toBe(OK);
     expect(loginAuthUserId.bodyObj).toStrictEqual({
@@ -34,24 +29,14 @@ describe('/auth/login/v2 testing', () => {
   });
 
   test('Test-2: correct login email but incorrect password', () => {
-    requestAuthRegisterV2(
-      'test@gmail.com',
-      '123456',
-      'firstName',
-      'lastName'
-    );
+    requestAuthRegisterV2('test@gmail.com', '123456', 'firstName', 'lastName');
     const loginAuthUserId = requestAuthLoginV2('test@gmail.com', '54321');
     expect(loginAuthUserId.statusCode).toBe(OK);
     expect(loginAuthUserId.bodyObj).toStrictEqual(ERROR);
   });
 
   test('Test-3: login with non-existing email and existing password', () => {
-    requestAuthRegisterV2(
-      'test@gmail.com',
-      '123456',
-      'firstName',
-      'lastName'
-    );
+    requestAuthRegisterV2('test@gmail.com', '123456', 'firstName', 'lastName');
     const loginAuthUserId = requestAuthLoginV2('another@gmail.com', '123456');
     expect(loginAuthUserId.statusCode).toBe(OK);
     expect(loginAuthUserId.bodyObj).toStrictEqual(ERROR);
@@ -195,14 +180,7 @@ describe('/auth/register/v2 testing - generating handle string / email duplicati
   });
 
   test('Test-3: already taken handlers', () => {
-    /* eslint-disable */
-    const detail1 = requestAuthRegisterV2(
-      'test1@gmail.com',
-      '123456',
-      'firstName',
-      'lastName'
-    );
-    /* eslint-enable */
+    requestAuthRegisterV2('test1@gmail.com', '123456', 'firstName', 'lastName');
     const detail2 = requestAuthRegisterV2(
       'test2@gmail.com',
       '123456',
@@ -220,14 +198,13 @@ describe('/auth/register/v2 testing - generating handle string / email duplicati
   });
 
   test('Test-4: already taken handler string exceeds 20 characters limit', () => {
-    /* eslint-disable */
     const detail1 = requestAuthRegisterV2(
       'test1@gmail.com',
       '123456',
       'firstName314',
       'lastName'
     );
-    
+
     const detail2 = requestAuthRegisterV2(
       'test2@gmail.com',
       '123456',
@@ -245,14 +222,7 @@ describe('/auth/register/v2 testing - generating handle string / email duplicati
   });
 
   test('Test-5: /auth/register/v2 testing with duplication in email', () => {
-    /* eslint-disable */
-    const detail1 = requestAuthRegisterV2(
-      'test@gmail.com',
-      '123456',
-      'firstName',
-      'lastName'
-    );
-    /* eslint-enable */
+    requestAuthRegisterV2('test@gmail.com', '123456', 'firstName', 'lastName');
     const detail2 = requestAuthRegisterV2(
       'test@gmail.com',
       '1234567',
@@ -327,18 +297,8 @@ describe('/auth/logout/v1 testing', () => {
       'firstName',
       'lastName'
     );
-    requestAuthRegisterV2(
-      'test2@gmail.com',
-      '123455',
-      'firstName',
-      'lastName'
-    );
-    requestAuthRegisterV2(
-      'test3@gmail.com',
-      '123455',
-      'firstName',
-      'lastName'
-    );
+    requestAuthRegisterV2('test2@gmail.com', '123455', 'firstName', 'lastName');
+    requestAuthRegisterV2('test3@gmail.com', '123455', 'firstName', 'lastName');
     const logoutAuthUserId = requestAuthLogOutV1(
       registerAuthUserId1.bodyObj.token
     );
