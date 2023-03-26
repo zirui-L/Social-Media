@@ -6,15 +6,15 @@ import {
   getData,
   storedMessage,
   Dm,
-} from "./dataStore";
-import fs from "fs";
+} from './dataStore';
+import fs from 'fs';
 
 export const storeData = () => {
   const data = getData();
-  if (fs.existsSync("src/data.json")) {
-    fs.unlinkSync("src/data.json");
+  if (fs.existsSync('src/data.json')) {
+    fs.unlinkSync('src/data.json');
   }
-  fs.writeFileSync("src/data.json", JSON.stringify(data), { flag: "w" });
+  fs.writeFileSync('src/data.json', JSON.stringify(data), { flag: 'w' });
 };
 
 /**
@@ -63,7 +63,7 @@ export const generateHandleStr = (
 ): string => {
   let handleString = nameFirst.toLowerCase() + nameLast.toLowerCase();
 
-  handleString = handleString.replace(/[^0-9a-z]/gi, "");
+  handleString = handleString.replace(/[^0-9a-z]/gi, '');
 
   if (handleString.length > 20) {
     handleString = handleString.substr(0, 20);
