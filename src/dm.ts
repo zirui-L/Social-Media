@@ -39,7 +39,7 @@ export const dmCreateV1 = (token: string, uIds: Array<number>): DmId | Error => 
 
   const authUserId = findUserFromToken(data, token);
   const dmId = createUniqueId();
-  uIds.push(authUserId);
+  uIds.unshift(authUserId);
 
   const users = [];
   for (const uId of uIds) {

@@ -445,8 +445,8 @@ describe('Testing /message/edit/v1', () => {
       'lastName2'
     );
 
-    const dmIdObj = requestDmCreateV1(test2.bodyObj.token, [
-      test1.bodyObj.authUserId,
+    const dmIdObj = requestDmCreateV1(test1.bodyObj.token, [
+      test2.bodyObj.authUserId,
     ]);
 
     const messageIdObj = requestMessageSendDmV1(
@@ -845,8 +845,8 @@ describe('Testing /message/remove/v1', () => {
       'lastName2'
     );
 
-    const dmIdObj = requestDmCreateV1(test2.bodyObj.token, [
-      test1.bodyObj.authUserId,
+    const dmIdObj = requestDmCreateV1(test1.bodyObj.token, [
+      test2.bodyObj.authUserId,
     ]);
 
     const messageIdObj = requestMessageSendDmV1(

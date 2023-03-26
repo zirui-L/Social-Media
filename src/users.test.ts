@@ -311,7 +311,7 @@ describe('Testing /user/profile/setname/v1 route', () => {
         email: 'test1@gmail.com',
         nameFirst: 'Richardo',
         nameLast: 'Lee',
-        handleStr: 'richardolee',
+        handleStr: 'firstname1lastname1',
       },
     });
   });

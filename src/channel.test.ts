@@ -792,8 +792,8 @@ describe('Testing /channel/messages/v2', () => {
 
     expect(channelMessageObj.statusCode).toBe(OK);
     expect(channelMessageObj.bodyObj).toStrictEqual({
-      messages: expect.anything,
-      start: 50,
+      messages: expect.anything(),
+      start: 0,
       end: -1,
     });
   });
@@ -842,17 +842,29 @@ describe('Testing /channel/messages/v2', () => {
 
     createMessages(test1.bodyObj.token, channel.bodyObj.channelId, 51);
 
-    const channelMessageObj = requestChannelMessagesV2(
+    const channelMessageObj1 = requestChannelMessagesV2(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
-      60
+      0
     );
 
-    expect(channelMessageObj.statusCode).toBe(OK);
-    expect(channelMessageObj.bodyObj).toStrictEqual({
-      messages: expect.anything,
+    const channelMessageObj2 = requestChannelMessagesV2(
+      test1.bodyObj.token,
+      channel.bodyObj.channelId,
+      50
+    );
+
+    expect(channelMessageObj1.statusCode).toBe(OK);
+    expect(channelMessageObj2.statusCode).toBe(OK);
+    expect(channelMessageObj1.bodyObj).toStrictEqual({
+      messages: expect.anything(),
       start: 0,
       end: 50,
+    });
+    expect(channelMessageObj2.bodyObj).toStrictEqual({
+      messages: expect.anything(),
+      start: 50,
+      end: -1,
     });
   });
 
@@ -893,17 +905,17 @@ describe('Testing /channel/messages/v2', () => {
     expect(channelMessageObj2.statusCode).toBe(OK);
     expect(channelMessageObj3.statusCode).toBe(OK);
     expect(channelMessageObj1.bodyObj).toStrictEqual({
-      messages: expect.anything,
+      messages: expect.anything(),
       start: 0,
       end: 50,
     });
     expect(channelMessageObj2.bodyObj).toStrictEqual({
-      messages: expect.anything,
+      messages: expect.anything(),
       start: 50,
       end: 100,
     });
     expect(channelMessageObj3.bodyObj).toStrictEqual({
-      messages: expect.anything,
+      messages: expect.anything(),
       start: 100,
       end: -1,
     });
@@ -1938,6 +1950,6 @@ const createMessages = (
   repetition: number
 ): void => {
   for (let count = 0; count < repetition; count++) {
-    requestMessageSendV1(token, channelId, '$Testing line {count}');
+    requestMessageSendV1(token, channelId, `Testing line ${count}`);
   }
 };

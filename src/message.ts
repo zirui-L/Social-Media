@@ -233,7 +233,7 @@ export const messageSendDmV1 = (
     uId,
     message,
     timeSent: Date.now() / 1000,
-    isChannelMessage: true,
+    isChannelMessage: false,
     dmOrChannelId: dmId
   });
   Dm.messages.unshift(messageId);
