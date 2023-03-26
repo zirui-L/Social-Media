@@ -32,11 +32,7 @@ describe('Testing /channel/details/v2', () => {
       'Richardo',
       'Li'
     );
-    requestChannelsCreateV2(
-      test1.bodyObj.token,
-      'RicardoChannel',
-      true
-    );
+    requestChannelsCreateV2(test1.bodyObj.token, 'RicardoChannel', true);
     const channelDetails = requestChannelDetailsV2(
       test1.bodyObj.token,
       test1.bodyObj.channelId + 1
@@ -995,7 +991,7 @@ describe('Testing /channel/leave/v1', () => {
     expect(channelLeaveObj.statusCode).toBe(OK);
     expect(channelLeaveObj.bodyObj).toStrictEqual(ERROR);
   });
-  /*
+
   test('Test-4: Success case of leave channel', () => {
     const test1 = requestAuthRegisterV2(
       'test1@gmail.com',
@@ -1062,14 +1058,16 @@ describe('Testing /channel/leave/v1', () => {
       channel.bodyObj.channelId,
       0
     );
-    expect(message.bodyObj.messages).toContain({
-      messageId: messageSendObj.bodyObj.messageId,
-      uId: test2.bodyObj.authUserId,
-      message: 'Froot',
-      timeSent: expect.any(Number),
-    });
+    expect(message.bodyObj.messages).toStrictEqual([
+      {
+        messageId: messageSendObj.bodyObj.messageId,
+        uId: test2.bodyObj.authUserId,
+        message: 'Froot',
+        timeSent: expect.any(Number),
+      },
+    ]);
   });
-  */
+
   test('Test-5: Success case of the owner leave channel', () => {
     const test1 = requestAuthRegisterV2(
       'test1@gmail.com',
@@ -1462,9 +1460,21 @@ describe('Testing /channel/addowner/v1', () => {
     requestChannelJoinV2(member5.bodyObj.token, channel.bodyObj.channelId);
 
     // add member1, member3, member5 to owner
-    requestChannelAddOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member1.bodyObj.authUserId);
-    requestChannelAddOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member3.bodyObj.authUserId);
-    const multipleOwner = requestChannelAddOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member5.bodyObj.authUserId);
+    requestChannelAddOwnerV1(
+      owner.bodyObj.token,
+      channel.bodyObj.channelId,
+      member1.bodyObj.authUserId
+    );
+    requestChannelAddOwnerV1(
+      owner.bodyObj.token,
+      channel.bodyObj.channelId,
+      member3.bodyObj.authUserId
+    );
+    const multipleOwner = requestChannelAddOwnerV1(
+      owner.bodyObj.token,
+      channel.bodyObj.channelId,
+      member5.bodyObj.authUserId
+    );
     expect(multipleOwner.statusCode).toBe(OK);
     expect(multipleOwner.bodyObj).toStrictEqual({});
     expect(
@@ -1545,7 +1555,7 @@ describe('Testing /channel/addowner/v1', () => {
           nameFirst: 'firstname5',
           nameLast: 'lastname5',
           handleStr: 'firstname5lastname5',
-        }
+        },
       ],
     });
   });
@@ -1858,18 +1868,53 @@ describe('Testing /channel/removeowner/v1', () => {
     requestChannelJoinV2(member4.bodyObj.token, channel.bodyObj.channelId);
     requestChannelJoinV2(member5.bodyObj.token, channel.bodyObj.channelId);
     // add all memmber to owner
-    requestChannelAddOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member1.bodyObj.authUserId);
-    requestChannelAddOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member2.bodyObj.authUserId);
-    requestChannelAddOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member3.bodyObj.authUserId);
-    requestChannelAddOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member4.bodyObj.authUserId);
-    requestChannelAddOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member5.bodyObj.authUserId);
+    requestChannelAddOwnerV1(
+      owner.bodyObj.token,
+      channel.bodyObj.channelId,
+      member1.bodyObj.authUserId
+    );
+    requestChannelAddOwnerV1(
+      owner.bodyObj.token,
+      channel.bodyObj.channelId,
+      member2.bodyObj.authUserId
+    );
+    requestChannelAddOwnerV1(
+      owner.bodyObj.token,
+      channel.bodyObj.channelId,
+      member3.bodyObj.authUserId
+    );
+    requestChannelAddOwnerV1(
+      owner.bodyObj.token,
+      channel.bodyObj.channelId,
+      member4.bodyObj.authUserId
+    );
+    requestChannelAddOwnerV1(
+      owner.bodyObj.token,
+      channel.bodyObj.channelId,
+      member5.bodyObj.authUserId
+    );
     // remove member1, member3, member5 from owner
-    requestChannelRemoveOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member1.bodyObj.authUserId);
-    requestChannelRemoveOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member3.bodyObj.authUserId);
-    const removeMultiple = requestChannelRemoveOwnerV1(owner.bodyObj.token, channel.bodyObj.channelId, member5.bodyObj.authUserId);
+    requestChannelRemoveOwnerV1(
+      owner.bodyObj.token,
+      channel.bodyObj.channelId,
+      member1.bodyObj.authUserId
+    );
+    requestChannelRemoveOwnerV1(
+      owner.bodyObj.token,
+      channel.bodyObj.channelId,
+      member3.bodyObj.authUserId
+    );
+    const removeMultiple = requestChannelRemoveOwnerV1(
+      owner.bodyObj.token,
+      channel.bodyObj.channelId,
+      member5.bodyObj.authUserId
+    );
     expect(removeMultiple.statusCode).toBe(OK);
     expect(removeMultiple.bodyObj).toStrictEqual({});
-    const channelDetail = requestChannelDetailsV2(owner.bodyObj.token, channel.bodyObj.channelId);
+    const channelDetail = requestChannelDetailsV2(
+      owner.bodyObj.token,
+      channel.bodyObj.channelId
+    );
     expect(channelDetail.bodyObj).toStrictEqual({
       name: 'channelName',
       isPublic: true,
@@ -1938,7 +1983,7 @@ describe('Testing /channel/removeowner/v1', () => {
           nameFirst: 'firstname5',
           nameLast: 'lastname5',
           handleStr: 'firstname5lastname5',
-        }
+        },
       ],
     });
   });

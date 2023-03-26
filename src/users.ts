@@ -9,9 +9,6 @@ import {
   findUserFromToken,
 } from './helperFunctions';
 import validator from 'validator';
-/* eslint-disable */
-import { toNamespacedPath } from 'path';
-/* eslint-enable */
 
 type UserObject = {
   user: User;
@@ -38,9 +35,9 @@ export const userProfileV2 = (
 ): UserObject | Error => {
   const data = getData();
 
-  if (!isTokenValid(data, token)) {
+  if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
-  } else if (!isAuthUserIdValid(data, uId)) {
+  } else if (!isAuthUserIdValid(uId)) {
     return { error: 'uId does not refer to a valid user' };
   }
 
@@ -72,7 +69,7 @@ export const userProfileV2 = (
 export const usersAllV1 = (token: string): UsersObject | Error => {
   const data = getData();
 
-  if (!isTokenValid(data, token)) {
+  if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   }
 
@@ -112,15 +109,15 @@ export const userProfileSetNameV1 = (
 ): Record<string, never> | Error => {
   const data = getData();
 
-  if (!isTokenValid(data, token)) {
+  if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   } else if (!nameInRange(nameFirst) || !nameInRange(nameLast)) {
     return { error: 'Invalid name length' };
   }
 
-  const autherUserId = findUserFromToken(data, token);
+  const autherUserId = findUserFromToken(token);
 
-  const user = findUser(data, autherUserId);
+  const user = findUser(autherUserId);
 
   user.nameFirst = nameFirst;
   user.nameLast = nameLast;
@@ -148,7 +145,7 @@ export const userProfileSetEmailV1 = (
 ): Record<string, never> | Error => {
   const data = getData();
 
-  if (!isTokenValid(data, token)) {
+  if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   } else if (!validator.isEmail(email)) {
     return { error: 'Invalid email' };
@@ -156,9 +153,9 @@ export const userProfileSetEmailV1 = (
     return { error: 'Email already exist' };
   }
 
-  const autherUserId = findUserFromToken(data, token);
+  const autherUserId = findUserFromToken(token);
 
-  const user = findUser(data, autherUserId);
+  const user = findUser(autherUserId);
 
   user.email = email;
 
@@ -187,20 +184,20 @@ export const userProfileSetHandleV1 = (
 ): Record<string, never> | Error => {
   const data = getData();
 
-  if (!isTokenValid(data, token)) {
+  if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   } else if (handleStr.length < 3 || handleStr.length > 20) {
     return { error: 'Invalid handle string length' };
   } else if (!/^[0-9a-zA-Z]+$/.test(handleStr)) {
     // test wether the string is alphanumerical using regular expression
     return { error: 'handleStr contains characters that are not alphanumeric' };
-  } else if (!isAvaliableHandleString(handleStr, data)) {
+  } else if (!isAvaliableHandleString(handleStr)) {
     return { error: 'handle is already used by another user' };
   }
 
-  const autherUserId = findUserFromToken(data, token);
+  const autherUserId = findUserFromToken(token);
 
-  const user = findUser(data, autherUserId);
+  const user = findUser(autherUserId);
 
   user.handleStr = handleStr;
 

@@ -42,21 +42,21 @@ type DmDetails = {
 
 export const dmCreateV1 = (token: string, uIds: Array<number>): DmId | Error => {
   const data = getData();
-  if (!isTokenValid(data, token)) {
+  if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   } else if (isDuplicate(uIds)) {
     return { error: 'Duplicate uIds' };
-  } else if (!isUIdsValid(data, uIds)) {
+  } else if (!isUIdsValid(uIds)) {
     return { error: 'Invalid uId(s)' };
   }
 
-  const authUserId = findUserFromToken(data, token);
+  const authUserId = findUserFromToken(token);
   const dmId = createUniqueId();
   uIds.unshift(authUserId);
 
   const users = [];
   for (const uId of uIds) {
-    users.push(findUser(data, uId));
+    users.push(findUser(uId));
   }
   users.sort((user1, user2) => user1.handleStr.localeCompare(user2.handleStr));
   let dmName = '';
@@ -85,17 +85,16 @@ export const dmCreateV1 = (token: string, uIds: Array<number>): DmId | Error => 
  */
 
 export const dmListV1 = (token: string): { dms: Array<DmObject> } | Error => {
-  const data = getData();
-  if (!isTokenValid(data, token)) {
+  if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   }
-  const authUserId = findUserFromToken(data, token);
-  const authUser = findUser(data, authUserId);
+  const authUserId = findUserFromToken(token);
+  const authUser = findUser(authUserId);
   const dmList = [];
   for (const dmId of authUser.dms) {
     dmList.push({
       dmId: dmId,
-      name: findDm(data, dmId).name,
+      name: findDm(dmId).name,
     });
   }
   return { dms: dmList };
@@ -117,20 +116,20 @@ export const dmListV1 = (token: string): { dms: Array<DmObject> } | Error => {
 
 export const dmRemoveV1 = (token: string, dmId: number): Record<string, never> | Error => {
   const data = getData();
-  if (!isDmValid(data, dmId)) {
+  if (!isDmValid(dmId)) {
     return { error: 'Invalid dmId' };
-  } else if (!isTokenValid(data, token)) {
+  } else if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   }
-  const authUserId = findUserFromToken(data, token);
-  if (!isDmOwner(data, authUserId, dmId)) {
+  const authUserId = findUserFromToken(token);
+  if (!isDmOwner(authUserId, dmId)) {
     return { error: 'The authorised user is not the owner of the DM' };
-  } else if (!isDmMember(data, authUserId, dmId)) {
+  } else if (!isDmMember(authUserId, dmId)) {
     return { error: 'The authorised user is not in the DM' };
   }
-  const Dm = findDm(data, dmId);
+  const Dm = findDm(dmId);
   for (const uId of Dm.allMembers) {
-    const user = findUser(data, uId);
+    const user = findUser(uId);
     user.dms = user.dms.filter((DmId) => DmId !== dmId);
   }
   data.dms = data.dms.filter((Dm) => Dm.dmId !== dmId);
@@ -153,20 +152,19 @@ export const dmRemoveV1 = (token: string, dmId: number): Record<string, never> |
  */
 
 export const dmDetailsV1 = (token: string, dmId: number): DmDetails | Error => {
-  const data = getData();
-  if (!isDmValid(data, dmId)) {
+  if (!isDmValid(dmId)) {
     return { error: 'Invalid dmId' };
-  } else if (!isTokenValid(data, token)) {
+  } else if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   }
-  const authUserId = findUserFromToken(data, token);
-  if (!isDmMember(data, authUserId, dmId)) {
+  const authUserId = findUserFromToken(token);
+  if (!isDmMember(authUserId, dmId)) {
     return { error: 'The authorised user is not in the DM' };
   }
-  const Dm = findDm(data, dmId);
+  const Dm = findDm(dmId);
   const members = [];
   for (const uId of Dm.allMembers) {
-    const member = findUser(data, uId);
+    const member = findUser(uId);
     members.push({
       uId: member.authUserId,
       email: member.email,
@@ -198,19 +196,19 @@ export const dmDetailsV1 = (token: string, dmId: number): DmDetails | Error => {
 
 export const dmLeaveV1 = (token: string, dmId: number): Record<string, never> | Error => {
   const data = getData();
-  if (!isDmValid(data, dmId)) {
+  if (!isDmValid(dmId)) {
     return { error: 'Invalid dmId' };
-  } else if (!isTokenValid(data, token)) {
+  } else if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   }
-  const authUserId = findUserFromToken(data, token);
-  if (!isDmMember(data, authUserId, dmId)) {
+  const authUserId = findUserFromToken(token);
+  if (!isDmMember(authUserId, dmId)) {
     return { error: 'The authorised user is not in the DM' };
   }
-  const user = findUser(data, authUserId);
+  const user = findUser(authUserId);
   user.dms = user.dms.filter((DmId) => DmId !== dmId);
 
-  const Dm = findDm(data, dmId);
+  const Dm = findDm(dmId);
   Dm.allMembers = Dm.allMembers.filter((uId) => uId !== authUserId);
   Dm.ownerMembers = Dm.ownerMembers.filter((uId) => uId !== authUserId);
   setData(data);
@@ -239,15 +237,14 @@ export const dmMessagesV1 = (
   dmId: number,
   start: number
 ): paginatedMessage | Error => {
-  const data = getData();
-  if (!isDmValid(data, dmId)) {
+  if (!isDmValid(dmId)) {
     return { error: 'Invalid dmId' };
-  } else if (!isTokenValid(data, token)) {
+  } else if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   }
-  const authUserId = findUserFromToken(data, token);
-  const Dm = findDm(data, dmId);
-  if (!isDmMember(data, authUserId, dmId)) {
+  const authUserId = findUserFromToken(token);
+  const Dm = findDm(dmId);
+  if (!isDmMember(authUserId, dmId)) {
     return { error: 'The authorised user is not in the DM' };
   } else if (start > Dm.messages.length) {
     return { error: 'Start is greater than the total number of messages' };
@@ -263,7 +260,7 @@ export const dmMessagesV1 = (
   }
   const paginatedMessages = [];
   for (let i = start; i < start + lengthOfMessage; i++) {
-    paginatedMessages.push(findMessageFromId(data, Dm.messages[i]));
+    paginatedMessages.push(findMessageFromId(Dm.messages[i]));
   }
   return {
     messages: paginatedMessages,

@@ -91,7 +91,7 @@ export const authRegisterV2 = (
     nameFirst: nameFirst,
     nameLast: nameLast,
     email: email,
-    handleStr: generateHandleStr(nameFirst, nameLast, data),
+    handleStr: generateHandleStr(nameFirst, nameLast),
     password: password,
     channels: [],
     permissionId: permissionId,
@@ -125,7 +125,7 @@ export const authRegisterV2 = (
 export const authLogOutV1 = (token: string): Record<string, never> | Error => {
   const data = getData();
 
-  if (!isTokenValid(data, token)) {
+  if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   }
 
