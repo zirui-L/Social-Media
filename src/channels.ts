@@ -38,12 +38,12 @@ export const channelsCreateV2 = (
   const data = getData();
   if (name.length < 1 || name.length > 20) {
     return { error: 'Invalid channel name length' };
-  } else if (!isTokenValid(data, token)) {
+  } else if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   }
 
   const channelId = createUniqueId();
-  const authUserId = findUserFromToken(data, token);
+  const authUserId = findUserFromToken(token);
   const userIndex = data.users.findIndex(
     (user) => user.authUserId === authUserId
   );
@@ -81,13 +81,13 @@ export const channelsCreateV2 = (
 export const channelsListV2 = (token: string): Channels | Error => {
   const data = getData();
 
-  if (!isTokenValid(data, token)) {
+  if (!isTokenValid(token)) {
     return {
       error: 'Invalid token',
     };
   }
 
-  const authUserId = findUserFromToken(data, token);
+  const authUserId = findUserFromToken(token);
 
   const getChannels = [];
 
@@ -118,7 +118,7 @@ export const channelsListV2 = (token: string): Channels | Error => {
 export const channelsListAllV2 = (token: string): Channels | Error => {
   const data = getData();
 
-  if (!isTokenValid(data, token)) {
+  if (!isTokenValid(token)) {
     return {
       error: 'Invalid token',
     };

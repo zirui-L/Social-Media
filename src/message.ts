@@ -38,16 +38,16 @@ export const messageSendV1 = (
   message: string
 ): messageIdObj | Error => {
   const data = getData();
-  const channel = findChannel(data, channelId);
-  if (!isTokenValid(data, token)) {
+  const channel = findChannel(channelId);
+  if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   } else if (channel === undefined) {
     return { error: 'Invalid channelId' };
   } else if (message.length < 1 || message.length > 1000) {
     return { error: 'Invalid message length' };
   }
-  const uId = findUserFromToken(data, token);
-  if (!isMember(data, uId, channelId)) {
+  const uId = findUserFromToken(token);
+  if (!isMember(uId, channelId)) {
     return { error: 'The user is not a member of the channel' };
   }
   const messageId = createUniqueId();
@@ -57,7 +57,7 @@ export const messageSendV1 = (
     message,
     timeSent: Date.now() / 1000,
     isChannelMessage: true,
-    dmOrChannelId: channelId
+    dmOrChannelId: channelId,
   });
   channel.messages.unshift(messageId);
   setData(data);
@@ -90,31 +90,37 @@ export const messageEditV1 = (
 ): Record<string, never> | Error => {
   const data = getData();
 
-  if (!isTokenValid(data, token)) {
+  if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
-  } else if (!isMessageValid(data, messageId)) {
+  } else if (!isMessageValid(messageId)) {
     return { error: 'Invalid massage Id' };
   } else if (message.length > 1000) {
     return { error: 'Invalid message length' };
   }
 
-  const MessageToEdit = findStoredMessageFromId(data, messageId);
-  const uId = findUserFromToken(data, token);
-  const User = findUser(data, uId);
+  const MessageToEdit = findStoredMessageFromId(messageId);
+  const uId = findUserFromToken(token);
+  const User = findUser(uId);
 
-  if (!User.channels.includes(MessageToEdit.dmOrChannelId) &&
-  !User.dms.includes(MessageToEdit.dmOrChannelId)) {
+  if (
+    !User.channels.includes(MessageToEdit.dmOrChannelId) &&
+    !User.dms.includes(MessageToEdit.dmOrChannelId)
+  ) {
     return { error: "Message is not in user's chat" };
   }
   if (MessageToEdit.isChannelMessage) {
-    if (uId !== MessageToEdit.uId &&
-      !isOwner(data, uId, MessageToEdit.dmOrChannelId) &&
-      findUser(data, uId).permissionId !== 1) {
+    if (
+      uId !== MessageToEdit.uId &&
+      !isOwner(uId, MessageToEdit.dmOrChannelId) &&
+      findUser(uId).permissionId !== 1
+    ) {
       return { error: "User doesn't have permission" };
     }
   } else {
-    if (uId !== MessageToEdit.uId &&
-      !isDmOwner(data, uId, MessageToEdit.dmOrChannelId)) {
+    if (
+      uId !== MessageToEdit.uId &&
+      !isDmOwner(uId, MessageToEdit.dmOrChannelId)
+    ) {
       return { error: "User doesn't have permission" };
     }
   }
@@ -150,43 +156,47 @@ export const messageRemoveV1 = (
 ): Record<string, never> | Error => {
   const data = getData();
 
-  if (!isTokenValid(data, token)) {
+  if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
-  } else if (!isMessageValid(data, messageId)) {
+  } else if (!isMessageValid(messageId)) {
     return { error: 'Invalid massage Id' };
   }
 
-  const MessageToDelete = findStoredMessageFromId(data, messageId);
-  const uId = findUserFromToken(data, token);
-  const storedUser = findUser(data, uId);
+  const MessageToDelete = findStoredMessageFromId(messageId);
+  const uId = findUserFromToken(token);
+  const storedUser = findUser(uId);
 
-  if (!storedUser.channels.includes(MessageToDelete.dmOrChannelId) &&
-  !storedUser.dms.includes(MessageToDelete.dmOrChannelId)) {
+  if (
+    !storedUser.channels.includes(MessageToDelete.dmOrChannelId) &&
+    !storedUser.dms.includes(MessageToDelete.dmOrChannelId)
+  ) {
     return { error: "Message is not in user's chat" };
   }
   if (MessageToDelete.isChannelMessage) {
-    if (uId !== MessageToDelete.uId &&
-      !isOwner(data, uId, MessageToDelete.dmOrChannelId) &&
-      findUser(data, uId).permissionId !== 1) {
+    if (
+      uId !== MessageToDelete.uId &&
+      !isOwner(uId, MessageToDelete.dmOrChannelId) &&
+      findUser(uId).permissionId !== 1
+    ) {
       return { error: "User doesn't have permission" };
     }
   } else {
-    if (uId !== MessageToDelete.uId &&
-      !isDmOwner(data, uId, MessageToDelete.dmOrChannelId)) {
+    if (
+      uId !== MessageToDelete.uId &&
+      !isDmOwner(uId, MessageToDelete.dmOrChannelId)
+    ) {
       return { error: "User doesn't have permission" };
     }
   }
 
   if (MessageToDelete.isChannelMessage) {
-    const channel = findChannel(data, MessageToDelete.dmOrChannelId);
+    const channel = findChannel(MessageToDelete.dmOrChannelId);
     channel.messages = channel.messages.filter(
       (message) => message !== messageId
     );
   } else {
-    const Dm = findDm(data, MessageToDelete.dmOrChannelId);
-    Dm.messages = Dm.messages.filter(
-      (message) => message !== messageId
-    );
+    const Dm = findDm(MessageToDelete.dmOrChannelId);
+    Dm.messages = Dm.messages.filter((message) => message !== messageId);
   }
   data.messages = data.messages.filter(
     (message) => message.messageId !== messageId
@@ -215,15 +225,15 @@ export const messageSendDmV1 = (
   message: string
 ): messageIdObj | Error => {
   const data = getData();
-  const Dm = findDm(data, dmId);
-  if (!isTokenValid(data, token)) {
+  const Dm = findDm(dmId);
+  if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   } else if (Dm === undefined) {
     return { error: 'Invalid DmId' };
   } else if (message.length < 1 || message.length > 1000) {
     return { error: 'Invalid message length' };
   }
-  const uId = findUserFromToken(data, token);
+  const uId = findUserFromToken(token);
   if (!Dm.allMembers.includes(uId)) {
     return { error: 'The user is not a member of the channel' };
   }
@@ -234,7 +244,7 @@ export const messageSendDmV1 = (
     message,
     timeSent: Date.now() / 1000,
     isChannelMessage: false,
-    dmOrChannelId: dmId
+    dmOrChannelId: dmId,
   });
   Dm.messages.unshift(messageId);
   setData(data);

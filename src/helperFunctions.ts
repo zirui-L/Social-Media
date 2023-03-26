@@ -1,6 +1,5 @@
 import {
   Channel,
-  Data,
   storedUser,
   Message,
   getData,
@@ -51,15 +50,12 @@ export const isAvaliableEmail = (email: string, users: any): boolean => {
  *
  * @param {string} nameFirst - first name of the registered users
  * @param {string} nameLast - last name of the registered users
- * @param {Data} data - object that stores informations
- * about user and channels
  *
  * @returns {handleString} - returns a unique handler string
  */
 export const generateHandleStr = (
   nameFirst: string,
-  nameLast: string,
-  data: Data
+  nameLast: string
 ): string => {
   let handleString = nameFirst.toLowerCase() + nameLast.toLowerCase();
 
@@ -71,7 +67,7 @@ export const generateHandleStr = (
 
   let numberCat = 0;
 
-  while (!isAvaliableHandleString(handleString, data)) {
+  while (!isAvaliableHandleString(handleString)) {
     handleString += numberCat.toString();
     numberCat += 1;
   }
@@ -80,10 +76,9 @@ export const generateHandleStr = (
 };
 
 // Search up the dataStore to see if a handler string already exist or not
-export const isAvaliableHandleString = (
-  newHandleStr: string,
-  data: Data
-): boolean => {
+export const isAvaliableHandleString = (newHandleStr: string): boolean => {
+  const data = getData();
+
   for (const user of data.users) {
     if (user.handleStr === newHandleStr) {
       return false;
@@ -95,14 +90,13 @@ export const isAvaliableHandleString = (
 /**
  * <Check whether a user is registed>
  *
- * @param {Data} data - object that stores informations
- * about user and channels
  * @param {number} authUserId - user id of the enquiring user
  *
  * @returns {true} - if user with such authUserId is registered
  * @returns {false} - if user with such authUserId is not registered
  */
-export const isAuthUserIdValid = (data: Data, authUserId: number): boolean => {
+export const isAuthUserIdValid = (authUserId: number): boolean => {
+  const data = getData();
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
       return true;
@@ -115,14 +109,13 @@ export const isAuthUserIdValid = (data: Data, authUserId: number): boolean => {
 /**
  * <Check whether a token is valid or not>
  *
- * @param {Data} data - object that stores informations
- * about user and channels
  * @param {string} token - user id of the enquiring user
  *
  * @returns {true} - if user with such token is logged in
  * @returns {false} - if user with such token is not logged in
  */
-export const isTokenValid = (data: Data, token: string): boolean => {
+export const isTokenValid = (token: string): boolean => {
+  const data = getData();
   for (const existingtoken of data.tokens) {
     if (existingtoken.token === token) {
       return true;
@@ -135,14 +128,13 @@ export const isTokenValid = (data: Data, token: string): boolean => {
 /**
  * <Check whether a channel is registed>
  *
- * @param {Data} data - object that stores informations
- * about user and channels
  * @param {number} channelId - channel id
  *
  * @returns {true} - if the channel with such channelId is registered
  * @returns {false} - if the channel with such channelId is not registered
  */
-export const isChannelValid = (data: Data, channelId: number): boolean => {
+export const isChannelValid = (channelId: number): boolean => {
+  const data = getData();
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
       return true;
@@ -155,14 +147,13 @@ export const isChannelValid = (data: Data, channelId: number): boolean => {
 /**
  * <Check whether a dm is registed>
  *
- * @param {Data} data - object that stores informations
- * about user and channels
  * @param {number} dmId - channel id
  *
  * @returns {true} - if the dm with such dmId is registered
  * @returns {false} - if the dm with such dmId is not registered
  */
-export const isDmValid = (data: Data, dmId: number): boolean => {
+export const isDmValid = (dmId: number): boolean => {
+  const data = getData();
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
       return true;
@@ -174,8 +165,6 @@ export const isDmValid = (data: Data, dmId: number): boolean => {
 /**
  * <Check if a specific user belong to a channel>
  *
- * @param {Data} data - object that stores informations
- * about user and channels
  * @param {string} authUserId - user id of the enquiring user
  * @param {string} channelId - channel id
  *
@@ -183,11 +172,8 @@ export const isDmValid = (data: Data, dmId: number): boolean => {
  * @returns {false} - user doesn't belong to a channel
  *
  */
-export const isMember = (
-  data: Data,
-  authUserId: number,
-  channelId: number
-): boolean => {
+export const isMember = (authUserId: number, channelId: number): boolean => {
+  const data = getData();
   const channelIndex = data.channels.findIndex(
     (channel) => channel.channelId === channelId
   );
@@ -198,15 +184,14 @@ export const isMember = (
 /**
  * <Check if a specific user belong to a channel>
  *
- * @param {Data} data - object that stores informations
- * about user and channels
  * @param {string} messageId - unique id of the messageId
  *
  * @returns {true} - if there exist message with such messageId
  * @returns {false} - if there doesn't exist message with such messageId
  *
  */
-export const isMessageValid = (data: Data, messageId: number): boolean => {
+export const isMessageValid = (messageId: number): boolean => {
+  const data = getData();
   for (const message of data.messages) {
     if (message.messageId === messageId) {
       return true;
@@ -219,7 +204,6 @@ export const isMessageValid = (data: Data, messageId: number): boolean => {
 /**
  * <Check if a specific user is an owner of the channel>
  *
- * @param {Data} data - object that stores informations about user and channels
  * @param {string} authUserId - user id of the enquiring user
  * @param {string} channelId - channel id
  *
@@ -227,19 +211,14 @@ export const isMessageValid = (data: Data, messageId: number): boolean => {
  * @returns {false} - user doesn't belong to a channel
  *
  */
-export const isOwner = (
-  data: Data,
-  authUserId: number,
-  channelId: number
-): boolean => {
-  const channel = findChannel(data, channelId);
+export const isOwner = (authUserId: number, channelId: number): boolean => {
+  const channel = findChannel(channelId);
   return channel.ownerMembers.includes(authUserId);
 };
 
 /**
  * <Check if a specific user is an owner of the Dm>
  *
- * @param {Data} data - object that stores informations about user and channels
  * @param {string} authUserId - user id of the enquiring user
  * @param {string} DmId - Dm id
  *
@@ -247,84 +226,75 @@ export const isOwner = (
  * @returns {false} - user doesn't belong to a Dm
  *
  */
-export const isDmOwner = (
-  data: Data,
-  authUserId: number,
-  DmId: number
-): boolean => {
-  const Dm = findDm(data, DmId);
+export const isDmOwner = (authUserId: number, DmId: number): boolean => {
+  const Dm = findDm(DmId);
   return Dm.ownerMembers.includes(authUserId);
 };
 
 /**
  * <Find a user object with given authUserId>
  *
- * @param {Data} data - object that stores informations
- * about user and channels
  * @param {number} authUserId - user id of the enquiring user
  *
- * @returns {{ user }} - if there exist a user with given authUserId
+ * @returns {storedUser} - if there exist a user with given authUserId
  * @returns { undefined } - if there doesn't exist a user with given authUserId
  */
-export const findUser = (data: Data, authUserId: number): storedUser => {
+export const findUser = (authUserId: number): storedUser => {
+  const data = getData();
   return data.users.find((user) => user.authUserId === authUserId);
 };
 
 /**
  * <Find a channel object with given channelId>
  *
- * @param {Data} data - object that stores informations
- * about user and channels
  * @param {number} channelId - channel id
  *
- * @returns {Channel} - if there exist a channel with given channelId
+ * @returns { Channel } - if there exist a channel with given channelId
  * @returns { undefined } - if there doesn't exist a channel with given
  * channelId
  */
-export const findChannel = (data: Data, channelId: number): Channel => {
+export const findChannel = (channelId: number): Channel => {
+  const data = getData();
   return data.channels.find((channel) => channel.channelId === channelId);
 };
 
 /**
  * <Find a channel object with given channelId>
  *
- * @param {Data} data - object that stores informations
- * about user and channels
  * @param {number} dmId - dm id
  *
- * @returns {Dm} - if there exist a dm with given channelId
+ * @returns { Dm } - if there exist a dm with given channelId
  * @returns { undefined } - if there doesn't exist a channel with given
  * channelId
  */
-export const findDm = (data: Data, dmId: number): Dm => {
+export const findDm = (dmId: number): Dm => {
+  const data = getData();
   return data.dms.find((dm) => dm.dmId === dmId);
 };
 
 /**
  * <Find a user id with given token>
  *
- * @param {Data} data - object that stores informations
- * about user and channels
  * @param {string} token - token for the user
  *
  * @returns { uId } - if there exist a user with given token
  * @returns { undefined } - if there doesn't exist a user with given
  * token
  */
-export const findUserFromToken = (data: Data, token: string): number => {
+export const findUserFromToken = (token: string): number => {
+  const data = getData();
   return data.tokens.find((existingtoken) => existingtoken.token === token).uId;
 };
 
 /**
  * <Find a message with given message id>
  *
- * @param {Data} data - object that stores informations
- * about user and channels
  * @param {number} messageId - id for the message
  *
  * @returns {Message} - if there exist a message with given id
  */
-export const findMessageFromId = (data: Data, messageId: number): Message => {
+export const findMessageFromId = (messageId: number): Message => {
+  const data = getData();
   const message = data.messages.find(
     (existingMessage) => existingMessage.messageId === messageId
   );
@@ -337,9 +307,9 @@ export const findMessageFromId = (data: Data, messageId: number): Message => {
   };
 };
 
-export const isUIdsValid = (data: Data, uIds: Array<number>): boolean => {
+export const isUIdsValid = (uIds: Array<number>): boolean => {
   for (const uId of uIds) {
-    if (!isAuthUserIdValid(data, uId)) {
+    if (!isAuthUserIdValid(uId)) {
       return false;
     }
   }
@@ -355,24 +325,20 @@ export const isDuplicate = (uIds: Array<number>): boolean => {
   return false;
 };
 
-export const isDmMember = (data: Data, UId: number, dmId: number): boolean => {
-  const Dm = findDm(data, dmId);
+export const isDmMember = (UId: number, dmId: number): boolean => {
+  const Dm = findDm(dmId);
   return Dm.allMembers.includes(UId);
 };
 
 /**
  * <Find a message in stored formate with given message id>
  *
- * @param {Data} data - object that stores informations
- * about user and channels
  * @param {number} messageId - id for the message
  *
  * @returns {Message} - if there exist a message with given id
  */
-export const findStoredMessageFromId = (
-  data: Data,
-  messageId: number
-): storedMessage => {
+export const findStoredMessageFromId = (messageId: number): storedMessage => {
+  const data = getData();
   const message = data.messages.find(
     (existingMessage) => existingMessage.messageId === messageId
   );
