@@ -27,6 +27,19 @@ type DmDetails = {
   name: string;
 };
 
+/**
+ * <Create a new dm and returns its dm Id.>
+ *
+ * @param {string} token - token for the requesting user
+ * @param {array<integer>} uIds - uIds of the dm members
+ *
+ * @returns {DmId} - object return when
+ * authUserIds are valid and 
+ * there are no duplicate 'uId's in uIds
+ * @returns {Error} - when authUserId
+ * is invalid or there are duplicate 'uId's in uIds
+ */
+
 export const dmCreateV1 = (token: string, uIds: Array<number>): DmId | Error => {
   const data = getData();
   if (!isTokenValid(data, token)) {
@@ -62,6 +75,15 @@ export const dmCreateV1 = (token: string, uIds: Array<number>): DmId | Error => 
   return { dmId: dmId };
 };
 
+/**
+ * <Returns the list of DMs that the user is a member of.>
+ *
+ * @param {string} token - token for the requesting user
+ *
+ * @returns {dms} - object return when authUserId is valid
+ * @returns {Error} - when authUserId is invalid
+ */
+
 export const dmListV1 = (token: string): { dms: Array<DmObject> } | Error => {
   const data = getData();
   if (!isTokenValid(data, token)) {
@@ -78,6 +100,20 @@ export const dmListV1 = (token: string): { dms: Array<DmObject> } | Error => {
   }
   return { dms: dmList };
 };
+
+/**
+ * <Remove an existing DM, so all members are no longer in the DM.
+ * This can only be done by the original creator of the DM.>
+ *
+ * @param {string} token - token for the requesting user
+ * @param {integer} dmId - dmId
+ *
+ * @returns {} - object return when
+ * dmId/authUserId is valid and 
+ * authorised user is an owner of the dm
+ * @returns {Error} - when dmId/authUserId
+ * is invalid or authorised user is not a owner/member of the dm
+ */
 
 export const dmRemoveV1 = (token: string, dmId: number): Record<string, never> | Error => {
   const data = getData();
@@ -101,6 +137,20 @@ export const dmRemoveV1 = (token: string, dmId: number): Record<string, never> |
   setData(data);
   return {};
 };
+
+/**
+ * <Given a dm with ID dmId that the authorised user
+ * is a member of, provides basic details about the dm.>
+ *
+ * @param {string} token - token for the requesting user
+ * @param {integer} dmId - dmId
+ *
+ * @returns {dmDetails} - object return when
+ * dmId/authUserId is valid and 
+ * authorised user is a member of the dm
+ * @returns {Error} - when dmId/authUserId
+ * is invalid or authorised user is not a member of the dm
+ */
 
 export const dmDetailsV1 = (token: string, dmId: number): DmDetails | Error => {
   const data = getData();
@@ -131,6 +181,21 @@ export const dmDetailsV1 = (token: string, dmId: number): DmDetails | Error => {
   };
 };
 
+/**
+ * <Given a DM ID, the user is removed as a member of this DM. 
+ * The creator is allowed to leave and the DM will still exist 
+ * if this happens. This does not update the name of the DM.>
+ *
+ * @param {string} token - token for the requesting user
+ * @param {integer} dmId - dmId
+ *
+ * @returns {} - object return when
+ * dmId/authUserId is valid and 
+ * authorised user is a member of the dm
+ * @returns {Error} - when dmId/authUserId
+ * is invalid or authorised user is not a member of the dm
+ */
+
 export const dmLeaveV1 = (token: string, dmId: number): Record<string, never> | Error => {
   const data = getData();
   if (!isDmValid(data, dmId)) {
@@ -151,6 +216,23 @@ export const dmLeaveV1 = (token: string, dmId: number): Record<string, never> | 
   setData(data);
   return {};
 };
+
+/**
+ * <Given a DM with ID dmId that the authorised user is a member of,
+ * return up to 50 messages between index "start" and "start + 50".>
+ *
+ * @param {string} token - token for the requesting user
+ * @param {integer} dmId - dmId
+ * @param {integer} start - start index
+ *
+ * @returns {paginatedMessage} - object return when 
+ * dmId/authUserId is valid and 
+ * authorised user is a member of the dm and
+ * start is less than the total number of messages in the dm
+ * @returns {Error} - when dmId/authUserId
+ * is invalid or authorised user is not a member of the dm
+ * or start is greater than the total number of messages in the dm
+ */
 
 export const dmMessagesV1 = (
   token: string,
