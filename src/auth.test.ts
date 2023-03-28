@@ -197,7 +197,6 @@ describe('/auth/register/v2 testing - generating handle string / email duplicati
     );
   });
 
-
   test('Test-4: already taken 2 handlers', () => {
     requestAuthRegisterV2('test1@gmail.com', '123456', 'firstName', 'lastName');
     requestAuthRegisterV2('test2@gmail.com', '123456', 'firstName', 'lastName');
