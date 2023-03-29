@@ -310,6 +310,15 @@ export const findMessageFromId = (messageId: number): Message => {
   };
 };
 
+/**
+ * <Check if uIds in the given array are valid>
+ *
+ * @param {Array<number>} uIds - an array of user id
+ *
+ * @returns {true} - all uIds are valid
+ * @returns {false} - there exists invalid uId
+ *
+ */
 export const isUIdsValid = (uIds: Array<number>): boolean => {
   for (const uId of uIds) {
     if (!isAuthUserIdValid(uId)) {
@@ -319,6 +328,15 @@ export const isUIdsValid = (uIds: Array<number>): boolean => {
   return true;
 };
 
+/**
+ * <Check if there exists duplicate elements in a given array>
+ *
+ * @param {Array<number>} uId - Array of user id
+ *
+ * @returns {true} - there exists duplicate elements in the array
+ * @returns {false} - the array has no duplicate elements
+ *
+ */
 export const isDuplicate = (uIds: Array<number>): boolean => {
   for (let i = 0; i < uIds.length; i++) {
     for (let j = i + 1; j < uIds.length; j++) {
