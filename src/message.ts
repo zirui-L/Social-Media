@@ -25,10 +25,10 @@ type messageIdObj = {
  * @param {string} message - Message sent
  *
  * @returns {Error} - returns when any of:
- * 1. channelId does not refer to a valid channel
- * 2. length of message is less than 1 or over 1000 characters
- * 3. channelId is valid and the authorised user is not a member of the channel
- * 4. token is invalid
+ * 1. Token is invalid
+ * 2. ChannelId does not refer to a valid channel
+ * 3. Length of message is less than 1 or over 1000 characters
+ * 4. ChannelId is valid and the authorised user is not a member of the channel
  * @returns {messageIdObj} - return if all error cases are avoided
  *
  */
@@ -40,14 +40,16 @@ export const messageSendV1 = (
   const data = getData();
   const channel = findChannel(channelId);
   if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+    return { error: 'Invalid token' };// Token is invalid
   } else if (channel === undefined) {
-    return { error: 'Invalid channelId' };
+    return { error: 'Invalid channelId' };// ChannelId does not refer to a valid channel
   } else if (message.length < 1 || message.length > 1000) {
+    // Length of message is less than 1 or over 1000 characters
     return { error: 'Invalid message length' };
   }
   const uId = findUserFromToken(token);
   if (!isMember(uId, channelId)) {
+    // ChannelId is valid and the authorised user is not a member of the channel
     return { error: 'The user is not a member of the channel' };
   }
   const messageId = createUniqueId();
@@ -73,12 +75,12 @@ export const messageSendV1 = (
  * @param {string} message - Message sent
  *
  * @returns {Error} - returns when any of:
- * 1. length of message is over 1000 characters
+ * 1. token is invalid
  * 2. messageId does not refer to a valid message within a channel/DM that the
  *    authorised user has joined
- * 3. the message was not sent by the authorised user making this request and
+ * 3. length of message is over 1000 characters
+ * 4. the message was not sent by the authorised user making this request and
  *    the user does not have owner permissions in the channel/DM
- * 4. token is invalid
  *
  * @returns {} - return if all error cases are avoided
  *
@@ -91,10 +93,12 @@ export const messageEditV1 = (
   const data = getData();
 
   if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+    return { error: 'Invalid token' };// token is invalid
   } else if (!isMessageValid(messageId)) {
+    // messageId does not refer to a valid message
     return { error: 'Invalid massage Id' };
   } else if (message.length > 1000) {
+    // length of message is over 1000 characters
     return { error: 'Invalid message length' };
   }
 
@@ -102,13 +106,19 @@ export const messageEditV1 = (
   const uId = findUserFromToken(token);
   const User = findUser(uId);
 
+  // messageId does not refer to a valid message within a channel/DM
+  // that the authorised user has joined
   if (
     !User.channels.includes(MessageToEdit.dmOrChannelId) &&
     !User.dms.includes(MessageToEdit.dmOrChannelId)
   ) {
     return { error: "Message is not in user's chat" };
   }
+
+  // the message was not sent by the authorised user making this request and
+  // the user does not have owner permissions in the channel/DM
   if (MessageToEdit.isChannelMessage) {
+    // Channel messages
     if (
       uId !== MessageToEdit.uId &&
       !isOwner(uId, MessageToEdit.dmOrChannelId) &&
@@ -117,6 +127,7 @@ export const messageEditV1 = (
       return { error: "User doesn't have permission" };
     }
   } else {
+    // Dm messages
     if (
       uId !== MessageToEdit.uId &&
       !isDmOwner(uId, MessageToEdit.dmOrChannelId)
@@ -126,8 +137,9 @@ export const messageEditV1 = (
   }
 
   if (message.length === 0) {
+    // If the new message is an empty string, the message is deleted
     messageRemoveV1(token, messageId);
-  } else {
+  } else { // Edit the message
     MessageToEdit.message = message;
   }
   setData(data);
@@ -142,11 +154,11 @@ export const messageEditV1 = (
  * @param {number} messageId - Id of the message
  *
  * @returns {Error} - returns when any of:
- * 1. messageId does not refer to a valid message within a channel/DM that
+ * 1. token is invalid
+ * 2. messageId does not refer to a valid message within a channel/DM that
  *    the authorised user has joined
- * 2. the message was not sent by the authorised user making this request and
+ * 3. the message was not sent by the authorised user making this request and
  *    the user does not have owner permissions in the channel/DM
- * 3. token is invalid
  * @returns {} - return if all error cases are avoided
  *
  */
@@ -157,21 +169,23 @@ export const messageRemoveV1 = (
   const data = getData();
 
   if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+    return { error: 'Invalid token' };// token is invalid
   } else if (!isMessageValid(messageId)) {
-    return { error: 'Invalid massage Id' };
+    return { error: 'Invalid massage Id' };// messageId does not refer to a valid message
   }
 
   const MessageToDelete = findStoredMessageFromId(messageId);
   const uId = findUserFromToken(token);
   const storedUser = findUser(uId);
 
-  if (
-    !storedUser.channels.includes(MessageToDelete.dmOrChannelId) &&
-    !storedUser.dms.includes(MessageToDelete.dmOrChannelId)
-  ) {
+  // messageId does not refer to a valid message within a channel/DM
+  // that the authorised user has joined
+  if (!storedUser.channels.includes(MessageToDelete.dmOrChannelId) &&
+      !storedUser.dms.includes(MessageToDelete.dmOrChannelId)) {
     return { error: "Message is not in user's chat" };
   }
+  // the message was not sent by the authorised user making this request
+  // and the user does not have owner permissions in the channel/DM
   if (MessageToDelete.isChannelMessage) {
     if (
       uId !== MessageToDelete.uId &&
@@ -212,10 +226,10 @@ export const messageRemoveV1 = (
  * @param {string} message - Message sent
  *
  * @returns {Error} - returns when any of:
+ * 1. token is invalid
  * 1. dmId does not refer to a valid DM
  * 2. length of message is less than 1 or over 1000 characters
  * 3. dmId is valid and the authorised user is not a member of the DM
- * 4. token is invalid
  * @returns {messageIdObj} - return if all error cases are avoided
  *
  */
@@ -227,14 +241,16 @@ export const messageSendDmV1 = (
   const data = getData();
   const Dm = findDm(dmId);
   if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+    return { error: 'Invalid token' };// token is invalid
   } else if (Dm === undefined) {
-    return { error: 'Invalid DmId' };
+    return { error: 'Invalid DmId' };// dmId does not refer to a valid DM
   } else if (message.length < 1 || message.length > 1000) {
+    // length of message is less than 1 or over 1000 characters
     return { error: 'Invalid message length' };
   }
   const uId = findUserFromToken(token);
   if (!Dm.allMembers.includes(uId)) {
+    // dmId is valid and the authorised user is not a member of the DM
     return { error: 'The user is not a member of the channel' };
   }
   const messageId = createUniqueId();

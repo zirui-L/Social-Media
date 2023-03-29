@@ -3,6 +3,7 @@ import {
   isTokenValid,
   createUniqueId,
   findUserFromToken,
+  findUser,
 } from './helperFunctions';
 
 type ChannelId = {
@@ -44,11 +45,9 @@ export const channelsCreateV2 = (
 
   const channelId = createUniqueId();
   const authUserId = findUserFromToken(token);
-  const userIndex = data.users.findIndex(
-    (user) => user.authUserId === authUserId
-  );
+  const user = findUser(authUserId);
 
-  data.users[userIndex].channels.push(channelId);
+  user.channels.push(channelId);
 
   data.channels.push({
     channelName: name,
