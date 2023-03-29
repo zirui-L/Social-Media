@@ -134,7 +134,7 @@ describe('Testing /users/all/v1 route', () => {
       'Richardo',
       'Lee'
     );
-    // test funciton with invalid token
+    // test function with invalid token
     const usersAllObj = requestUsersAllV1(test1.bodyObj.token + 1);
     // expect function to run and return an error
     expect(usersAllObj.statusCode).toBe(OK);
@@ -229,7 +229,7 @@ describe('Testing /user/profile/setname/v1 route', () => {
       'firstName1',
       'lastName1'
     );
-    // test function with invalid token
+    // test funciton with invalid token
     const usersProfileSetnameObj = requestUserProfileSetNameV1(
       test1.bodyObj.token + 1,
       'Richardo',
@@ -249,7 +249,7 @@ describe('Testing /user/profile/setname/v1 route', () => {
       'lastName1'
     );
 
-    // test function with invalid first name(length lower than 1)
+    // test function with invalid first name (length lower than 1)
     const usersProfileSetnameObj = requestUserProfileSetNameV1(
       test1.bodyObj.token,
       '',
@@ -265,7 +265,7 @@ describe('Testing /user/profile/setname/v1 route', () => {
       '3.1415926535897932384626433832795028841971693993751',
       'Lee'
     );
-    // expect funtion to run and return an error
+    // expect function to run and return an error
     expect(usersProfileSetnameObj1.statusCode).toBe(OK);
     expect(usersProfileSetnameObj1.bodyObj).toStrictEqual(ERROR);
   });
@@ -285,11 +285,11 @@ describe('Testing /user/profile/setname/v1 route', () => {
       'Richardo',
       ''
     );
-    // expect funtion to run and return an error
+    // expect function to run and return an error
     expect(usersProfileSetnameObj.statusCode).toBe(OK);
     expect(usersProfileSetnameObj.bodyObj).toStrictEqual(ERROR);
 
-    // test function with invalid last name (length greater than 50)
+    //  test funciton with invalid last name (length greater than 50)
     const usersProfileSetnameObj1 = requestUserProfileSetNameV1(
       test1.bodyObj.token,
       'Richardo',
@@ -308,16 +308,16 @@ describe('Testing /user/profile/setname/v1 route', () => {
       'firstName1',
       'lastName1'
     );
-    // test function with valid inputs
+    // test function with correct inputs
     const usersProfileSetnameObj = requestUserProfileSetNameV1(
       test1.bodyObj.token,
       'Richardo',
       'Lee'
     );
-    // expect functions to run and return an empty object
+    // expect funtion to run and return an empty object
     expect(usersProfileSetnameObj.statusCode).toBe(OK);
     expect(usersProfileSetnameObj.bodyObj).toStrictEqual({});
-    // verify first/last name have been updated by userprofileV2 function
+    // verify outputs by using requestUserProfileV2 function
     const userProfileObj = requestUserProfileV2(
       test1.bodyObj.token,
       test1.bodyObj.authUserId
@@ -362,7 +362,7 @@ describe('Testing /user/profile/setemail/v1 route', () => {
       'firstName1',
       'lastName1'
     );
-    // test funtion with invalid email address
+    // test function with invalid email address
     const usersProfileSetEmailObj = requestUserProfileSetEmailV1(
       test1.bodyObj.token,
       'test1##ad.unsw.edu.au'
@@ -387,7 +387,7 @@ describe('Testing /user/profile/setemail/v1 route', () => {
       'firstName2',
       'lastName2'
     );
-    // test function with email address already registered
+    // test function with invalid email that is being taken
     const usersProfileSetEmailObj = requestUserProfileSetEmailV1(
       test1.bodyObj.token,
       'test2@gmail.com'
@@ -405,15 +405,15 @@ describe('Testing /user/profile/setemail/v1 route', () => {
       'firstName1',
       'lastName1'
     );
-    // test function with valid inputs
+    // test fuction with correct inputs
     const usersProfileSetEmailObj = requestUserProfileSetEmailV1(
       test1.bodyObj.token,
       'test1@ad.unsw.edu.au'
     );
-    // expect funtion to run and return an empty object
+    // expect function to run and return an empty object
     expect(usersProfileSetEmailObj.statusCode).toBe(OK);
     expect(usersProfileSetEmailObj.bodyObj).toStrictEqual({});
-    // verify email address has been updated by using requestUserProfileV2 function
+    // verify email address has been updated by requestUserProfileV2 function
     const userProfileObj = requestUserProfileV2(
       test1.bodyObj.token,
       test1.bodyObj.authUserId
@@ -446,6 +446,7 @@ describe('Testing /user/profile/sethandle/v1 route', () => {
       'newhandlestring'
     );
     // expect function to run and return an error
+
     expect(usersProfileSetHandleObj.statusCode).toBe(OK);
     expect(usersProfileSetHandleObj.bodyObj).toStrictEqual(ERROR);
   });
@@ -459,16 +460,16 @@ describe('Testing /user/profile/sethandle/v1 route', () => {
       'lastName1'
     );
 
-    // test function with invalid handlestr（length of handleStr is less than 3）
+    // test function with invalid handleStr(length of handleStr is less than 3)
     const usersProfileSetHandleObj = requestUserProfileSetHandleV1(
       test1.bodyObj.token,
       '12'
     );
-    // expect funtion to run and return an error
+    // expect function to run and return an error
     expect(usersProfileSetHandleObj.statusCode).toBe(OK);
     expect(usersProfileSetHandleObj.bodyObj).toStrictEqual(ERROR);
 
-    // test function with invalid handlestr(length of handleStr is greater than 20)
+    // test function with invalid handleStr (length of handleStr is greater than 20)
     const usersProfileSetHandleObj1 = requestUserProfileSetHandleV1(
       test1.bodyObj.token,
       '314159265358979323846264338327'
@@ -495,12 +496,12 @@ describe('Testing /user/profile/sethandle/v1 route', () => {
       'firstName1',
       'lastName1'
     );
-    // test function with invalid handlestr(not alphanumeric)
+    // test function with invalid handleStr (not alphanumeric)
     const usersProfileSetHandleObj = requestUserProfileSetHandleV1(
       test1.bodyObj.token,
       '!@#$%%^&*()(*&^%$#@'
     );
-    // expect funtion to run and return an error
+    // expect function to run and return an error
     expect(usersProfileSetHandleObj.statusCode).toBe(OK);
     expect(usersProfileSetHandleObj.bodyObj).toStrictEqual(ERROR);
   });
@@ -520,14 +521,14 @@ describe('Testing /user/profile/sethandle/v1 route', () => {
       'firstName2',
       'lastName2'
     );
-    // add handleStr to a user
+    // create handleStr for user test1
     const usersProfileSetHandleObj = requestUserProfileSetHandleV1(
       test1.bodyObj.token,
       '12345'
     );
 
     expect(usersProfileSetHandleObj.bodyObj).toStrictEqual({});
-    // test function with invalid handleStr(already being taken)
+    // test function with invalid handleStr(already taken)
     const usersProfileSetHandleObj1 = requestUserProfileSetHandleV1(
       test2.bodyObj.token,
       '12345'
@@ -545,7 +546,7 @@ describe('Testing /user/profile/sethandle/v1 route', () => {
       'firstName1',
       'lastName1'
     );
-    // test function with correct input
+    // test function with correct inputs
     const usersProfileSetHandleObj = requestUserProfileSetHandleV1(
       test1.bodyObj.token,
       '12345'
@@ -553,7 +554,7 @@ describe('Testing /user/profile/sethandle/v1 route', () => {
     // expect function to run and return an empty object
     expect(usersProfileSetHandleObj.statusCode).toBe(OK);
     expect(usersProfileSetHandleObj.bodyObj).toStrictEqual({});
-    // verify handleStr has been updated by using requestUserProfileV2 function
+    // verify output by using requestUserProfileV2 function
     const userProfileObj = requestUserProfileV2(
       test1.bodyObj.token,
       test1.bodyObj.authUserId
