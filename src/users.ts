@@ -34,13 +34,13 @@ export const userProfileV2 = (
   uId: number
 ): UserObject | Error => {
   const data = getData();
-
+  // check validity of inputs
   if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   } else if (!isAuthUserIdValid(uId)) {
     return { error: 'uId does not refer to a valid user' };
   }
-
+  // return user's detail
   for (const user of data.users) {
     if (user.authUserId === uId) {
       return {
@@ -68,11 +68,11 @@ export const userProfileV2 = (
 
 export const usersAllV1 = (token: string): UsersObject | Error => {
   const data = getData();
-
+  // check validity of input
   if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   }
-
+  // push all users' detail into a new array
   const usersArray = [];
 
   for (const user of data.users) {
@@ -108,20 +108,20 @@ export const userProfileSetNameV1 = (
   nameLast: string
 ): Record<string, never> | Error => {
   const data = getData();
-
+  // check validity of inputs
   if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   } else if (!nameInRange(nameFirst) || !nameInRange(nameLast)) {
     return { error: 'Invalid name length' };
   }
-
+  // find user
   const autherUserId = findUserFromToken(token);
 
   const user = findUser(autherUserId);
-
+  // change name
   user.nameFirst = nameFirst;
   user.nameLast = nameLast;
-
+  // update to data
   setData(data);
   return {};
 };
@@ -144,7 +144,7 @@ export const userProfileSetEmailV1 = (
   email: string
 ): Record<string, never> | Error => {
   const data = getData();
-
+  // check validaity of inputs
   if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   } else if (!validator.isEmail(email)) {
@@ -152,11 +152,11 @@ export const userProfileSetEmailV1 = (
   } else if (!isAvaliableEmail(email, data.users)) {
     return { error: 'Email already exist' };
   }
-
+  // Find user
   const autherUserId = findUserFromToken(token);
 
   const user = findUser(autherUserId);
-
+  // change user's email and updated to data
   user.email = email;
 
   setData(data);
@@ -183,7 +183,7 @@ export const userProfileSetHandleV1 = (
   handleStr: string
 ): Record<string, never> | Error => {
   const data = getData();
-
+  // check validaity of inputs
   if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
   } else if (handleStr.length < 3 || handleStr.length > 20) {
@@ -194,11 +194,11 @@ export const userProfileSetHandleV1 = (
   } else if (!isAvaliableHandleString(handleStr)) {
     return { error: 'handle is already used by another user' };
   }
-
+  // find user
   const autherUserId = findUserFromToken(token);
 
   const user = findUser(autherUserId);
-
+  // change handleStr and updated to data
   user.handleStr = handleStr;
 
   setData(data);

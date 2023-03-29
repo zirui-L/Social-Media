@@ -65,11 +65,14 @@ export const generateHandleStr = (
     handleString = handleString.substr(0, 20);
   }
 
-  let numberCat = 0;
-
-  while (!isAvaliableHandleString(handleString)) {
-    handleString += numberCat.toString();
-    numberCat += 1;
+  if (!isAvaliableHandleString(handleString)) {
+    let numberCat = 0;
+    let newhandleString = handleString;
+    while (!isAvaliableHandleString(newhandleString)) {
+      newhandleString = handleString + numberCat.toString();
+      numberCat += 1;
+    }
+    return newhandleString;
   }
 
   return handleString;

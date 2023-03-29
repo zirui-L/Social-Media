@@ -197,7 +197,26 @@ describe('/auth/register/v2 testing - generating handle string / email duplicati
     );
   });
 
-  test('Test-4: already taken handler string exceeds 20 characters limit', () => {
+  test('Test-4: already taken 2 handlers', () => {
+    requestAuthRegisterV2('test1@gmail.com', '123456', 'firstName', 'lastName');
+    requestAuthRegisterV2('test2@gmail.com', '123456', 'firstName', 'lastName');
+    const detail = requestAuthRegisterV2(
+      'test3@gmail.com',
+      '123456',
+      'firstName',
+      'lastName'
+    );
+    const user3Profile = requestUserProfileV2(
+      detail.bodyObj.token,
+      detail.bodyObj.authUserId
+    );
+    expect(user3Profile.statusCode).toBe(OK);
+    expect(user3Profile.bodyObj.user.handleStr).toStrictEqual(
+      'firstnamelastname1'
+    );
+  });
+
+  test('Test-5: already taken handler string exceeds 20 characters limit', () => {
     const detail1 = requestAuthRegisterV2(
       'test1@gmail.com',
       '123456',
@@ -221,7 +240,7 @@ describe('/auth/register/v2 testing - generating handle string / email duplicati
     );
   });
 
-  test('Test-5: /auth/register/v2 testing with duplication in email', () => {
+  test('Test-6: /auth/register/v2 testing with duplication in email', () => {
     requestAuthRegisterV2('test@gmail.com', '123456', 'firstName', 'lastName');
     const detail2 = requestAuthRegisterV2(
       'test@gmail.com',

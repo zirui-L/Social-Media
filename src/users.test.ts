@@ -10,11 +10,11 @@ import {
 
 const OK = 200;
 const ERROR = { error: expect.any(String) };
-
+// clear data before each test
 beforeEach(() => {
   requestClearV1();
 });
-
+// clear data after each test
 afterEach(() => {
   requestClearV1();
 });
@@ -57,9 +57,9 @@ describe('Testing /user/profile/v2 route', () => {
   });
 
   test('Test-3: Error, invalid token and invalid uId', () => {
-    // test funciton with invalid token and invalid uId
+    // test function with invalid token and invalid authUserId
     const userProfileObj = requestUserProfileV2('0', 0);
-    // expect function to run and return an error
+    // expect funtion to run and return an error
     expect(userProfileObj.statusCode).toBe(OK);
     expect(userProfileObj.bodyObj).toStrictEqual(ERROR);
   });
@@ -78,7 +78,7 @@ describe('Testing /user/profile/v2 route', () => {
       'Shenba',
       'Chen'
     );
-    // test function with correct inputs
+    // test function with correct && valid inputs
     const userProfileObj = requestUserProfileV2(
       test1.bodyObj.token,
       test2.bodyObj.authUserId
@@ -105,7 +105,7 @@ describe('Testing /user/profile/v2 route', () => {
       'Richardo',
       'Lee'
     );
-    // test function with correct input
+    // test function with correct inputs
     const userProfileObj = requestUserProfileV2(
       test1.bodyObj.token,
       test1.bodyObj.authUserId
@@ -241,7 +241,7 @@ describe('Testing /user/profile/setname/v1 route', () => {
   });
 
   test('Test-2: Error, length of first name is not between 1 and 50', () => {
-    // ceate a new user
+    // create a new user
     const test1 = requestAuthRegisterV2(
       'test1@gmail.com',
       'password1',
