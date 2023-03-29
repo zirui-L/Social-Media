@@ -133,11 +133,13 @@ export const authLogOutV1 = (token: string): Record<string, never> | Error => {
     return { error: 'Invalid token' };
   }
 
+  // find the index of the token that need to be removed, and using splice method
+  // to remove it from the data store
   const indexToDelete = data.tokens.findIndex(
     (existingToken) => existingToken.token === token
   );
 
-  data.tokens = data.tokens.splice(indexToDelete, 1);
+  data.tokens.splice(indexToDelete, 1);
 
   setData(data);
 
