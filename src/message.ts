@@ -61,7 +61,7 @@ export const messageSendV1 = (
     isChannelMessage: true,
     dmOrChannelId: channelId,
   });
-  channel.messages.unshift(messageId);
+  channel.messages.unshift(messageId); // unshift the most recent message to the front
   setData(data);
   return { messageId };
 };
@@ -122,7 +122,7 @@ export const messageEditV1 = (
     if (
       uId !== MessageToEdit.uId &&
       !isOwner(uId, MessageToEdit.dmOrChannelId) &&
-      findUser(uId).permissionId !== 1
+      findUser(uId).permissionId !== 1 // user is not global owner
     ) {
       return { error: "User doesn't have permission" };
     }
@@ -190,7 +190,7 @@ export const messageRemoveV1 = (
     if (
       uId !== MessageToDelete.uId &&
       !isOwner(uId, MessageToDelete.dmOrChannelId) &&
-      findUser(uId).permissionId !== 1
+      findUser(uId).permissionId !== 1 // User is not global owner
     ) {
       return { error: "User doesn't have permission" };
     }
@@ -262,7 +262,7 @@ export const messageSendDmV1 = (
     isChannelMessage: false,
     dmOrChannelId: dmId,
   });
-  Dm.messages.unshift(messageId);
+  Dm.messages.unshift(messageId);// unshift the most recent message to the front
   setData(data);
   return { messageId };
 };

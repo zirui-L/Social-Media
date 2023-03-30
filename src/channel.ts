@@ -53,6 +53,7 @@ export const channelDetailsV2 = (
   const ownerMembers = [];
   const allMembers = [];
 
+  // Find the user information that match with the uId in ownerMember array
   for (const user of newChannel.ownerMembers) {
     const currentUser = findUser(user);
     ownerMembers.push({
@@ -64,6 +65,7 @@ export const channelDetailsV2 = (
     });
   }
 
+  // Find the user information that match with the uId in allMember array
   for (const user of newChannel.allMembers) {
     const currentUser = findUser(user);
     allMembers.push({
@@ -120,6 +122,8 @@ export const channelJoinV2 = (
   const newUser = findUser(authUserId);
   const newChannel = findChannel(channelId);
 
+  // channel is private and when the authorised user is
+  // not a channel member and is not a global owner
   if (!newChannel.isPublic && newUser.permissionId !== 1) {
     return { error: 'Private channel, and user is not global' };
   }
@@ -174,6 +178,8 @@ export const channelInviteV2 = (
 
   const newUser = findUser(authUserId);
   const newChannel = findChannel(channelId);
+
+  // Record the information in both user's data and channel's data
   newUser.channels.push(channelId);
   newChannel.allMembers.push(uId);
 
@@ -228,6 +234,8 @@ export const channelMessagesV2 = (
   let end;
   let lengthOfMessage;
 
+  // return the first 50 message from the start, if there is less than 50
+  // messages, return all remainig message and set end to -1.
   if (newChannel.messages.length - start <= 50) {
     lengthOfMessage = newChannel.messages.length - start;
     end = -1;
@@ -238,6 +246,7 @@ export const channelMessagesV2 = (
 
   const paginatedMessages = [];
 
+  // Push the message information according to given message Id
   for (let i = start; i < start + lengthOfMessage; i++) {
     paginatedMessages.push(findMessageFromId(newChannel.messages[i]));
   }
@@ -388,9 +397,6 @@ export const channelRemoveOwnerV1 = (
   } else if (!isAuthUserIdValid(uId)) {
     return { error: 'Invalid uId' };
   } else if (!isOwner(uId, channelId)) {
-    const channel = findChannel(channelId);
-    console.log(channel);
-    console.log(uId);
     return { error: 'User is not an owner of the channel' };
   }
 
