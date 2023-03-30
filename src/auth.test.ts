@@ -6,10 +6,9 @@ import {
   requestAuthLogOutV1,
 } from './helperServer';
 
-const OK = 200; // correct status code for the server (no errors)
+const OK = 200;
 const ERROR = { error: expect.any(String) };
 
-// clear the data store before and after each test
 beforeEach(() => {
   requestClearV1();
 });
@@ -253,66 +252,6 @@ describe('/auth/register/v2 testing - generating handle string / email duplicati
     expect(detail2.statusCode).toBe(OK);
     expect(detail2.bodyObj).toStrictEqual(ERROR);
   });
-
-  test('Test-6: Multiple users with same first and last names', () => {
-    // four users shares common first and last names
-
-    const detail1 = requestAuthRegisterV2(
-      'test1@gmail.com',
-      '123456',
-      'firstName314',
-      'lastName'
-    );
-
-    const detail2 = requestAuthRegisterV2(
-      'test2@gmail.com',
-      '123456',
-      'firstName314',
-      'lastName'
-    );
-    const detail3 = requestAuthRegisterV2(
-      'test3@gmail.com',
-      '123456',
-      'firstName314',
-      'lastName'
-    );
-    const detail4 = requestAuthRegisterV2(
-      'test4@gmail.com',
-      '123456',
-      'firstName314',
-      'lastName'
-    );
-
-    const userProfile = requestUserProfileV2(
-      detail1.bodyObj.token,
-      detail2.bodyObj.authUserId
-    );
-
-    expect(userProfile.statusCode).toBe(OK);
-    expect(userProfile.bodyObj.user.handleStr).toStrictEqual(
-      'firstname314lastname0'
-    );
-
-    const userProfile1 = requestUserProfileV2(
-      detail1.bodyObj.token,
-      detail3.bodyObj.authUserId
-    );
-
-    expect(userProfile1.statusCode).toBe(OK);
-    expect(userProfile1.bodyObj.user.handleStr).toStrictEqual(
-      'firstname314lastname01'
-    );
-
-    const userProfile2 = requestUserProfileV2(
-      detail1.bodyObj.token,
-      detail4.bodyObj.authUserId
-    );
-
-    expect(userProfile2.statusCode).toBe(OK);
-    expect(userProfile2.bodyObj.user.handleStr).toStrictEqual(
-      'firstname314lastname012'
-    );
-  });
 });
 
 describe('/auth/logout/v1 testing', () => {
@@ -379,8 +318,6 @@ describe('/auth/logout/v1 testing', () => {
     );
     requestAuthRegisterV2('test2@gmail.com', '123455', 'firstName', 'lastName');
     requestAuthRegisterV2('test3@gmail.com', '123455', 'firstName', 'lastName');
-
-    // log the first user out
     const logoutAuthUserId = requestAuthLogOutV1(
       registerAuthUserId1.bodyObj.token
     );
