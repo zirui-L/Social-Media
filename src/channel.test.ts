@@ -1186,7 +1186,7 @@ describe('Testing /channel/leave/v1', () => {
     expect(channelLeaveObj.statusCode).toBe(OK);
     expect(channelLeaveObj.bodyObj).toStrictEqual({});
 
-    //channel info displayed without the owner
+    // channel info displayed without the owner
     expect(
       requestChannelDetailsV2(test2.bodyObj.token, channel.bodyObj.channelId)
         .bodyObj
