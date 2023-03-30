@@ -32,7 +32,7 @@ export const authLoginV2 = (
 
   for (const user of data.users) {
     if (user.email === email && user.password === password) {
-      //Create a unique token in numbers and convert it to string
+      // Create a unique token in numbers and convert it to string
       const token = `${createUniqueId()}`;
       data.tokens.push({
         uId: user.authUserId,

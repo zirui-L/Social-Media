@@ -236,7 +236,7 @@ describe('/auth/register/v2 testing - generating handle string / email duplicati
   });
 
   test('Test-6: Multiple users with same first and last names', () => {
-    //four users shares common first and last names
+    // four users shares common first and last names
 
     const detail1 = requestAuthRegisterV2(
       'test1@gmail.com',
