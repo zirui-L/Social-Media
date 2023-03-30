@@ -42,31 +42,35 @@ type DmDetails = {
 
 export const dmCreateV1 = (token: string, uIds: Array<number>): DmId | Error => {
   const data = getData();
+  // check input's validity
   if (!isTokenValid(token)) {
     return { error: 'Invalid token' };
-  } else if (isDuplicate(uIds)) {
-    return { error: 'Duplicate uIds' };
   } else if (!isUIdsValid(uIds)) {
     return { error: 'Invalid uId(s)' };
   }
 
   const authUserId = findUserFromToken(token);
-  const dmId = createUniqueId();
   uIds.unshift(authUserId);
+  if (isDuplicate(uIds)) {
+    return { error: 'Duplicate uIds' };
+  }
+  const dmId = createUniqueId();
 
   const users = [];
   for (const uId of uIds) {
     users.push(findUser(uId));
   }
+  // sort users alphabetically
   users.sort((user1, user2) => user1.handleStr.localeCompare(user2.handleStr));
   let dmName = '';
+  // create the dm's name
   for (const user of users) {
     dmName += `${user.handleStr}, `;
     user.dms.push(dmId);
   }
   data.dms.push({
     dmId: dmId,
-    name: dmName.substring(0, dmName.length - 2),
+    name: dmName.substring(0, dmName.length - 2), // discard the ", " after the last uid
     ownerMembers: [authUserId],
     allMembers: uIds,
     messages: [],
@@ -122,17 +126,22 @@ export const dmRemoveV1 = (token: string, dmId: number): Record<string, never> |
     return { error: 'Invalid token' };
   }
   const authUserId = findUserFromToken(token);
-  if (!isDmOwner(authUserId, dmId)) {
-    return { error: 'The authorised user is not the owner of the DM' };
-  } else if (!isDmMember(authUserId, dmId)) {
+  if (!isDmMember(authUserId, dmId)) {
     return { error: 'The authorised user is not in the DM' };
+  } else if (!isDmOwner(authUserId, dmId)) {
+    return { error: 'The authorised user is not the owner of the DM' };
   }
   const Dm = findDm(dmId);
   for (const uId of Dm.allMembers) {
-    const user = findUser(uId);
+    const user = findUser(uId); // Remove dm from user's profile
     user.dms = user.dms.filter((DmId) => DmId !== dmId);
   }
+  // Remove dm from dm list
   data.dms = data.dms.filter((Dm) => Dm.dmId !== dmId);
+  // Remove all messages in the dm
+  data.messages = data.messages.filter(
+    (message) => !Dm.messages.includes(message.messageId)
+  );
   setData(data);
   return {};
 };
@@ -152,6 +161,7 @@ export const dmRemoveV1 = (token: string, dmId: number): Record<string, never> |
  */
 
 export const dmDetailsV1 = (token: string, dmId: number): DmDetails | Error => {
+  // check validity of input
   if (!isDmValid(dmId)) {
     return { error: 'Invalid dmId' };
   } else if (!isTokenValid(token)) {
@@ -163,6 +173,7 @@ export const dmDetailsV1 = (token: string, dmId: number): DmDetails | Error => {
   }
   const Dm = findDm(dmId);
   const members = [];
+  // Find the user information that match with the uId in allMember array
   for (const uId of Dm.allMembers) {
     const member = findUser(uId);
     members.push({
@@ -196,6 +207,7 @@ export const dmDetailsV1 = (token: string, dmId: number): DmDetails | Error => {
 
 export const dmLeaveV1 = (token: string, dmId: number): Record<string, never> | Error => {
   const data = getData();
+  // check validity of input
   if (!isDmValid(dmId)) {
     return { error: 'Invalid dmId' };
   } else if (!isTokenValid(token)) {
@@ -205,10 +217,12 @@ export const dmLeaveV1 = (token: string, dmId: number): Record<string, never> | 
   if (!isDmMember(authUserId, dmId)) {
     return { error: 'The authorised user is not in the DM' };
   }
+  // remove dm from user's detail
   const user = findUser(authUserId);
   user.dms = user.dms.filter((DmId) => DmId !== dmId);
 
   const Dm = findDm(dmId);
+  // remove member from dm
   Dm.allMembers = Dm.allMembers.filter((uId) => uId !== authUserId);
   Dm.ownerMembers = Dm.ownerMembers.filter((uId) => uId !== authUserId);
   setData(data);
@@ -251,6 +265,9 @@ export const dmMessagesV1 = (
   }
   let lengthOfMessage;
   let end;
+
+  // return the first 50 message from the start, if there is less than 50
+  // messages, return all remainig message and set end to -1.
   if (Dm.messages.length - start <= 50) {
     lengthOfMessage = Dm.messages.length - start;
     end = -1;
@@ -258,6 +275,7 @@ export const dmMessagesV1 = (
     lengthOfMessage = 50;
     end = start + 50;
   }
+  // Push the message information according to given message Id
   const paginatedMessages = [];
   for (let i = start; i < start + lengthOfMessage; i++) {
     paginatedMessages.push(findMessageFromId(Dm.messages[i]));

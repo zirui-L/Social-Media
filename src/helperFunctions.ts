@@ -8,6 +8,13 @@ import {
 } from './dataStore';
 import fs from 'fs';
 
+/**
+ * <For persistence measure, which store data of server into a json file>
+ *
+ * @param N/A
+ *
+ * @returns N/A
+ */
 export const storeData = () => {
   const data = getData();
   if (fs.existsSync('src/data.json')) {
@@ -17,7 +24,8 @@ export const storeData = () => {
 };
 
 /**
- * <Create a unique id by utilise combination of timestampe and random number, which avoid repetition and collision>
+ * <Create a unique id by utilise combination of timestampe and random number,
+ * which avoid repetition and collision>
  *
  * @param N/A
  *

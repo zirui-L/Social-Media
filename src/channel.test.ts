@@ -788,10 +788,14 @@ describe('Testing /channel/messages/v2', () => {
 
     expect(channelMessageObj.statusCode).toBe(OK);
     expect(channelMessageObj.bodyObj).toStrictEqual({
-      messages: expect.anything(),
+      messages: expect.any(Array),
       start: 0,
       end: -1,
     });
+
+    // Ensure the returned messages are from most recent to least recent
+    expect(channelMessageObj.bodyObj.messages[0].message).toBe('49');
+    expect(channelMessageObj.bodyObj.messages[49].message).toBe('0');
   });
 
   test('Test-7: Success, start is 60, and there are in total 60 messages', () => {
@@ -853,15 +857,20 @@ describe('Testing /channel/messages/v2', () => {
     expect(channelMessageObj1.statusCode).toBe(OK);
     expect(channelMessageObj2.statusCode).toBe(OK);
     expect(channelMessageObj1.bodyObj).toStrictEqual({
-      messages: expect.anything(),
+      messages: expect.any(Array),
       start: 0,
       end: 50,
     });
     expect(channelMessageObj2.bodyObj).toStrictEqual({
-      messages: expect.anything(),
+      messages: expect.any(Array),
       start: 50,
       end: -1,
     });
+
+    // Ensure the returned messages are from most recent to least recent
+    expect(channelMessageObj1.bodyObj.messages[0].message).toBe('50');
+    expect(channelMessageObj1.bodyObj.messages[49].message).toBe('1');
+    expect(channelMessageObj2.bodyObj.messages[0].message).toBe('0');
   });
 
   test('Test-9: Success, 3 channel message request to a channel with 124 messages', () => {
@@ -897,24 +906,101 @@ describe('Testing /channel/messages/v2', () => {
       100
     );
 
+    // Three message request intervals adds up to 124
     expect(channelMessageObj1.statusCode).toBe(OK);
     expect(channelMessageObj2.statusCode).toBe(OK);
     expect(channelMessageObj3.statusCode).toBe(OK);
     expect(channelMessageObj1.bodyObj).toStrictEqual({
-      messages: expect.anything(),
+      messages: expect.any(Array),
       start: 0,
       end: 50,
     });
     expect(channelMessageObj2.bodyObj).toStrictEqual({
-      messages: expect.anything(),
+      messages: expect.any(Array),
       start: 50,
       end: 100,
     });
     expect(channelMessageObj3.bodyObj).toStrictEqual({
-      messages: expect.anything(),
+      messages: expect.any(Array),
       start: 100,
       end: -1,
     });
+
+    // Ensure the returned messages are from most recent to least recent
+    expect(channelMessageObj1.bodyObj.messages[16].message).toBe('107');
+    expect(channelMessageObj2.bodyObj.messages[23].message).toBe('50');
+  });
+
+  test('Test-10: Successfully return 3 messages', () => {
+    const test1 = requestAuthRegisterV2(
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
+    );
+    const channel = requestChannelsCreateV2(
+      test1.bodyObj.token,
+      'LeeChannel',
+      true
+    );
+
+    const messageId1 = requestMessageSendV1(
+      test1.bodyObj.token,
+      channel.bodyObj.channelId,
+      'first'
+    );
+
+    const messageId2 = requestMessageSendV1(
+      test1.bodyObj.token,
+      channel.bodyObj.channelId,
+      'second'
+    );
+
+    const messageId3 = requestMessageSendV1(
+      test1.bodyObj.token,
+      channel.bodyObj.channelId,
+      'third'
+    );
+
+    const expectedTimeSent = Math.floor(Date.now() / 1000);
+
+    const channelMessageObj1 = requestChannelMessagesV2(
+      test1.bodyObj.token,
+      channel.bodyObj.channelId,
+      0
+    );
+    expect(channelMessageObj1.statusCode).toBe(OK);
+
+    // from the most recent to least recent
+    expect(channelMessageObj1.bodyObj).toStrictEqual({
+      messages: [
+        {
+          messageId: messageId3.bodyObj.messageId,
+          uId: test1.bodyObj.authUserId,
+          message: 'third',
+          timeSent: expect.any(Number),
+        },
+        {
+          messageId: messageId2.bodyObj.messageId,
+          uId: test1.bodyObj.authUserId,
+          message: 'second',
+          timeSent: expect.any(Number),
+        },
+        {
+          messageId: messageId1.bodyObj.messageId,
+          uId: test1.bodyObj.authUserId,
+          message: 'first',
+          timeSent: expect.any(Number),
+        },
+      ],
+      start: 0,
+      end: -1,
+    });
+
+    // make sure the message sent has a time before now
+    expect(
+      channelMessageObj1.bodyObj.messages[0].timeSent
+    ).toBeGreaterThanOrEqual(expectedTimeSent);
   });
 });
 
@@ -1027,6 +1113,7 @@ describe('Testing /channel/leave/v1', () => {
     expect(channelLeaveObj.statusCode).toBe(OK);
     expect(channelLeaveObj.bodyObj).toStrictEqual({});
 
+    // Channel displayed without the user that left
     expect(
       requestChannelDetailsV2(test1.bodyObj.token, channel.bodyObj.channelId)
         .bodyObj
@@ -1053,6 +1140,7 @@ describe('Testing /channel/leave/v1', () => {
       ],
     });
 
+    // message still remains after the user left
     const message = requestChannelMessagesV2(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
@@ -1098,6 +1186,7 @@ describe('Testing /channel/leave/v1', () => {
     expect(channelLeaveObj.statusCode).toBe(OK);
     expect(channelLeaveObj.bodyObj).toStrictEqual({});
 
+    // channel info displayed without the owner
     expect(
       requestChannelDetailsV2(test2.bodyObj.token, channel.bodyObj.channelId)
         .bodyObj
@@ -1153,6 +1242,7 @@ describe('Testing /channel/leave/v1', () => {
     expect(channelLeaveObj2.statusCode).toBe(OK);
     expect(channelLeaveObj2.bodyObj).toStrictEqual({});
 
+    // all user had left the channel
     expect(requestChannelsListAllV2(test1.bodyObj.token).bodyObj).toStrictEqual(
       {
         channels: [
@@ -1369,6 +1459,8 @@ describe('Testing /channel/addowner/v1', () => {
     );
     expect(channelAddOwnerObj.statusCode).toBe(OK);
     expect(channelAddOwnerObj.bodyObj).toStrictEqual({});
+
+    // displat channel info with two owners
     expect(
       requestChannelDetailsV2(test1.bodyObj.token, channel.bodyObj.channelId)
         .bodyObj
@@ -1477,6 +1569,8 @@ describe('Testing /channel/addowner/v1', () => {
     );
     expect(multipleOwner.statusCode).toBe(OK);
     expect(multipleOwner.bodyObj).toStrictEqual({});
+
+    // display channel info with multiple owners
     expect(
       requestChannelDetailsV2(owner.bodyObj.token, channel.bodyObj.channelId)
         .bodyObj
@@ -1663,6 +1757,7 @@ describe('Testing /channel/removeowner/v1', () => {
 
     requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
 
+    // test1 is the only owner in the channel
     const channelRemoveOwnerObj = requestChannelRemoveOwnerV1(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
@@ -1708,6 +1803,7 @@ describe('Testing /channel/removeowner/v1', () => {
       test2.bodyObj.autherUserId
     );
 
+    // test 3 does not have owner permission in the channel
     const channelRemoveOwnerObj = requestChannelRemoveOwnerV1(
       test3.bodyObj.token,
       channel.bodyObj.channelId,
@@ -1778,6 +1874,7 @@ describe('Testing /channel/removeowner/v1', () => {
       test2.bodyObj.authUserId
     );
 
+    // remove the newly added owner
     const channelRemoveOwnerObj = requestChannelRemoveOwnerV1(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
@@ -1995,6 +2092,6 @@ const createMessages = (
   repetition: number
 ): void => {
   for (let count = 0; count < repetition; count++) {
-    requestMessageSendV1(token, channelId, `Testing line ${count}`);
+    requestMessageSendV1(token, channelId, `${count}`);
   }
 };

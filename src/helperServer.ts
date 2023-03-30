@@ -2,6 +2,17 @@ import request, { HttpVerb } from 'sync-request';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
+/**
+ * <Make request base on given method and route>
+ *
+ * @param {HttpVerb} method - Methods of 'GET', 'DELETE', 'PUT', and 'POST'
+ * @param {string} path - the route or path for the request
+ * @param {unknown} parameters - request parameters
+ *
+ * @returns {{ statusCode, bodyObj }} - returns a object containing:
+ * 1. status code - to indicate the status of the server for debugging
+ * 2. body object - the return value for each request
+ */
 const httpRequestHandle = (
   method: HttpVerb,
   path: string,
@@ -18,6 +29,9 @@ const httpRequestHandle = (
   const statusCode = res.statusCode;
   return { statusCode, bodyObj };
 };
+
+// Following funciton are written to simplify the syntax in testing file, which
+// receive parameters and make relevant http requests.
 
 export const requestAuthLoginV2 = (email: string, password: string) => {
   return httpRequestHandle('POST', '/auth/login/v2', { email, password });

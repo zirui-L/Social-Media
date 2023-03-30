@@ -38,7 +38,15 @@ describe('Testing /dm/create/v1', () => {
     expect(DmCreate.bodyObj).toStrictEqual(ERROR);
   });
 
-  test('Test-3: Error, invalid token', () => {
+  test('Test-3: Error, creator.uId in uIds', () => {
+    const user1 = requestAuthRegisterV2('test1@gmail.com', '123456', 'Richardo', 'Li').bodyObj;
+    const user2 = requestAuthRegisterV2('test2@gmail.com', '1234567', 'Shenba', 'Chen').bodyObj;
+    const DmCreate = requestDmCreateV1(user1.token, [user1.authUserId, user2.authUserId]);
+    expect(DmCreate.statusCode).toBe(OK);
+    expect(DmCreate.bodyObj).toStrictEqual(ERROR);
+  });
+
+  test('Test-4: Error, invalid token', () => {
     const user1 = requestAuthRegisterV2('test1@gmail.com', '123456', 'Richardo', 'Li').bodyObj;
     const user2 = requestAuthRegisterV2('test2@gmail.com', '1234567', 'Shenba', 'Chen').bodyObj;
     const DmCreate = requestDmCreateV1(user1.token + 1, [user2.authUserId]);
@@ -46,7 +54,7 @@ describe('Testing /dm/create/v1', () => {
     expect(DmCreate.bodyObj).toStrictEqual(ERROR);
   });
 
-  test('Test-4, correct input parameters', () => {
+  test('Test-5: Success, correct input parameters', () => {
     const user1 = requestAuthRegisterV2('test1@gmail.com', '123456', 'Richardo', 'Li').bodyObj;
     const user2 = requestAuthRegisterV2('test2@gmail.com', '1234567', 'Shenba', 'Chen').bodyObj;
     const DmCreate = requestDmCreateV1(user1.token, [user2.authUserId]);
@@ -243,6 +251,29 @@ describe('Testing /dm/leave/v1', () => {
     const DmLeave = requestDmLeaveV1(user1.token, dmId);
     expect(DmLeave.statusCode).toBe(OK);
     expect(DmLeave.bodyObj).toStrictEqual({});
+
+    // dm displayed without the user that left
+    expect(
+      requestDmDetailsV1(user2.token, dmId).bodyObj
+    ).toStrictEqual({
+      name: 'kundayu, richardoli, shenbachen',
+      members: [
+        {
+          uId: user2.authUserId,
+          email: 'test2@gmail.com',
+          nameFirst: 'Shenba',
+          nameLast: 'Chen',
+          handleStr: 'shenbachen',
+        },
+        {
+          uId: user3.authUserId,
+          email: 'test3@gmail.com',
+          nameFirst: 'Kunda',
+          nameLast: 'Yu',
+          handleStr: 'kundayu',
+        },
+      ],
+    });
   });
 });
 
@@ -309,6 +340,9 @@ describe('Testing /dm/messages/v1', () => {
       start: 0,
       end: -1,
     });
+    // Ensure the returned messages are from most recent to least recent
+    expect(DmMessages.bodyObj.messages[0].message).toBe('49');
+    expect(DmMessages.bodyObj.messages[49].message).toBe('0');
   });
 
   test('Test-7: Success, start is 60, and there are in total 60 messages', () => {
@@ -330,13 +364,29 @@ describe('Testing /dm/messages/v1', () => {
     const user2 = requestAuthRegisterV2('test2@gmail.com', '1234567', 'Shenba', 'Chen').bodyObj;
     const dmId = requestDmCreateV1(user1.token, [user2.authUserId]).bodyObj.dmId;
     createMessages(user1.token, dmId, 51);
-    const DmMessages = requestDmMessagesV1(user1.token, dmId, 0);
-    expect(DmMessages.statusCode).toBe(OK);
-    expect(DmMessages.bodyObj).toStrictEqual({
+    const DmMessages1 = requestDmMessagesV1(user1.token, dmId, 0);
+    const DmMessages2 = requestDmMessagesV1(user1.token, dmId, 50);
+    expect(DmMessages1.statusCode).toBe(OK);
+    expect(DmMessages1.bodyObj).toStrictEqual({
       messages: expect.any(Array),
       start: 0,
       end: 50,
     });
+    expect(DmMessages2.statusCode).toBe(OK);
+    expect(DmMessages2.bodyObj).toStrictEqual({
+      messages: expect.any(Array),
+      start: 50,
+      end: -1,
+    });
+    // Ensure the returned messages are from most recent to least recent
+    expect(DmMessages1.bodyObj.messages[0].message).toBe('50');
+    expect(DmMessages1.bodyObj.messages[49].message).toBe('1');
+    expect(DmMessages2.bodyObj.messages[0].message).toBe('0');
+    const expectedTimeSent = Math.floor(Date.now() / 1000);
+    // make sure the message sent has a time before now
+    expect(
+      DmMessages1.bodyObj.messages[0].timeSent
+    ).toBeGreaterThanOrEqual(expectedTimeSent);
   });
 });
 
@@ -346,6 +396,6 @@ const createMessages = (
   repetition: number
 ): void => {
   for (let count = 0; count < repetition; count++) {
-    requestMessageSendDmV1(token, dmId, `Testing line ${count}`);
+    requestMessageSendDmV1(token, dmId, `${count}`);
   }
 };
