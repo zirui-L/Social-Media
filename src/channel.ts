@@ -388,9 +388,6 @@ export const channelRemoveOwnerV1 = (
   } else if (!isAuthUserIdValid(uId)) {
     return { error: 'Invalid uId' };
   } else if (!isOwner(uId, channelId)) {
-    const channel = findChannel(channelId);
-    console.log(channel);
-    console.log(uId);
     return { error: 'User is not an owner of the channel' };
   }
 
