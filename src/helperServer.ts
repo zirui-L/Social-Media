@@ -2,6 +2,11 @@ import request, { HttpVerb } from 'sync-request';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
 
+type routeReturn = {
+  statusCode: number;
+  bodyObj: any;
+};
+
 /**
  * <Make request base on given method and route>
  *
@@ -17,7 +22,7 @@ const httpRequestHandle = (
   method: HttpVerb,
   path: string,
   parameters: unknown
-) => {
+): routeReturn => {
   let requestObject = {};
   if (method === 'GET' || method === 'DELETE') {
     requestObject = { qs: parameters };
