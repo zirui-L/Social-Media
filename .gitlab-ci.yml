@@ -15,8 +15,6 @@ tests with coverage:
     - timeout -s SIGINT 180s npm run test || (cat $SERVER_LOG && exit 1)
     - kill -SIGINT %1
     - sleep 2
-    - npm run test src/**.ts
-    - kill -SIGINT %1
     - cat $SERVER_LOG
   coverage: '/All files\s*\|\s*(\d+(?:\.\d+)?)/'
   artifacts:
