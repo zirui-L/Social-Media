@@ -1,12 +1,34 @@
-import { echo } from './echo';
+import { port, url } from './config.json';
+import request from 'sync-request';
 
-test('Test successful echo', () => {
-  let result = echo('1');
-  expect(result).toBe('1');
-  result = echo('abc');
-  expect(result).toBe('abc');
-});
+const OK = 200;
+const INPUT_ERROR = 400;
+/*
+Iteration 2
+*/
 
-test('Test invalid echo', () => {
-  expect(echo('echo')).toStrictEqual({ error: 'error' });
+describe('HTTP tests using Jest', () => {
+  test('Test successful echo', () => {
+    const res = request('GET', `${url}:${port}/echo`, {
+      qs: {
+        echo: 'Hello',
+      },
+      // adding a timeout will help you spot when your server hangs
+      timeout: 100,
+    });
+    const bodyObj = JSON.parse(res.body as string);
+    expect(res.statusCode).toBe(OK);
+    expect(bodyObj).toEqual('Hello');
+  });
+  test('Test invalid echo', () => {
+    const res = request('GET', `${url}:${port}/echo`, {
+      qs: {
+        echo: 'echo',
+      },
+      timeout: 100,
+    });
+    const bodyObj = JSON.parse(res.body as string);
+    expect(res.statusCode).toBe(INPUT_ERROR);
+    expect(bodyObj.error).toStrictEqual({ message: 'Cannot echo "echo"' });
+  });
 });
