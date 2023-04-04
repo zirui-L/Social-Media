@@ -747,7 +747,7 @@ describe('Testing /dm/messages/v1', () => {
     expect(DmMessages2.bodyObj.messages[0].message).toBe('0');
     const expectedTimeSent = Math.floor(Date.now() / 1000);
     // make sure the message sent has a time before now
-    expect(DmMessages1.bodyObj.messages[0].timeSent).toBeLessThanOrEqual(
+    expect(DmMessages1.bodyObj.messages[0].timeSent / 1000).toBeLessThanOrEqual(
       expectedTimeSent
     );
   });
