@@ -43,6 +43,7 @@ import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
 import fs from 'fs';
+import errorHandler from 'middleware-http-errors';
 
 // Set up web app
 const app = express();
@@ -248,6 +249,9 @@ if (fs.existsSync('src/data.json')) {
   const syncData = fs.readFileSync('src/data.json', { flag: 'r' });
   setData(JSON.parse(String(syncData)));
 }
+// Keep this BENEATH route definitions
+// handles errors nicely
+app.use(errorHandler());
 
 // start server
 const server = app.listen(PORT, HOST, () => {
