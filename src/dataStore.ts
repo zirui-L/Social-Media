@@ -1,7 +1,15 @@
 export type Error = {
   error: string;
 };
-
+export type React = {
+  reactId: number;
+  uIds: Array<number>;
+}
+export type ReactReturn = {
+  reactId: number;
+  uIds: Array<number>;
+  isThisUserReacted: boolean;
+}
 export type storedMessage = {
   messageId: number;
   uId: number;
@@ -9,12 +17,16 @@ export type storedMessage = {
   timeSent: number;
   isChannelMessage: boolean;
   dmOrChannelId: number;
+  reacts: Array<React>;
+  isPinned: boolean;
 };
 export type Message = {
   messageId: number;
   uId: number;
   message: string;
   timeSent: number;
+  reacts: Array<React>;
+  isPinned: boolean;
 };
 
 export type Channel = {
@@ -65,6 +77,7 @@ export type Data = {
   messages: Array<storedMessage>;
   dms: Array<Dm>;
   tokens: Array<Token>;
+  reactIds: Array<number>,
 };
 
 export type paginatedMessage = {
@@ -80,6 +93,7 @@ let data: Data = {
   messages: [],
   dms: [],
   tokens: [],
+  reactIds: [1],
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

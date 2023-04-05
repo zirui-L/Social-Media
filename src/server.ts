@@ -25,6 +25,7 @@ import {
   messageRemoveV1,
   messageSendDmV1,
   messageSendV1,
+  messageReactV1,
 } from './message';
 import {
   dmCreateV1,
@@ -197,6 +198,12 @@ app.delete('/message/remove/v1', (req: Request, res: Response) => {
 app.post('/message/senddm/v1', (req: Request, res: Response) => {
   const { token, dmId, message } = req.body;
   res.json(messageSendDmV1(token, dmId, message));
+  storeData();
+});
+
+app.post('/message/react/v1', (req: Request, res: Response) => {
+  const { token, messageId, reactId } = req.body;
+  res.json(messageReactV1(token, messageId, reactId));
   storeData();
 });
 

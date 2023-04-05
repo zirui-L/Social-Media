@@ -5,6 +5,7 @@ import {
   isDmOwner,
   isMessageValid,
   isTokenValid,
+  isReactIdValid,
   createUniqueId,
   findChannel,
   findUserFromToken,
@@ -12,10 +13,14 @@ import {
   findUser,
   findDm,
 } from './helperFunctions';
+import HTTPError from 'http-errors';
 
 type messageIdObj = {
   messageId: number;
 };
+
+const BAD_REQUEST = 400;
+const FORBIDDEN = 403;
 
 /**
  * <Send a message from authorised user to the channel specified by channelId.>
@@ -47,6 +52,7 @@ export const messageSendV1 = (
     // Length of message is less than 1 or over 1000 characters
     return { error: 'Invalid message length' };
   }
+
   const uId = findUserFromToken(token);
   if (!isMember(uId, channelId)) {
     // ChannelId is valid and the authorised user is not a member of the channel
@@ -60,6 +66,8 @@ export const messageSendV1 = (
     timeSent: Date.now() / 1000,
     isChannelMessage: true,
     dmOrChannelId: channelId,
+    reacts: [],
+    isPinned: false,
   });
   channel.messages.unshift(messageId); // unshift the most recent message to the front
   setData(data);
@@ -261,8 +269,54 @@ export const messageSendDmV1 = (
     timeSent: Date.now() / 1000,
     isChannelMessage: false,
     dmOrChannelId: dmId,
+    reacts: [],
+    isPinned: false,
   });
   Dm.messages.unshift(messageId);// unshift the most recent message to the front
   setData(data);
   return { messageId };
+};
+
+export const messageReactV1 = (
+  token: string,
+  messageId: number,
+  reactId: number
+): Record<string, never> => {
+  const data = getData();
+
+  if (!isTokenValid(token)) {
+    throw HTTPError(FORBIDDEN, 'Invalid token'); // token is invalid
+  } else if (!isMessageValid(messageId)) {
+    throw HTTPError(BAD_REQUEST, 'Invalid message id'); // messageId does not refer to a valid message
+  } else if (!isReactIdValid(reactId)) {
+    throw HTTPError(BAD_REQUEST, 'Invalid react id');
+  }
+
+  const message = findStoredMessageFromId(messageId);
+  const uId = findUserFromToken(token);
+  const user = findUser(uId);
+
+  // messageId does not refer to a valid message within a channel/DM
+  // that the authorised user has joined
+  if (!user.channels.includes(message.dmOrChannelId) &&
+      !user.dms.includes(message.dmOrChannelId)) {
+    throw HTTPError(BAD_REQUEST, "Message is not in user's chat");
+  }
+
+  const react = message.reacts.find((react) => react.reactId === reactId);
+  if (react && react.uIds.includes(uId)) {
+    throw HTTPError(BAD_REQUEST, 'Already reacted');
+  }
+
+  if (!react) {
+    message.reacts.push({
+      reactId: reactId,
+      uIds: [uId],
+    });
+  } else {
+    react.uIds.push(uId);
+  }
+
+  setData(data);
+  return {};
 };

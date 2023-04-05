@@ -10,9 +10,15 @@ import {
   requestMessageSendDmV1,
   requestDmMessagesV1,
   requestDmCreateV1,
+  requestMessageReactV1,
+  // requestMessageUnReactV1,
+  // requestMessagePinV1,
+  // requestMessageUnPinV1,
 } from './helperServer';
 
 const OK = 200;
+const BAD_REQUEST = 400;
+const FORBIDDEN = 403;
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
@@ -172,6 +178,8 @@ describe('Testing /message/send/v1', () => {
           uId: test1.bodyObj.authUserId,
           message: 'firstMessage',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
       ],
       start: 0,
@@ -246,18 +254,24 @@ describe('Testing /message/send/v1', () => {
           uId: test2.bodyObj.authUserId,
           message: 'thirdMessage',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
         {
           messageId: messageSendObj2.bodyObj.messageId,
           uId: test2.bodyObj.authUserId,
           message: 'secondMessage',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
         {
           messageId: messageSendObj1.bodyObj.messageId,
           uId: test1.bodyObj.authUserId,
           message: 'firstMessage',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
       ],
       start: 0,
@@ -536,6 +550,8 @@ describe('Testing /message/edit/v1', () => {
           uId: test2.bodyObj.authUserId,
           message: 'HelloWorld',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
       ],
       start: 0,
@@ -591,6 +607,8 @@ describe('Testing /message/edit/v1', () => {
           uId: test2.bodyObj.authUserId,
           message: 'HelloWorld',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
       ],
       start: 0,
@@ -647,6 +665,8 @@ describe('Testing /message/edit/v1', () => {
           uId: test2.bodyObj.authUserId,
           message: 'HelloWorld',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
       ],
       start: 0,
@@ -694,6 +714,8 @@ describe('Testing /message/edit/v1', () => {
           uId: test1.bodyObj.authUserId,
           message: 'helloWorld',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
       ],
       start: 0,
@@ -742,6 +764,8 @@ describe('Testing /message/edit/v1', () => {
           uId: test1.bodyObj.authUserId,
           message: 'helloWorld',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
       ],
       start: 0,
@@ -1331,6 +1355,8 @@ describe('Testing /message/senddm/v1', () => {
           uId: test1.bodyObj.authUserId,
           message: 'helloWorld',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
       ],
       start: 0,
@@ -1396,18 +1422,302 @@ describe('Testing /message/senddm/v1', () => {
           uId: test2.bodyObj.authUserId,
           message: 'thirdMessage',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
         {
           messageId: messageSendDmObj2.bodyObj.messageId,
           uId: test2.bodyObj.authUserId,
           message: 'secondMessage',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
         {
           messageId: messageSendDmObj1.bodyObj.messageId,
           uId: test1.bodyObj.authUserId,
           message: 'firstMessage',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
+        },
+      ],
+      start: 0,
+      end: -1,
+    });
+  });
+});
+
+describe('Testing /message/react/v1', () => {
+  test('Test-1: Error, token is invalid', () => {
+    const test1 = requestAuthRegisterV2(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+
+    const channelId = requestChannelsCreateV2(
+      test1.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSendV1(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+
+    const res = requestMessageReactV1(
+      test1.token + '1',
+      messageSendObj1.messageId, 1
+    );
+
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Test-2: Error, messageId does not refer to a valid message', () => {
+    const test1 = requestAuthRegisterV2(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreateV2(
+      test1.token,
+      'RicardoChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSendV1(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessageReactV1(
+      test1.token,
+      messageSendObj1.messageId + 1, 1
+    );
+
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-3: Error, user is not a member of the channel where the message is in', () => {
+    const test1 = requestAuthRegisterV2(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegisterV2(
+      'test2@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreateV2(
+      test1.token,
+      'RicardoChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSendV1(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessageReactV1(
+      test2.token,
+      messageSendObj1.messageId, 1
+    );
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-4: Error, user is not a member of the dm where the message is in', () => {
+    const test1 = requestAuthRegisterV2(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegisterV2(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const test3 = requestAuthRegisterV2(
+      'test3@gmail.com',
+      'password3',
+      'firstName3',
+      'lastName3'
+    ).bodyObj;
+    const dmIdObj = requestDmCreateV1(test2.token, [
+      test1.authUserId,
+    ]).bodyObj;
+    const messageIdObj = requestMessageSendDmV1(
+      test1.token,
+      dmIdObj.dmId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessageReactV1(
+      test3.token,
+      messageIdObj.messageId, 1
+    );
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-5: Error, invalid reactId', () => {
+    const test1 = requestAuthRegisterV2(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+
+    const channelId = requestChannelsCreateV2(
+      test1.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSendV1(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+
+    const res = requestMessageReactV1(
+      test1.token,
+      messageSendObj1.messageId, 2
+    );
+
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-6: Error, already exist reactId', () => {
+    const test1 = requestAuthRegisterV2(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+
+    const channelId = requestChannelsCreateV2(
+      test1.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSendV1(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+
+    requestMessageReactV1(
+      test1.token,
+      messageSendObj1.messageId, 1
+    );
+    const res = requestMessageReactV1(
+      test1.token,
+      messageSendObj1.messageId, 1
+    );
+
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-7: Success react in a channel, checking side effects', () => {
+    const test1 = requestAuthRegisterV2(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreateV2(
+      test1.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSendV1(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessageReactV1(
+      test1.token,
+      messageSendObj1.messageId, 1
+    );
+    expect(res.statusCode).toStrictEqual(OK);
+    expect(res.bodyObj).toStrictEqual({});
+
+    const channelMessages = requestChannelMessagesV2(
+      test1.token,
+      channelId.channelId,
+      0
+    );
+    expect(channelMessages.bodyObj).toStrictEqual({
+      messages: [
+        {
+          messageId: messageSendObj1.messageId,
+          uId: test1.authUserId,
+          message: 'firstMessage',
+          timeSent: expect.any(Number),
+          reacts: [{
+            reactId: 1,
+            uIds: [test1.authUserId],
+            isThisUserReacted: true,
+          }],
+          isPinned: false,
+        },
+      ],
+      start: 0,
+      end: -1,
+    });
+  });
+
+  test('Test-8: Success react in a dm', () => {
+    const test1 = requestAuthRegisterV2(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegisterV2(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const dmIdObj = requestDmCreateV1(test1.token, [
+      test2.authUserId,
+    ]).bodyObj;
+    const messageIdObj = requestMessageSendDmV1(
+      test1.token,
+      dmIdObj.dmId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessageReactV1(
+      test2.token,
+      messageIdObj.messageId, 1
+    );
+    expect(res.statusCode).toStrictEqual(OK);
+    expect(res.bodyObj).toStrictEqual({});
+
+    const dmMessages = requestDmMessagesV1(
+      test1.token,
+      dmIdObj.dmId,
+      0
+    );
+    expect(dmMessages.bodyObj).toStrictEqual({
+      messages: [
+        {
+          messageId: messageIdObj.messageId,
+          uId: test1.authUserId,
+          message: 'firstMessage',
+          timeSent: expect.any(Number),
+          reacts: [{
+            reactId: 1,
+            uIds: [test2.authUserId],
+            isThisUserReacted: false,
+          }],
+          isPinned: false,
         },
       ],
       start: 0,

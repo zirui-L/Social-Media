@@ -7,6 +7,8 @@ type routeReturn = {
   bodyObj: any;
 };
 
+const OK = 200;
+
 /**
  * <Make request base on given method and route>
  *
@@ -30,8 +32,12 @@ const httpRequestHandle = (
     requestObject = { json: parameters };
   }
   const res = request(method, SERVER_URL + path, requestObject);
-  const bodyObj = JSON.parse(res.getBody() as string);
   const statusCode = res.statusCode;
+  let bodyObj = {};
+  if (statusCode !== OK) {
+    return { statusCode, bodyObj };
+  }
+  bodyObj = JSON.parse(res.getBody() as string);
   return { statusCode, bodyObj };
 };
 
@@ -174,6 +180,36 @@ export const requestMessageEditV1 = (
 
 export const requestMessageRemoveV1 = (token: string, messageId: number) => {
   return httpRequestHandle('DELETE', '/message/remove/v1', {
+    token,
+    messageId,
+  });
+};
+
+export const requestMessageReactV1 = (token: string, messageId: number, reactId: number) => {
+  return httpRequestHandle('POST', '/message/react/v1', {
+    token,
+    messageId,
+    reactId,
+  });
+};
+
+export const requestMessageUnReactV1 = (token: string, messageId: number, reactId: number) => {
+  return httpRequestHandle('POST', '/message/unreact/v1', {
+    token,
+    messageId,
+    reactId,
+  });
+};
+
+export const requestMessagePinV1 = (token: string, messageId: number) => {
+  return httpRequestHandle('POST', '/message/pin/v1', {
+    token,
+    messageId,
+  });
+};
+
+export const requestMessageUnPinV1 = (token: string, messageId: number) => {
+  return httpRequestHandle('POST', '/message/unpin/v1', {
     token,
     messageId,
   });

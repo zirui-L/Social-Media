@@ -278,7 +278,7 @@ export const dmMessagesV1 = (
   // Push the message information according to given message Id
   const paginatedMessages = [];
   for (let i = start; i < start + lengthOfMessage; i++) {
-    paginatedMessages.push(findMessageFromId(Dm.messages[i]));
+    paginatedMessages.push(findMessageFromId(authUserId, Dm.messages[i]));
   }
   return {
     messages: paginatedMessages,
