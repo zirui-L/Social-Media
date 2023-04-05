@@ -5,6 +5,7 @@ import {
   getData,
   storedMessage,
   Dm,
+  ReactReturn
 } from './dataStore';
 import fs from 'fs';
 
@@ -304,7 +305,7 @@ export const findUserFromToken = (token: string): number => {
  *
  * @returns {Message} - if there exist a message with given id
  */
-export const findMessageFromId = (messageId: number): Message => {
+export const findMessageFromId = (uId: number, messageId: number): Message => {
   const data = getData();
   const message = data.messages.find(
     (existingMessage) => existingMessage.messageId === messageId
@@ -315,10 +316,24 @@ export const findMessageFromId = (messageId: number): Message => {
     uId: message.uId,
     message: message.message,
     timeSent: message.timeSent,
-    reacts: message.reacts,
+    reacts: getReacts(uId, message),
     isPinned: message.isPinned,
   };
 };
+
+export const getReacts = (uId: number, message: Message): Array<ReactReturn> => {
+  const reactsReturn = [];
+  for (const react of message.reacts) {
+    let isThisUserReacted = false;
+    if (react.uIds.includes(uId)) isThisUserReacted = true;
+    reactsReturn.push({
+      reactId: react.reactId,
+      uIds: react.uIds,
+      isThisUserReacted: isThisUserReacted,
+    });
+  }
+  return reactsReturn;
+}
 
 /**
  * <Check if uIds in the given array are valid>
@@ -376,3 +391,8 @@ export const findStoredMessageFromId = (messageId: number): storedMessage => {
 
   return message;
 };
+
+export const isReactIdValid = (reactId: number): boolean => {
+  const data = getData();
+  return data.reactIds.includes(reactId);
+}

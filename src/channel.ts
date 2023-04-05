@@ -248,7 +248,7 @@ export const channelMessagesV2 = (
 
   // Push the message information according to given message Id
   for (let i = start; i < start + lengthOfMessage; i++) {
-    paginatedMessages.push(findMessageFromId(newChannel.messages[i]));
+    paginatedMessages.push(findMessageFromId(authUserId, newChannel.messages[i]));
   }
 
   return {

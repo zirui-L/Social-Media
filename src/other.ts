@@ -16,6 +16,7 @@ export const clearV1 = (): Record<string, never> => {
   data.messages.length = 0;
   data.dms.length = 0;
   data.tokens.length = 0;
+  data.reactIds = [1];
   setData(data);
   return {};
 };

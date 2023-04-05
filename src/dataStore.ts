@@ -5,6 +5,11 @@ export type React = {
   reactId: number;
   uIds: Array<number>;
 }
+export type ReactReturn = {
+  reactId: number;
+  uIds: Array<number>;
+  isThisUserReacted: boolean;
+}
 export type storedMessage = {
   messageId: number;
   uId: number;
@@ -72,6 +77,7 @@ export type Data = {
   messages: Array<storedMessage>;
   dms: Array<Dm>;
   tokens: Array<Token>;
+  reactIds: Array<Number>,
 };
 
 export type paginatedMessage = {
@@ -87,6 +93,7 @@ let data: Data = {
   messages: [],
   dms: [],
   tokens: [],
+  reactIds: [1],
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

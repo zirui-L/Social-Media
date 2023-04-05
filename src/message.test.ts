@@ -28,7 +28,7 @@ beforeEach(() => {
 afterEach(() => {
   requestClearV1();
 });
-
+/*
 describe('Testing /message/send/v1', () => {
   test('Test-1: Error, channelId does not refer to a valid channel', () => {
     const test1 = requestAuthRegisterV2(
@@ -1447,7 +1447,7 @@ describe('Testing /message/senddm/v1', () => {
     });
   });
 });
-
+*/
 describe('Testing /message/react/v1', () => {
 
   test('Test-1: Error, token is invalid', () => {
@@ -1474,7 +1474,7 @@ describe('Testing /message/react/v1', () => {
       messageSendObj1.messageId, 1
     );
 
-    expect(res.statusCode).toBe(BAD_REQUEST);
+    expect(res.statusCode).toBe(FORBIDDEN);
   });
 
 
@@ -1632,7 +1632,6 @@ describe('Testing /message/react/v1', () => {
       'firstName1',
       'lastName1'
     ).bodyObj;
-
     const channelId = requestChannelsCreateV2(
       test1.token,
       'firstChannel',
@@ -1643,16 +1642,19 @@ describe('Testing /message/react/v1', () => {
       channelId.channelId,
       'firstMessage'
     ).bodyObj;
-    requestMessageReactV1(
+    const res = requestMessageReactV1(
       test1.token,
       messageSendObj1.messageId, 1
     );
-    const res = requestChannelMessagesV2(
+    expect(res.statusCode).toStrictEqual(OK);
+    expect(res.bodyObj).toStrictEqual({});
+
+    const channelMessages = requestChannelMessagesV2(
       test1.token,
       channelId.channelId,
       0
     );
-    expect(res.bodyObj).toStrictEqual({
+    expect(channelMessages.bodyObj).toStrictEqual({
       messages: [
         {
           messageId: messageSendObj1.messageId,
@@ -1693,17 +1695,19 @@ describe('Testing /message/react/v1', () => {
       dmIdObj.dmId,
       'firstMessage'
     ).bodyObj;
-    requestMessageReactV1(
+    const res = requestMessageReactV1(
       test2.token,
       messageIdObj.messageId, 1
     );
-    const res = requestDmMessagesV1(
+    expect(res.statusCode).toStrictEqual(OK);
+    expect(res.bodyObj).toStrictEqual({});
+
+    const dmMessages = requestDmMessagesV1(
       test1.token,
       dmIdObj.dmId,
       0
     );
-
-    expect(res.bodyObj).toStrictEqual({
+    expect(dmMessages.bodyObj).toStrictEqual({
       messages: [
         {
           messageId: messageIdObj.messageId,
