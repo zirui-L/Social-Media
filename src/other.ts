@@ -13,6 +13,9 @@ export const clearV1 = (): Record<string, never> => {
   const data = getData();
   data.channels.length = 0;
   data.users.length = 0;
+  data.messages.length = 0;
+  data.dms.length = 0;
+  data.tokens.length = 0;
   setData(data);
   return {};
 };
