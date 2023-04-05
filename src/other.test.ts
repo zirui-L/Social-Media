@@ -7,6 +7,14 @@ import {
 const OK = 200;
 const ERROR = { error: expect.any(String) };
 
+beforeEach(() => {
+  requestClearV1();
+});
+
+afterEach(() => {
+  requestClearV1();
+});
+
 test('clear all register users', () => {
   const test1 = requestAuthRegisterV2(
     'test1@gmail.com',
