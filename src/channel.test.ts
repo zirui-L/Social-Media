@@ -979,18 +979,24 @@ describe('Testing /channel/messages/v2', () => {
           uId: test1.bodyObj.authUserId,
           message: 'third',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
         {
           messageId: messageId2.bodyObj.messageId,
           uId: test1.bodyObj.authUserId,
           message: 'second',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
         {
           messageId: messageId1.bodyObj.messageId,
           uId: test1.bodyObj.authUserId,
           message: 'first',
           timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
         },
       ],
       start: 0,
@@ -1152,6 +1158,8 @@ describe('Testing /channel/leave/v1', () => {
         uId: test2.bodyObj.authUserId,
         message: 'Froot',
         timeSent: expect.any(Number),
+        reacts: [],
+        isPinned: false,
       },
     ]);
   });

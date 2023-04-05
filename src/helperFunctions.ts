@@ -315,6 +315,8 @@ export const findMessageFromId = (messageId: number): Message => {
     uId: message.uId,
     message: message.message,
     timeSent: message.timeSent,
+    reacts: message.reacts,
+    isPinned: message.isPinned,
   };
 };
 

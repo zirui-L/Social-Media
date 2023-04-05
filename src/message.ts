@@ -1,3 +1,4 @@
+import { isParameter } from 'typescript';
 import { Error, getData, setData } from './dataStore';
 import {
   isMember,
@@ -60,6 +61,8 @@ export const messageSendV1 = (
     timeSent: Date.now() / 1000,
     isChannelMessage: true,
     dmOrChannelId: channelId,
+    reacts: [],
+    isPinned: false,
   });
   channel.messages.unshift(messageId); // unshift the most recent message to the front
   setData(data);
@@ -261,6 +264,8 @@ export const messageSendDmV1 = (
     timeSent: Date.now() / 1000,
     isChannelMessage: false,
     dmOrChannelId: dmId,
+    reacts: [],
+    isPinned: false,
   });
   Dm.messages.unshift(messageId);// unshift the most recent message to the front
   setData(data);

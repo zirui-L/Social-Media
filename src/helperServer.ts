@@ -179,6 +179,36 @@ export const requestMessageRemoveV1 = (token: string, messageId: number) => {
   });
 };
 
+export const requestMessageReactV1 = (token: string, messageId: number, reactId: number) => {
+  return httpRequestHandle('POST', '/message/react/v1', {
+    token,
+    messageId,
+    reactId,
+  });
+};
+
+export const requestMessageUnReactV1 = (token: string, messageId: number, reactId: number) => {
+  return httpRequestHandle('POST', '/message/unreact/v1', {
+    token,
+    messageId,
+    reactId,
+  });
+};
+
+export const requestMessagePinV1 = (token: string, messageId: number) => {
+  return httpRequestHandle('POST', '/message/pin/v1', {
+    token,
+    messageId,
+  });
+};
+
+export const requestMessageUnPinV1 = (token: string, messageId: number) => {
+  return httpRequestHandle('POST', '/message/unpin/v1', {
+    token,
+    messageId,
+  });
+};
+
 export const requestDmCreateV1 = (token: string, uIds: Array<number>) => {
   return httpRequestHandle('POST', '/dm/create/v1', { token, uIds });
 };

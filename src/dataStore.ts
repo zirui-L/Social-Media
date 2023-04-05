@@ -1,7 +1,10 @@
 export type Error = {
   error: string;
 };
-
+export type React = {
+  reactId: number;
+  uIds: Array<number>;
+}
 export type storedMessage = {
   messageId: number;
   uId: number;
@@ -9,12 +12,16 @@ export type storedMessage = {
   timeSent: number;
   isChannelMessage: boolean;
   dmOrChannelId: number;
+  reacts: Array<React>;
+  isPinned: boolean;
 };
 export type Message = {
   messageId: number;
   uId: number;
   message: string;
   timeSent: number;
+  reacts: Array<React>;
+  isPinned: boolean;
 };
 
 export type Channel = {
