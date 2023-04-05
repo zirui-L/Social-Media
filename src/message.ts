@@ -1,4 +1,3 @@
-import { isParameter } from 'typescript';
 import { Error, getData, setData } from './dataStore';
 import {
   isMember,
@@ -53,7 +52,7 @@ export const messageSendV1 = (
     // Length of message is less than 1 or over 1000 characters
     return { error: 'Invalid message length' };
   }
-  
+
   const uId = findUserFromToken(token);
   if (!isMember(uId, channelId)) {
     // ChannelId is valid and the authorised user is not a member of the channel
@@ -286,11 +285,11 @@ export const messageReactV1 = (
   const data = getData();
 
   if (!isTokenValid(token)) {
-    throw HTTPError(FORBIDDEN, "Invalid token"); // token is invalid
+    throw HTTPError(FORBIDDEN, 'Invalid token'); // token is invalid
   } else if (!isMessageValid(messageId)) {
-    throw HTTPError(BAD_REQUEST, "Invalid message id"); // messageId does not refer to a valid message
+    throw HTTPError(BAD_REQUEST, 'Invalid message id'); // messageId does not refer to a valid message
   } else if (!isReactIdValid(reactId)) {
-    throw HTTPError(BAD_REQUEST, "Invalid react id");
+    throw HTTPError(BAD_REQUEST, 'Invalid react id');
   }
 
   const message = findStoredMessageFromId(messageId);
@@ -301,12 +300,12 @@ export const messageReactV1 = (
   // that the authorised user has joined
   if (!user.channels.includes(message.dmOrChannelId) &&
       !user.dms.includes(message.dmOrChannelId)) {
-    throw HTTPError(BAD_REQUEST, "Message is not in user's chat" );
+    throw HTTPError(BAD_REQUEST, "Message is not in user's chat");
   }
 
   const react = message.reacts.find((react) => react.reactId === reactId);
   if (react && react.uIds.includes(uId)) {
-    throw HTTPError(BAD_REQUEST, "Already reacted");
+    throw HTTPError(BAD_REQUEST, 'Already reacted');
   }
 
   if (!react) {
@@ -321,4 +320,3 @@ export const messageReactV1 = (
   setData(data);
   return {};
 };
-

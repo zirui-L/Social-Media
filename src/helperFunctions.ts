@@ -333,7 +333,7 @@ export const getReacts = (uId: number, message: Message): Array<ReactReturn> => 
     });
   }
   return reactsReturn;
-}
+};
 
 /**
  * <Check if uIds in the given array are valid>
@@ -395,4 +395,4 @@ export const findStoredMessageFromId = (messageId: number): storedMessage => {
 export const isReactIdValid = (reactId: number): boolean => {
   const data = getData();
   return data.reactIds.includes(reactId);
-}
+};

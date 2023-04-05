@@ -77,7 +77,7 @@ export type Data = {
   messages: Array<storedMessage>;
   dms: Array<Dm>;
   tokens: Array<Token>;
-  reactIds: Array<Number>,
+  reactIds: Array<number>,
 };
 
 export type paginatedMessage = {

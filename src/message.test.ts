@@ -11,9 +11,9 @@ import {
   requestDmMessagesV1,
   requestDmCreateV1,
   requestMessageReactV1,
-  requestMessageUnReactV1,
-  requestMessagePinV1,
-  requestMessageUnPinV1,
+  // requestMessageUnReactV1,
+  // requestMessagePinV1,
+  // requestMessageUnPinV1,
 } from './helperServer';
 
 const OK = 200;
@@ -28,7 +28,7 @@ beforeEach(() => {
 afterEach(() => {
   requestClearV1();
 });
-/*
+
 describe('Testing /message/send/v1', () => {
   test('Test-1: Error, channelId does not refer to a valid channel', () => {
     const test1 = requestAuthRegisterV2(
@@ -1447,9 +1447,8 @@ describe('Testing /message/senddm/v1', () => {
     });
   });
 });
-*/
-describe('Testing /message/react/v1', () => {
 
+describe('Testing /message/react/v1', () => {
   test('Test-1: Error, token is invalid', () => {
     const test1 = requestAuthRegisterV2(
       'test1@gmail.com',
@@ -1476,7 +1475,6 @@ describe('Testing /message/react/v1', () => {
 
     expect(res.statusCode).toBe(FORBIDDEN);
   });
-
 
   test('Test-2: Error, messageId does not refer to a valid message', () => {
     const test1 = requestAuthRegisterV2(
@@ -1673,9 +1671,9 @@ describe('Testing /message/react/v1', () => {
       end: -1,
     });
   });
-  
+
   test('Test-8: Success react in a dm', () => {
-    const test1 = requestAuthRegisterV2(  
+    const test1 = requestAuthRegisterV2(
       'test1@gmail.com',
       'password1',
       'firstName1',
