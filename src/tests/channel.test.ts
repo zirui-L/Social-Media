@@ -1,39 +1,39 @@
 import {
-  requestAuthRegisterV2,
-  requestChannelDetailsV2,
-  requestChannelInviteV2,
-  requestChannelJoinV2,
-  requestChannelAddOwnerV1,
-  requestChannelLeaveV1,
-  requestChannelRemoveOwnerV1,
-  requestChannelMessagesV2,
-  requestChannelsCreateV2,
-  requestChannelsListAllV2,
-  requestClearV1,
-  requestMessageSendV1,
+  requestAuthRegister,
+  requestChannelDetails,
+  requestChannelInvite,
+  requestChannelJoin,
+  requestChannelAddOwner,
+  requestChannelLeave,
+  requestChannelRemoveOwner,
+  requestChannelMessages,
+  requestChannelsCreate,
+  requestChannelsListAll,
+  requestClear,
+  requestMessageSend,
 } from '../helperFunctions/helperServer';
 
 const OK = 200;
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
-  requestClearV1();
+  requestClear();
 });
 
 afterEach(() => {
-  requestClearV1();
+  requestClear();
 });
 
 describe('Testing /channel/details/v2', () => {
   test('Test-1: Error, incorrect channelId', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Li'
     );
-    requestChannelsCreateV2(test1.bodyObj.token, 'RicardoChannel', true);
-    const channelDetails = requestChannelDetailsV2(
+    requestChannelsCreate(test1.bodyObj.token, 'RicardoChannel', true);
+    const channelDetails = requestChannelDetails(
       test1.bodyObj.token,
       test1.bodyObj.channelId + 1
     );
@@ -42,18 +42,18 @@ describe('Testing /channel/details/v2', () => {
   });
 
   test('Test-2: Error, invalid token', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Li'
     );
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
-    const channelDetails = requestChannelDetailsV2(
+    const channelDetails = requestChannelDetails(
       test1.bodyObj.token + 1,
       channelId.bodyObj.channelId
     );
@@ -62,24 +62,24 @@ describe('Testing /channel/details/v2', () => {
   });
 
   test('Test-3: Error, User inputed is not in the existing channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Li'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '1234567',
       'Shenba',
       'Chen'
     );
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
-    const channelDetails = requestChannelDetailsV2(
+    const channelDetails = requestChannelDetails(
       test2.bodyObj.token,
       channelId.bodyObj.channelId
     );
@@ -88,18 +88,18 @@ describe('Testing /channel/details/v2', () => {
   });
 
   test('Test-4, correct input parameters', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Li'
     );
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
-    const channelDetails = requestChannelDetailsV2(
+    const channelDetails = requestChannelDetails(
       test1.bodyObj.token,
       channelId.bodyObj.channelId
     );
@@ -130,34 +130,34 @@ describe('Testing /channel/details/v2', () => {
   });
 
   test('Test-5, correct input parameters, but with multiple members', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Li'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '1234567',
       'Shenba',
       'Chen'
     );
-    const test3 = requestAuthRegisterV2(
+    const test3 = requestAuthRegister(
       'test3@gmail.com',
       '12345678',
       'Kunda',
       'Yu'
     );
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channelId.bodyObj.channelId);
-    requestChannelJoinV2(test3.bodyObj.token, channelId.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channelId.bodyObj.channelId);
+    requestChannelJoin(test3.bodyObj.token, channelId.bodyObj.channelId);
 
-    const channelDetails = requestChannelDetailsV2(
+    const channelDetails = requestChannelDetails(
       test1.bodyObj.token,
       channelId.bodyObj.channelId
     );
@@ -204,27 +204,27 @@ describe('Testing /channel/details/v2', () => {
 
 describe('Testing /channel/join/v2', () => {
   test('Test-1: Error, channelId does not refer to a valid channel', () => {
-    const user1 = requestAuthRegisterV2(
+    const user1 = requestAuthRegister(
       'ricky@gmail.com',
       '123455',
       'Ricky',
       'Li'
     );
 
-    const user2 = requestAuthRegisterV2(
+    const user2 = requestAuthRegister(
       'libro@gmail.com',
       '123455',
       'libro',
       'Zhang'
     );
 
-    const channel1 = requestChannelsCreateV2(
+    const channel1 = requestChannelsCreate(
       user2.bodyObj.token,
       'Rickychannel',
       true
     );
 
-    const channelJoinObj = requestChannelJoinV2(
+    const channelJoinObj = requestChannelJoin(
       user1.bodyObj.token,
       channel1.bodyObj.channelId + 5
     );
@@ -233,20 +233,20 @@ describe('Testing /channel/join/v2', () => {
   });
 
   test('Test-2: Error, token is invalid', () => {
-    const user1 = requestAuthRegisterV2(
+    const user1 = requestAuthRegister(
       'ricky@gmail.com',
       '123455',
       'Ricky',
       'Li'
     );
 
-    const channel1 = requestChannelsCreateV2(
+    const channel1 = requestChannelsCreate(
       user1.bodyObj.token,
       'Rickychannel',
       true
     );
 
-    const channelJoinObj = requestChannelJoinV2(
+    const channelJoinObj = requestChannelJoin(
       user1.bodyObj.token + 1,
       channel1.bodyObj.channelId
     );
@@ -255,20 +255,20 @@ describe('Testing /channel/join/v2', () => {
   });
 
   test('Test-3: Error, user is already a member of the channel', () => {
-    const user1 = requestAuthRegisterV2(
+    const user1 = requestAuthRegister(
       'ricky@gmail.com',
       '123455',
       'Ricky',
       'Li'
     );
 
-    const channel1 = requestChannelsCreateV2(
+    const channel1 = requestChannelsCreate(
       user1.bodyObj.token,
       'Rickychannel',
       true
     );
 
-    const channelJoinObj = requestChannelJoinV2(
+    const channelJoinObj = requestChannelJoin(
       user1.bodyObj.token,
       channel1.bodyObj.channelId
     );
@@ -277,27 +277,27 @@ describe('Testing /channel/join/v2', () => {
   });
 
   test('Test-3: Error, private channel, and user is not a global owner', () => {
-    const user1 = requestAuthRegisterV2(
+    const user1 = requestAuthRegister(
       'ricky@gmail.com',
       '123455',
       'Ricky',
       'Li'
     );
 
-    const user2 = requestAuthRegisterV2(
+    const user2 = requestAuthRegister(
       'libro@gmail.com',
       '123455',
       'libro',
       'Zhang'
     );
 
-    const channel1 = requestChannelsCreateV2(
+    const channel1 = requestChannelsCreate(
       user1.bodyObj.token,
       'Rickychannel',
       false
     );
 
-    const channelJoinObj = requestChannelJoinV2(
+    const channelJoinObj = requestChannelJoin(
       user2.bodyObj.token,
       channel1.bodyObj.channelId
     );
@@ -306,26 +306,26 @@ describe('Testing /channel/join/v2', () => {
   });
 
   test('Test-4: successiful case', () => {
-    const user1 = requestAuthRegisterV2(
+    const user1 = requestAuthRegister(
       'ricky@gmail.com',
       '123455',
       'Ricky',
       'Li'
     );
 
-    const user2 = requestAuthRegisterV2(
+    const user2 = requestAuthRegister(
       'libro@gmail.com',
       '123455',
       'libro',
       'Zhang'
     );
-    const channel1 = requestChannelsCreateV2(
+    const channel1 = requestChannelsCreate(
       user1.bodyObj.token,
       'Rickychannel',
       true
     );
 
-    const channelJoinObj = requestChannelJoinV2(
+    const channelJoinObj = requestChannelJoin(
       user2.bodyObj.token,
       channel1.bodyObj.channelId
     );
@@ -334,26 +334,26 @@ describe('Testing /channel/join/v2', () => {
   });
 
   test('Test-5: private channel, but the user is a global owner', () => {
-    const user1 = requestAuthRegisterV2(
+    const user1 = requestAuthRegister(
       'ricky@gmail.com',
       '123455',
       'Ricky',
       'Li'
     );
 
-    const user2 = requestAuthRegisterV2(
+    const user2 = requestAuthRegister(
       'libro@gmail.com',
       '123455',
       'libro',
       'Zhang'
     );
-    const channel1 = requestChannelsCreateV2(
+    const channel1 = requestChannelsCreate(
       user2.bodyObj.token,
       'Rickychannel',
       false
     );
 
-    const channelJoinObj = requestChannelJoinV2(
+    const channelJoinObj = requestChannelJoin(
       user1.bodyObj.token,
       channel1.bodyObj.channelId
     );
@@ -364,20 +364,20 @@ describe('Testing /channel/join/v2', () => {
 
 describe('/channel/invite/v2 testing', () => {
   test('Test-1: Error, invalid channelId', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '1234567',
       'Shenba',
       'Chen'
     );
 
-    const channelInviteObj = requestChannelInviteV2(
+    const channelInviteObj = requestChannelInvite(
       test1.bodyObj.token,
       0,
       test2.bodyObj.authUserId
@@ -387,19 +387,19 @@ describe('/channel/invite/v2 testing', () => {
   });
 
   test('Test-2: Error, Invalid uIs', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'LeeChannel',
       true
     );
 
-    const channelInviteObj = requestChannelInviteV2(
+    const channelInviteObj = requestChannelInvite(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId + 1
@@ -409,26 +409,26 @@ describe('/channel/invite/v2 testing', () => {
   });
 
   test('Test-3: Error, uId belong to a user who is already in the channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '1234567',
       'Shenba',
       'Chen'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'LeeChannel',
       true
     );
-    requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channel.bodyObj.channelId);
 
-    const channelInviteObj = requestChannelInviteV2(
+    const channelInviteObj = requestChannelInvite(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
@@ -438,31 +438,31 @@ describe('/channel/invite/v2 testing', () => {
   });
 
   test('Test-4: Error, channelId is valid and the authorised user is not a member of the channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '1234567',
       'Shenba',
       'Chen'
     );
-    const test3 = requestAuthRegisterV2(
+    const test3 = requestAuthRegister(
       'test3@gmail.com',
       '12345678',
       'Kunda',
       'Yu'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'LeeChannel',
       true
     );
 
-    const channelInviteObj = requestChannelInviteV2(
+    const channelInviteObj = requestChannelInvite(
       test2.bodyObj.token,
       channel.bodyObj.channelId,
       test3.bodyObj.authUserId
@@ -472,19 +472,19 @@ describe('/channel/invite/v2 testing', () => {
   });
 
   test('Test-5: Error, invalid token', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test@gmail.com',
       '123456',
       'Ricardo',
       'Lee'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'LeeChannel',
       true
     );
 
-    const channelInviteObj = requestChannelInviteV2(
+    const channelInviteObj = requestChannelInvite(
       test1.bodyObj.token + 1,
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId
@@ -494,19 +494,19 @@ describe('/channel/invite/v2 testing', () => {
   });
 
   test('Test-6: Error, user inviting themselves', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'LeeChannel',
       true
     );
 
-    const channelInviteObj = requestChannelInviteV2(
+    const channelInviteObj = requestChannelInvite(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId
@@ -516,25 +516,25 @@ describe('/channel/invite/v2 testing', () => {
   });
 
   test('Test-7: Successful invite', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '1234567',
       'Shenba',
       'Chen'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'LeeChannel',
       true
     );
 
-    const channelInviteObj = requestChannelInviteV2(
+    const channelInviteObj = requestChannelInvite(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
@@ -542,7 +542,7 @@ describe('/channel/invite/v2 testing', () => {
     expect(channelInviteObj.statusCode).toBe(OK);
     expect(channelInviteObj.bodyObj).toStrictEqual({});
 
-    const channelDetailObj = requestChannelDetailsV2(
+    const channelDetailObj = requestChannelDetails(
       test1.bodyObj.token,
       channel.bodyObj.channelId
     );
@@ -579,25 +579,25 @@ describe('/channel/invite/v2 testing', () => {
   });
 
   test('Inviting global owner into the channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '1234567',
       'Shenba',
       'Chen'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test2.bodyObj.token,
       'ShenbaChannel',
       false
     );
 
-    const channelInviteObj = requestChannelInviteV2(
+    const channelInviteObj = requestChannelInvite(
       test2.bodyObj.token,
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId
@@ -605,7 +605,7 @@ describe('/channel/invite/v2 testing', () => {
     expect(channelInviteObj.statusCode).toBe(OK);
     expect(channelInviteObj.bodyObj).toStrictEqual({});
 
-    const channelDetailObj = requestChannelDetailsV2(
+    const channelDetailObj = requestChannelDetails(
       test1.bodyObj.token,
       channel.bodyObj.channelId
     );
@@ -644,20 +644,20 @@ describe('/channel/invite/v2 testing', () => {
 
 describe('Testing /channel/messages/v2', () => {
   test('Test-1: Error, invalid channelId', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    const channelMessageObj = requestChannelMessagesV2(
+    const channelMessageObj = requestChannelMessages(
       test1.bodyObj.token,
       channel.bodyObj.channelId + 1,
       0
@@ -667,20 +667,20 @@ describe('Testing /channel/messages/v2', () => {
   });
 
   test('Test-2: Error, Invalid token', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    const channelMessageObj = requestChannelMessagesV2(
+    const channelMessageObj = requestChannelMessages(
       test1.bodyObj.token + '1',
       channel.bodyObj.channelId,
       0
@@ -690,25 +690,25 @@ describe('Testing /channel/messages/v2', () => {
   });
 
   test('Test-3: Error, channel is valid but authorised user is not in the channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '1234567',
       'Shenba',
       'Chen'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'LeeChannel',
       true
     );
 
-    const channelMessageObj = requestChannelMessagesV2(
+    const channelMessageObj = requestChannelMessages(
       test2.bodyObj.token,
       channel.bodyObj.channelId,
       0
@@ -718,19 +718,19 @@ describe('Testing /channel/messages/v2', () => {
   });
 
   test('Test-4: Error, Start greater than total numebr of messages', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'LeeChannel',
       true
     );
 
-    const channelMessageObj = requestChannelMessagesV2(
+    const channelMessageObj = requestChannelMessages(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       5
@@ -740,19 +740,19 @@ describe('Testing /channel/messages/v2', () => {
   });
 
   test('Test-5: Success, 0 message output', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'LeeChannel',
       true
     );
 
-    const channelMessageObj = requestChannelMessagesV2(
+    const channelMessageObj = requestChannelMessages(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       0
@@ -766,13 +766,13 @@ describe('Testing /channel/messages/v2', () => {
   });
 
   test('Test-6: Success, start is 0, and there are in total 50 messages', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'LeeChannel',
       true
@@ -780,7 +780,7 @@ describe('Testing /channel/messages/v2', () => {
 
     createMessages(test1.bodyObj.token, channel.bodyObj.channelId, 50);
 
-    const channelMessageObj = requestChannelMessagesV2(
+    const channelMessageObj = requestChannelMessages(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       0
@@ -799,13 +799,13 @@ describe('Testing /channel/messages/v2', () => {
   });
 
   test('Test-7: Success, start is 60, and there are in total 60 messages', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'LeeChannel',
       true
@@ -813,7 +813,7 @@ describe('Testing /channel/messages/v2', () => {
 
     createMessages(test1.bodyObj.token, channel.bodyObj.channelId, 60);
 
-    const channelMessageObj = requestChannelMessagesV2(
+    const channelMessageObj = requestChannelMessages(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       60
@@ -828,13 +828,13 @@ describe('Testing /channel/messages/v2', () => {
   });
 
   test('Test-8: Success, start is 0, and there are in total 51 messages', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'LeeChannel',
       true
@@ -842,13 +842,13 @@ describe('Testing /channel/messages/v2', () => {
 
     createMessages(test1.bodyObj.token, channel.bodyObj.channelId, 51);
 
-    const channelMessageObj1 = requestChannelMessagesV2(
+    const channelMessageObj1 = requestChannelMessages(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       0
     );
 
-    const channelMessageObj2 = requestChannelMessagesV2(
+    const channelMessageObj2 = requestChannelMessages(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       50
@@ -874,13 +874,13 @@ describe('Testing /channel/messages/v2', () => {
   });
 
   test('Test-9: Success, 3 channel message request to a channel with 124 messages', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'LeeChannel',
       true
@@ -888,19 +888,19 @@ describe('Testing /channel/messages/v2', () => {
 
     createMessages(test1.bodyObj.token, channel.bodyObj.channelId, 124);
 
-    const channelMessageObj1 = requestChannelMessagesV2(
+    const channelMessageObj1 = requestChannelMessages(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       0
     );
 
-    const channelMessageObj2 = requestChannelMessagesV2(
+    const channelMessageObj2 = requestChannelMessages(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       50
     );
 
-    const channelMessageObj3 = requestChannelMessagesV2(
+    const channelMessageObj3 = requestChannelMessages(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       100
@@ -932,31 +932,31 @@ describe('Testing /channel/messages/v2', () => {
   });
 
   test('Test-10: Successfully return 3 messages', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'LeeChannel',
       true
     );
 
-    const messageId1 = requestMessageSendV1(
+    const messageId1 = requestMessageSend(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       'first'
     );
 
-    const messageId2 = requestMessageSendV1(
+    const messageId2 = requestMessageSend(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       'second'
     );
 
-    const messageId3 = requestMessageSendV1(
+    const messageId3 = requestMessageSend(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       'third'
@@ -964,7 +964,7 @@ describe('Testing /channel/messages/v2', () => {
 
     const expectedTimeSent = Math.floor(Date.now() / 1000);
 
-    const channelMessageObj1 = requestChannelMessagesV2(
+    const channelMessageObj1 = requestChannelMessages(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       0
@@ -1012,20 +1012,20 @@ describe('Testing /channel/messages/v2', () => {
 
 describe('Testing /channel/leave/v1', () => {
   test('Test-1: Error, invalid channelId', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    const channelLeaveObj = requestChannelLeaveV1(
+    const channelLeaveObj = requestChannelLeave(
       test1.bodyObj.token,
       channel.bodyObj.channelId + 1
     );
@@ -1034,27 +1034,27 @@ describe('Testing /channel/leave/v1', () => {
   });
 
   test('Test-2: Error, channelId is valid and the authorised user is not a member of the channel', () => {
-    const ChannelMember = requestAuthRegisterV2(
+    const ChannelMember = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const NotChannelMmember = requestAuthRegisterV2(
+    const NotChannelMmember = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstName',
       'lastName'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       ChannelMember.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    const channelLeaveObj = requestChannelLeaveV1(
+    const channelLeaveObj = requestChannelLeave(
       NotChannelMmember.bodyObj.token,
       channel.bodyObj.channelId
     );
@@ -1063,20 +1063,20 @@ describe('Testing /channel/leave/v1', () => {
   });
 
   test('Test-3: Error, token is invalid', () => {
-    const user = requestAuthRegisterV2(
+    const user = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       user.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    const channelLeaveObj = requestChannelLeaveV1(
+    const channelLeaveObj = requestChannelLeave(
       user.bodyObj.token + '1',
       channel.bodyObj.channelId
     );
@@ -1085,34 +1085,34 @@ describe('Testing /channel/leave/v1', () => {
   });
 
   test('Test-4: Success case of leave channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstName',
       'lastName'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
-    const messageSendObj = requestMessageSendV1(
+    requestChannelJoin(test2.bodyObj.token, channel.bodyObj.channelId);
+    const messageSendObj = requestMessageSend(
       test2.bodyObj.token,
       channel.bodyObj.channelId,
       'Froot'
     );
 
-    const channelLeaveObj = requestChannelLeaveV1(
+    const channelLeaveObj = requestChannelLeave(
       test2.bodyObj.token,
       channel.bodyObj.channelId
     );
@@ -1121,7 +1121,7 @@ describe('Testing /channel/leave/v1', () => {
 
     // Channel displayed without the user that left
     expect(
-      requestChannelDetailsV2(test1.bodyObj.token, channel.bodyObj.channelId)
+      requestChannelDetails(test1.bodyObj.token, channel.bodyObj.channelId)
         .bodyObj
     ).toStrictEqual({
       name: 'RicardoChannel',
@@ -1147,7 +1147,7 @@ describe('Testing /channel/leave/v1', () => {
     });
 
     // message still remains after the user left
-    const message = requestChannelMessagesV2(
+    const message = requestChannelMessages(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       0
@@ -1165,29 +1165,29 @@ describe('Testing /channel/leave/v1', () => {
   });
 
   test('Test-5: Success case of the owner leave channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstName',
       'lastName'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channel.bodyObj.channelId);
 
-    const channelLeaveObj = requestChannelLeaveV1(
+    const channelLeaveObj = requestChannelLeave(
       test1.bodyObj.token,
       channel.bodyObj.channelId
     );
@@ -1196,7 +1196,7 @@ describe('Testing /channel/leave/v1', () => {
 
     // channel info displayed without the owner
     expect(
-      requestChannelDetailsV2(test2.bodyObj.token, channel.bodyObj.channelId)
+      requestChannelDetails(test2.bodyObj.token, channel.bodyObj.channelId)
         .bodyObj
     ).toStrictEqual({
       name: 'RicardoChannel',
@@ -1215,33 +1215,33 @@ describe('Testing /channel/leave/v1', () => {
   });
 
   test('Test-6: Success case of the all members leaves the channel (check the channel list)', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstName',
       'lastName'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channel.bodyObj.channelId);
 
-    const channelLeaveObj = requestChannelLeaveV1(
+    const channelLeaveObj = requestChannelLeave(
       test1.bodyObj.token,
       channel.bodyObj.channelId
     );
-    const channelLeaveObj2 = requestChannelLeaveV1(
+    const channelLeaveObj2 = requestChannelLeave(
       test2.bodyObj.token,
       channel.bodyObj.channelId
     );
@@ -1251,44 +1251,42 @@ describe('Testing /channel/leave/v1', () => {
     expect(channelLeaveObj2.bodyObj).toStrictEqual({});
 
     // all user had left the channel
-    expect(requestChannelsListAllV2(test1.bodyObj.token).bodyObj).toStrictEqual(
-      {
-        channels: [
-          {
-            channelId: channel.bodyObj.channelId,
-            name: 'RicardoChannel',
-          },
-        ],
-      }
-    );
+    expect(requestChannelsListAll(test1.bodyObj.token).bodyObj).toStrictEqual({
+      channels: [
+        {
+          channelId: channel.bodyObj.channelId,
+          name: 'RicardoChannel',
+        },
+      ],
+    });
   });
 });
 
 describe('Testing /channel/addowner/v1', () => {
   test('Test-1: Error, invalid channelId', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstName',
       'lastName'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channel.bodyObj.channelId);
 
-    const channelAddOwnerObj = requestChannelAddOwnerV1(
+    const channelAddOwnerObj = requestChannelAddOwner(
       test1.bodyObj.token,
       channel.bodyObj.channelId + 1,
       test2.bodyObj.authUserId
@@ -1298,20 +1296,20 @@ describe('Testing /channel/addowner/v1', () => {
   });
 
   test('Test-2: Error, uId does not refer to a valid user', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    const channelAddOwnerObj = requestChannelAddOwnerV1(
+    const channelAddOwnerObj = requestChannelAddOwner(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId + 1
@@ -1321,27 +1319,27 @@ describe('Testing /channel/addowner/v1', () => {
   });
 
   test('Test-3: Error, uId refers to a user who is not a member of the channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstName',
       'lastName'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    const channelAddOwnerObj = requestChannelAddOwnerV1(
+    const channelAddOwnerObj = requestChannelAddOwner(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
@@ -1351,20 +1349,20 @@ describe('Testing /channel/addowner/v1', () => {
   });
 
   test('Test-4: Error, uId refers to a user who is already an owner of the channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    const channelAddOwnerObj = requestChannelAddOwnerV1(
+    const channelAddOwnerObj = requestChannelAddOwner(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId
@@ -1374,29 +1372,29 @@ describe('Testing /channel/addowner/v1', () => {
   });
 
   test('Test-5: Error, channelId is valid and the authorised user does not have owner permissions in the channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstName',
       'lastName'
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channel.bodyObj.channelId);
 
-    const channelAddOwnerObj = requestChannelAddOwnerV1(
+    const channelAddOwnerObj = requestChannelAddOwner(
       test2.bodyObj.token,
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
@@ -1406,29 +1404,29 @@ describe('Testing /channel/addowner/v1', () => {
   });
 
   test('Test-6: Error, token is invalid', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstName',
       'lastName'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channel.bodyObj.channelId);
 
-    const channelAddOwnerObj = requestChannelAddOwnerV1(
+    const channelAddOwnerObj = requestChannelAddOwner(
       test1.bodyObj.token + '1',
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
@@ -1438,29 +1436,29 @@ describe('Testing /channel/addowner/v1', () => {
   });
 
   test('Test-6: Success, member been added as a owner', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstName',
       'lastName'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channel.bodyObj.channelId);
 
-    const channelAddOwnerObj = requestChannelAddOwnerV1(
+    const channelAddOwnerObj = requestChannelAddOwner(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
@@ -1470,7 +1468,7 @@ describe('Testing /channel/addowner/v1', () => {
 
     // displat channel info with two owners
     expect(
-      requestChannelDetailsV2(test1.bodyObj.token, channel.bodyObj.channelId)
+      requestChannelDetails(test1.bodyObj.token, channel.bodyObj.channelId)
         .bodyObj
     ).toStrictEqual({
       name: 'RicardoChannel',
@@ -1511,66 +1509,66 @@ describe('Testing /channel/addowner/v1', () => {
   });
 
   test('Test-7: add multiple owners', () => {
-    const owner = requestAuthRegisterV2(
+    const owner = requestAuthRegister(
       'test0@gmail.com',
       '123456',
       'firstname0',
       'lastname0'
     );
-    const member1 = requestAuthRegisterV2(
+    const member1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'firstname1',
       'lastname1'
     );
-    const member2 = requestAuthRegisterV2(
+    const member2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstname2',
       'lastname2'
     );
-    const member3 = requestAuthRegisterV2(
+    const member3 = requestAuthRegister(
       'test3@gmail.com',
       '123456',
       'firstname3',
       'lastname3'
     );
-    const member4 = requestAuthRegisterV2(
+    const member4 = requestAuthRegister(
       'test4@gmail.com',
       '123456',
       'firstname4',
       'lastname4'
     );
-    const member5 = requestAuthRegisterV2(
+    const member5 = requestAuthRegister(
       'test5@gmail.com',
       '123456',
       'firstname5',
       'lastname5'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       owner.bodyObj.token,
       'channelName',
       true
     );
 
-    requestChannelJoinV2(member1.bodyObj.token, channel.bodyObj.channelId);
-    requestChannelJoinV2(member2.bodyObj.token, channel.bodyObj.channelId);
-    requestChannelJoinV2(member3.bodyObj.token, channel.bodyObj.channelId);
-    requestChannelJoinV2(member4.bodyObj.token, channel.bodyObj.channelId);
-    requestChannelJoinV2(member5.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(member1.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(member2.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(member3.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(member4.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(member5.bodyObj.token, channel.bodyObj.channelId);
 
     // add member1, member3, member5 to owner
-    requestChannelAddOwnerV1(
+    requestChannelAddOwner(
       owner.bodyObj.token,
       channel.bodyObj.channelId,
       member1.bodyObj.authUserId
     );
-    requestChannelAddOwnerV1(
+    requestChannelAddOwner(
       owner.bodyObj.token,
       channel.bodyObj.channelId,
       member3.bodyObj.authUserId
     );
-    const multipleOwner = requestChannelAddOwnerV1(
+    const multipleOwner = requestChannelAddOwner(
       owner.bodyObj.token,
       channel.bodyObj.channelId,
       member5.bodyObj.authUserId
@@ -1580,7 +1578,7 @@ describe('Testing /channel/addowner/v1', () => {
 
     // display channel info with multiple owners
     expect(
-      requestChannelDetailsV2(owner.bodyObj.token, channel.bodyObj.channelId)
+      requestChannelDetails(owner.bodyObj.token, channel.bodyObj.channelId)
         .bodyObj
     ).toStrictEqual({
       name: 'channelName',
@@ -1665,20 +1663,20 @@ describe('Testing /channel/addowner/v1', () => {
 
 describe('Testing /channel/removeowner/v1', () => {
   test('Test-1: Error, invalid channelId', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    const channelRemoveOwnerObj = requestChannelRemoveOwnerV1(
+    const channelRemoveOwnerObj = requestChannelRemoveOwner(
       test1.bodyObj.token,
       channel.bodyObj.channelId + 1,
       test1.bodyObj.authUserId
@@ -1688,20 +1686,20 @@ describe('Testing /channel/removeowner/v1', () => {
   });
 
   test('Test-2: Error, uId does not refer to a valid user', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    const channelRemoveOwnerObj = requestChannelRemoveOwnerV1(
+    const channelRemoveOwnerObj = requestChannelRemoveOwner(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId + 1
@@ -1711,29 +1709,29 @@ describe('Testing /channel/removeowner/v1', () => {
   });
 
   test('Test-3: Error, uId refers to a user who is not an owner of the channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstName',
       'lastName'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channel.bodyObj.channelId);
 
-    const channelRemoveOwnerObj = requestChannelRemoveOwnerV1(
+    const channelRemoveOwnerObj = requestChannelRemoveOwner(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
@@ -1743,30 +1741,30 @@ describe('Testing /channel/removeowner/v1', () => {
   });
 
   test('Test-4: Error, uId refers to a user who is currently the only owner of the channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstName',
       'lastName'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channel.bodyObj.channelId);
 
     // test1 is the only owner in the channel
-    const channelRemoveOwnerObj = requestChannelRemoveOwnerV1(
+    const channelRemoveOwnerObj = requestChannelRemoveOwner(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId
@@ -1776,43 +1774,43 @@ describe('Testing /channel/removeowner/v1', () => {
   });
 
   test('Test-5: Error, channelId is valid and the authorised user does not have owner permissions in the channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstName',
       'lastName'
     );
 
-    const test3 = requestAuthRegisterV2(
+    const test3 = requestAuthRegister(
       'test3@gmail.com',
       '123456',
       'firstName3',
       'lastName3'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
-    requestChannelJoinV2(test3.bodyObj.token, channel.bodyObj.channelId);
-    requestChannelAddOwnerV1(
+    requestChannelJoin(test2.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(test3.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelAddOwner(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test2.bodyObj.autherUserId
     );
 
     // test 3 does not have owner permission in the channel
-    const channelRemoveOwnerObj = requestChannelRemoveOwnerV1(
+    const channelRemoveOwnerObj = requestChannelRemoveOwner(
       test3.bodyObj.token,
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
@@ -1822,29 +1820,29 @@ describe('Testing /channel/removeowner/v1', () => {
   });
 
   test('Test-6: Error, token is invalid', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstName',
       'lastName'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channel.bodyObj.channelId);
 
-    const channelRemoveOwnerObj = requestChannelRemoveOwnerV1(
+    const channelRemoveOwnerObj = requestChannelRemoveOwner(
       test1.bodyObj.token + 1,
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
@@ -1854,36 +1852,36 @@ describe('Testing /channel/removeowner/v1', () => {
   });
 
   test('Test-7: Success case with removing a owner', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'Richardo',
       'Lee'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstName',
       'lastName'
     );
 
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channel.bodyObj.channelId);
 
-    requestChannelAddOwnerV1(
+    requestChannelAddOwner(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
     );
 
     // remove the newly added owner
-    const channelRemoveOwnerObj = requestChannelRemoveOwnerV1(
+    const channelRemoveOwnerObj = requestChannelRemoveOwner(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
@@ -1892,7 +1890,7 @@ describe('Testing /channel/removeowner/v1', () => {
     expect(channelRemoveOwnerObj.bodyObj).toStrictEqual({});
 
     expect(
-      requestChannelDetailsV2(test1.bodyObj.token, channel.bodyObj.channelId)
+      requestChannelDetails(test1.bodyObj.token, channel.bodyObj.channelId)
         .bodyObj
     ).toStrictEqual({
       name: 'RicardoChannel',
@@ -1926,97 +1924,97 @@ describe('Testing /channel/removeowner/v1', () => {
   });
 
   test('Test-8: remove multiple owners', () => {
-    const owner = requestAuthRegisterV2(
+    const owner = requestAuthRegister(
       'test0@gmail.com',
       '123456',
       'firstname0',
       'lastname0'
     );
-    const member1 = requestAuthRegisterV2(
+    const member1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'firstname1',
       'lastname1'
     );
-    const member2 = requestAuthRegisterV2(
+    const member2 = requestAuthRegister(
       'test2@gmail.com',
       '123456',
       'firstname2',
       'lastname2'
     );
-    const member3 = requestAuthRegisterV2(
+    const member3 = requestAuthRegister(
       'test3@gmail.com',
       '123456',
       'firstname3',
       'lastname3'
     );
-    const member4 = requestAuthRegisterV2(
+    const member4 = requestAuthRegister(
       'test4@gmail.com',
       '123456',
       'firstname4',
       'lastname4'
     );
-    const member5 = requestAuthRegisterV2(
+    const member5 = requestAuthRegister(
       'test5@gmail.com',
       '123456',
       'firstname5',
       'lastname5'
     );
-    const channel = requestChannelsCreateV2(
+    const channel = requestChannelsCreate(
       owner.bodyObj.token,
       'channelName',
       true
     );
-    requestChannelJoinV2(member1.bodyObj.token, channel.bodyObj.channelId);
-    requestChannelJoinV2(member2.bodyObj.token, channel.bodyObj.channelId);
-    requestChannelJoinV2(member3.bodyObj.token, channel.bodyObj.channelId);
-    requestChannelJoinV2(member4.bodyObj.token, channel.bodyObj.channelId);
-    requestChannelJoinV2(member5.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(member1.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(member2.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(member3.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(member4.bodyObj.token, channel.bodyObj.channelId);
+    requestChannelJoin(member5.bodyObj.token, channel.bodyObj.channelId);
     // add all memmber to owner
-    requestChannelAddOwnerV1(
+    requestChannelAddOwner(
       owner.bodyObj.token,
       channel.bodyObj.channelId,
       member1.bodyObj.authUserId
     );
-    requestChannelAddOwnerV1(
+    requestChannelAddOwner(
       owner.bodyObj.token,
       channel.bodyObj.channelId,
       member2.bodyObj.authUserId
     );
-    requestChannelAddOwnerV1(
+    requestChannelAddOwner(
       owner.bodyObj.token,
       channel.bodyObj.channelId,
       member3.bodyObj.authUserId
     );
-    requestChannelAddOwnerV1(
+    requestChannelAddOwner(
       owner.bodyObj.token,
       channel.bodyObj.channelId,
       member4.bodyObj.authUserId
     );
-    requestChannelAddOwnerV1(
+    requestChannelAddOwner(
       owner.bodyObj.token,
       channel.bodyObj.channelId,
       member5.bodyObj.authUserId
     );
     // remove member1, member3, member5 from owner
-    requestChannelRemoveOwnerV1(
+    requestChannelRemoveOwner(
       owner.bodyObj.token,
       channel.bodyObj.channelId,
       member1.bodyObj.authUserId
     );
-    requestChannelRemoveOwnerV1(
+    requestChannelRemoveOwner(
       owner.bodyObj.token,
       channel.bodyObj.channelId,
       member3.bodyObj.authUserId
     );
-    const removeMultiple = requestChannelRemoveOwnerV1(
+    const removeMultiple = requestChannelRemoveOwner(
       owner.bodyObj.token,
       channel.bodyObj.channelId,
       member5.bodyObj.authUserId
     );
     expect(removeMultiple.statusCode).toBe(OK);
     expect(removeMultiple.bodyObj).toStrictEqual({});
-    const channelDetail = requestChannelDetailsV2(
+    const channelDetail = requestChannelDetails(
       owner.bodyObj.token,
       channel.bodyObj.channelId
     );
@@ -2100,6 +2098,6 @@ const createMessages = (
   repetition: number
 ): void => {
   for (let count = 0; count < repetition; count++) {
-    requestMessageSendV1(token, channelId, `${count}`);
+    requestMessageSend(token, channelId, `${count}`);
   }
 };

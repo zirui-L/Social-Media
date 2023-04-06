@@ -1,33 +1,33 @@
 import {
-  requestAuthRegisterV2,
-  requestClearV1,
-  requestUserProfileV2,
+  requestAuthRegister,
+  requestClear,
+  requestUserProfile,
 } from '../helperFunctions/helperServer';
 
 const OK = 200;
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
-  requestClearV1();
+  requestClear();
 });
 
 afterEach(() => {
-  requestClearV1();
+  requestClear();
 });
 
 test('clear all register users', () => {
-  const test1 = requestAuthRegisterV2(
+  const test1 = requestAuthRegister(
     'test1@gmail.com',
     '123456',
     'Richardo',
     'Li'
   );
 
-  const clearObj = requestClearV1();
+  const clearObj = requestClear();
   expect(clearObj.statusCode).toBe(OK);
   expect(clearObj.bodyObj).toStrictEqual({});
 
-  const userProfileObj = requestUserProfileV2(
+  const userProfileObj = requestUserProfile(
     test1.bodyObj.token,
     test1.bodyObj.authUserId
   );
@@ -36,7 +36,7 @@ test('clear all register users', () => {
 });
 
 test('clear empty channels and users', () => {
-  const clearObj = requestClearV1();
+  const clearObj = requestClear();
   expect(clearObj.statusCode).toBe(OK);
   expect(clearObj.bodyObj).toStrictEqual({});
 });

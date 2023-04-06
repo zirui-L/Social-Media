@@ -1,3 +1,4 @@
+import { BADSTR } from 'dns';
 import { getData, setData, User, Error, paginatedMessage } from './dataStore';
 import {
   isTokenValid,
@@ -10,6 +11,9 @@ import {
   findMessageFromId,
   isOwner,
 } from './helperFunctions/helperFunctions';
+
+import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
+import HTTPError from 'http-errors';
 
 type ChannelDetails = {
   name: string;
@@ -28,24 +32,26 @@ type ChannelDetails = {
  * @returns {ChannelDetails} - object return when
  * hannelId/authUserId
  * is valid and authorised user is a member of the channel
- * @returns {Error} - when channelId/authUserId
+ * @throws {Error} - when channelId/authUserId
  * is invalid or authorised user is not a member of the channel
  */
 
-export const channelDetailsV2 = (
+export const channelDetailsV3 = (
   token: string,
   channelId: number
-): ChannelDetails | Error => {
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+): ChannelDetails => {
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!isChannelValid(channelId)) {
-    return { error: 'Invalid channel' };
+    throw HTTPError(BAD_REQUEST, 'Invalid channel');
   }
 
-  const authUserId = findUserFromToken(token);
+  const authUserId = findUserFromToken(tokenId);
 
   if (!isMember(authUserId, channelId)) {
-    return { error: 'User is not a member of the channel' };
+    throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
 
   const newChannel = findChannel(channelId);
@@ -95,28 +101,30 @@ export const channelDetailsV2 = (
  * @returns {{}} - return empty object if channelId/authUserId are valid,
  * authorised is not a member of the public channel. (or global owner joining a
  * private channel)
- * @returns {Error} - when channelId/authUserId
+ * @throws {Error} - when channelId/authUserId
  * is invalid or authorised user is a member of the channel
  * or the channel is private and when the authorised user is
  * not a channel member and is not a global owner
  */
 
-export const channelJoinV2 = (
+export const channelJoinV3 = (
   token: string,
   channelId: number
-): Record<string, never> | Error => {
+): Record<string, never> => {
   const data = getData();
 
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!isChannelValid(channelId)) {
-    return { error: 'Invalid channel' };
+    throw HTTPError(BAD_REQUEST, 'Invalid channel');
   }
 
-  const authUserId = findUserFromToken(token);
+  const authUserId = findUserFromToken(tokenId);
 
   if (isMember(authUserId, channelId)) {
-    return { error: 'User is already a member of the channel' };
+    throw HTTPError(BAD_REQUEST, 'User is already a member of the channel');
   }
 
   const newUser = findUser(authUserId);
@@ -125,7 +133,7 @@ export const channelJoinV2 = (
   // channel is private and when the authorised user is
   // not a channel member and is not a global owner
   if (!newChannel.isPublic && newUser.permissionId !== 1) {
-    return { error: 'Private channel, and user is not global' };
+    throw HTTPError(FORBIDDEN, 'Private channel, and user is not global');
   }
 
   newChannel.allMembers.push(authUserId);
@@ -144,7 +152,7 @@ export const channelJoinV2 = (
  * @param {integer} uId -- userId of the user being invited
  *
  * @returns {} - return empty object is no error occurs
- * @returns {Error} - error is being returned if
+ * @throws {Error} - error is being returned if
  *                               1.  channelId does not exist
  *                               2. uid/autherId is not valid
  *                               3. channel Id is valid but the authorised
@@ -153,27 +161,32 @@ export const channelJoinV2 = (
  *                                  member of the channel
  */
 
-export const channelInviteV2 = (
+export const channelInviteV3 = (
   token: string,
   channelId: number,
   uId: number
-): Record<string, never> | Error => {
+): Record<string, never> => {
   const data = getData();
 
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!isChannelValid(channelId)) {
-    return { error: 'Invalid channel' };
+    throw HTTPError(BAD_REQUEST, 'Invalid channel');
   } else if (!isAuthUserIdValid(uId)) {
-    return { error: 'Invalid user id' };
+    throw HTTPError(BAD_REQUEST, 'Invalid user id');
   } else if (isMember(uId, channelId)) {
-    return { error: 'Invited user is already a member' };
+    throw HTTPError(BAD_REQUEST, 'Invalid user is already a member');
   }
 
-  const authUserId = findUserFromToken(token);
+  const authUserId = findUserFromToken(tokenId);
 
   if (!isMember(authUserId, channelId)) {
-    return { error: 'Requested by a user with invalid token (not a member)' };
+    throw HTTPError(
+      FORBIDDEN,
+      'Requested by a user with invalid token (not a member)'
+    );
   }
 
   const newUser = findUser(authUserId);
@@ -208,27 +221,32 @@ export const channelInviteV2 = (
  *
  */
 
-export const channelMessagesV2 = (
+export const channelMessagesV3 = (
   token: string,
   channelId: number,
   start: number
-): paginatedMessage | Error => {
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+): paginatedMessage => {
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!isChannelValid(channelId)) {
-    return { error: 'Invalid channel' };
+    throw HTTPError(BAD_REQUEST, 'Invalid channel');
   }
 
-  const authUserId = findUserFromToken(token);
+  const authUserId = findUserFromToken(tokenId);
 
   if (!isMember(authUserId, channelId)) {
-    return { error: 'User is not a member of the channel' };
+    throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
 
   const newChannel = findChannel(channelId);
 
   if (newChannel.messages.length < start) {
-    return { error: 'start is greater than the total number of messages' };
+    throw HTTPError(
+      BAD_REQUEST,
+      'start is greater than the total number of messages'
+    );
   }
 
   let end;
@@ -268,29 +286,31 @@ export const channelMessagesV2 = (
  * @param {string} token - token for a requesting user
  * @param {integer} channelId - channelId
  *
- * @returns  {Error} -  Return eror object when any of:
+ * @throws  {Error} -  Return eror object when any of:
  * 1. channelId does not refer to a valid channel
  * 2. channelId is valid and the authorised user is not a member of the channel
  * 3. token is invalid
  * @returns {{}} - Return {} upon success, when all error cases are avoided
  *
  */
-export const channelLeaveV1 = (
+export const channelLeaveV2 = (
   token: string,
   channelId: number
 ): Record<string, never> | Error => {
   const data = getData();
   // check validity of input
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!isChannelValid(channelId)) {
-    return { error: 'Invalid channel' };
+    throw HTTPError(BAD_REQUEST, 'Invalid channel');
   }
 
-  const authUserId = findUserFromToken(token);
+  const authUserId = findUserFromToken(tokenId);
 
   if (!isMember(authUserId, channelId)) {
-    return { error: 'User is not a member of the channel' };
+    throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
   // remove meember from channel
   const channel = findChannel(channelId);
@@ -320,7 +340,7 @@ export const channelLeaveV1 = (
  * @param {integer} channelId - channelId
  * @param {integer} uId - user Id that is added as a new owner of the channel
  *
- * @returns  {Error} -  Return eror object when any of:
+ * @throws  {Error} -  Return eror object when any of:
  * 1. channelId does not refer to a valid channel
  * 2. uId does not refer to a valid user
  * 3. token is invalid
@@ -331,31 +351,36 @@ export const channelLeaveV1 = (
  * @returns {{}} - Return {} upon success, when all error cases are avoided
  *
  */
-export const channelAddOwnerV1 = (
+export const channelAddOwnerV2 = (
   token: string,
   channelId: number,
   uId: number
-): Record<string, never> | Error => {
+): Record<string, never> => {
   const data = getData();
   // check validity of input
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!isChannelValid(channelId)) {
-    return { error: 'Invalid channel' };
+    throw HTTPError(BAD_REQUEST, 'Invalid channel');
   } else if (!isAuthUserIdValid(uId)) {
-    return { error: 'Invalid uId' };
+    throw HTTPError(BAD_REQUEST, 'Invalid uId');
   } else if (!isMember(uId, channelId)) {
-    return { error: 'UId refer to user that is not a member of the channel' };
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   }
 
   if (isOwner(uId, channelId)) {
-    return { error: 'User is already an owner' };
+    throw HTTPError(BAD_REQUEST, 'User is already an owner');
   }
 
   const authUserId = findUserFromToken(token);
 
   if (!isOwner(authUserId, channelId)) {
-    return { error: 'The authorised user is not an owner of the channel' };
+    throw HTTPError(
+      FORBIDDEN,
+      'The authorised user is not an owner of the channel'
+    );
   }
   // add user to ownermember array
   const channel = findChannel(channelId);
@@ -375,7 +400,7 @@ export const channelAddOwnerV1 = (
  * @param {string} token - token for a requesting user
  * @param {integer} channelId - channelId
  *
- * @returns  {Error} -  Return eror object when any of:
+ * @throws  {Error} -  Return eror object when any of:
  * 1. channelId does not refer to a valid channel
  * 2. uId does not refer to a valid user
  * 3. token is invalid
@@ -387,32 +412,37 @@ export const channelAddOwnerV1 = (
  *
  */
 
-export const channelRemoveOwnerV1 = (
+export const channelRemoveOwnerV2 = (
   token: string,
   channelId: number,
   uId: number
-): Record<string, never> | Error => {
+): Record<string, never> => {
   const data = getData();
   // check validity of input
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!isChannelValid(channelId)) {
-    return { error: 'Invalid channel' };
+    throw HTTPError(BAD_REQUEST, 'Invalid channel');
   } else if (!isAuthUserIdValid(uId)) {
-    return { error: 'Invalid uId' };
+    throw HTTPError(BAD_REQUEST, 'Invalid uId');
   } else if (!isOwner(uId, channelId)) {
-    return { error: 'User is not an owner of the channel' };
+    throw HTTPError(BAD_REQUEST, 'User is not an owner of the channel');
   }
 
   const authUserId = findUserFromToken(token);
 
   if (!isOwner(authUserId, channelId)) {
-    return { error: 'The authorised user is not an owner of the channel' };
+    throw HTTPError(
+      FORBIDDEN,
+      'The authorised user is not an owner of the channel'
+    );
   }
 
   const channel = findChannel(channelId);
   if (channel.ownerMembers.length === 1) {
-    return { error: 'User is the only owner of the channel' };
+    throw HTTPError(BAD_REQUEST, 'User is the only owner of the channel');
   }
   // remove user from ownermember list
   channel.ownerMembers = channel.ownerMembers.filter(

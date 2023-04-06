@@ -6,8 +6,11 @@ import {
   storedMessage,
   Dm,
   ReactReturn,
-} from './dataStore';
+} from '../dataStore';
 import fs from 'fs';
+import crypto from 'crypto';
+
+export const SECRET = 'SECRETSTRING';
 
 /**
  * <For persistence measure, which store data of server into a json file>
@@ -38,6 +41,11 @@ export const createUniqueId = (): number => {
   const id = parseInt(`${timestamp}${randomNum}`);
   return id;
 };
+
+// Create hash of a string using 'sha256' method
+export function getHashOf(plaintext: string) {
+  return crypto.createHash('sha256').update(plaintext).digest('hex');
+}
 
 // Determine whether a name has length between 1 and 50 inclusive
 export const nameInRange = (name: string): boolean => {
@@ -126,15 +134,15 @@ export const isAuthUserIdValid = (authUserId: number): boolean => {
  * @returns {true} - if user with such token is logged in
  * @returns {false} - if user with such token is not logged in
  */
-export const isTokenValid = (token: string): boolean => {
+export const isTokenValid = (token: string): string => {
   const data = getData();
   for (const existingtoken of data.tokens) {
-    if (existingtoken.token === token) {
-      return true;
+    if (getHashOf(existingtoken.token + SECRET) === token) {
+      return token;
     }
   }
 
-  return false;
+  return undefined;
 };
 
 /**

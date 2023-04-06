@@ -1,5 +1,5 @@
 import request, { HttpVerb } from 'sync-request';
-import { port, url } from './config.json';
+import { port, url } from '../config.json';
 const SERVER_URL = `${url}:${port}`;
 
 export const OK = 200;
@@ -46,17 +46,17 @@ const httpRequestHandle = (
 // Following funciton are written to simplify the syntax in testing file, which
 // receive parameters and make relevant http requests.
 
-export const requestAuthLoginV2 = (email: string, password: string) => {
-  return httpRequestHandle('POST', '/auth/login/v2', { email, password });
+export const requestAuthLogin = (email: string, password: string) => {
+  return httpRequestHandle('POST', '/auth/login/v3', { email, password });
 };
 
-export const requestAuthRegisterV2 = (
+export const requestAuthRegister = (
   email: string,
   password: string,
   nameFirst: string,
   nameLast: string
 ) => {
-  return httpRequestHandle('POST', '/auth/register/v2', {
+  return httpRequestHandle('POST', '/auth/register/v3', {
     email,
     password,
     nameFirst,
@@ -64,130 +64,130 @@ export const requestAuthRegisterV2 = (
   });
 };
 
-export const requestChannelsCreateV2 = (
+export const requestChannelsCreate = (
   token: string,
   name: string,
   isPublic: boolean
 ) => {
-  return httpRequestHandle('POST', '/channels/create/v2', {
+  return httpRequestHandle('POST', '/channels/create/v3', {
     token,
     name,
     isPublic,
   });
 };
 
-export const requestChannelsListV2 = (token: string) => {
-  return httpRequestHandle('GET', '/channels/list/v2', { token });
+export const requestChannelsList = (token: string) => {
+  return httpRequestHandle('GET', '/channels/list/v3', { token });
 };
 
-export const requestChannelsListAllV2 = (token: string) => {
-  return httpRequestHandle('GET', '/channels/listall/v2', { token });
+export const requestChannelsListAll = (token: string) => {
+  return httpRequestHandle('GET', '/channels/listall/v3', { token });
 };
 
-export const requestChannelDetailsV2 = (token: string, channelId: number) => {
-  return httpRequestHandle('GET', '/channel/details/v2', { token, channelId });
+export const requestChannelDetails = (token: string, channelId: number) => {
+  return httpRequestHandle('GET', '/channel/details/v3', { token, channelId });
 };
 
-export const requestChannelJoinV2 = (token: string, channelId: number) => {
-  return httpRequestHandle('POST', '/channel/join/v2', { token, channelId });
+export const requestChannelJoin = (token: string, channelId: number) => {
+  return httpRequestHandle('POST', '/channel/join/v3', { token, channelId });
 };
 
-export const requestChannelInviteV2 = (
+export const requestChannelInvite = (
   token: string,
   channelId: number,
   uId: number
 ) => {
-  return httpRequestHandle('POST', '/channel/invite/v2', {
+  return httpRequestHandle('POST', '/channel/invite/v3', {
     token,
     channelId,
     uId,
   });
 };
 
-export const requestChannelMessagesV2 = (
+export const requestChannelMessages = (
   token: string,
   channelId: number,
   start: number
 ) => {
-  return httpRequestHandle('GET', '/channel/messages/v2', {
+  return httpRequestHandle('GET', '/channel/messages/v3', {
     token,
     channelId,
     start,
   });
 };
 
-export const requestUserProfileV2 = (token: string, uId: number) => {
-  return httpRequestHandle('GET', '/user/profile/v2', { token, uId });
+export const requestUserProfile = (token: string, uId: number) => {
+  return httpRequestHandle('GET', '/user/profile/v3', { token, uId });
 };
 
-export const requestClearV1 = () => {
+export const requestClear = () => {
   return httpRequestHandle('DELETE', '/clear/v1', {});
 };
 
-export const requestAuthLogOutV1 = (token: string) => {
-  return httpRequestHandle('POST', '/auth/logout/v1', { token });
+export const requestAuthLogOut = (token: string) => {
+  return httpRequestHandle('POST', '/auth/logout/v2', { token });
 };
 
-export const requestChannelLeaveV1 = (token: string, channelId: number) => {
-  return httpRequestHandle('POST', '/channel/leave/v1', { token, channelId });
+export const requestChannelLeave = (token: string, channelId: number) => {
+  return httpRequestHandle('POST', '/channel/leave/v2', { token, channelId });
 };
 
-export const requestChannelAddOwnerV1 = (
+export const requestChannelAddOwner = (
   token: string,
   channelId: number,
   uId: number
 ) => {
-  return httpRequestHandle('POST', '/channel/addowner/v1', {
+  return httpRequestHandle('POST', '/channel/addowner/v2', {
     token,
     channelId,
     uId,
   });
 };
 
-export const requestChannelRemoveOwnerV1 = (
+export const requestChannelRemoveOwner = (
   token: string,
   channelId: number,
   uId: number
 ) => {
-  return httpRequestHandle('POST', '/channel/removeowner/v1', {
+  return httpRequestHandle('POST', '/channel/removeowner/v2', {
     token,
     channelId,
     uId,
   });
 };
 
-export const requestMessageSendV1 = (
+export const requestMessageSend = (
   token: string,
   channelId: number,
   message: string
 ) => {
-  return httpRequestHandle('POST', '/message/send/v1', {
+  return httpRequestHandle('POST', '/message/send/v2', {
     token,
     channelId,
     message,
   });
 };
 
-export const requestMessageEditV1 = (
+export const requestMessageEdit = (
   token: string,
   messageId: number,
   message: string
 ) => {
-  return httpRequestHandle('PUT', '/message/edit/v1', {
+  return httpRequestHandle('PUT', '/message/edit/v2', {
     token,
     messageId,
     message,
   });
 };
 
-export const requestMessageRemoveV1 = (token: string, messageId: number) => {
-  return httpRequestHandle('DELETE', '/message/remove/v1', {
+export const requestMessageRemove = (token: string, messageId: number) => {
+  return httpRequestHandle('DELETE', '/message/remove/v2', {
     token,
     messageId,
   });
 };
 
-export const requestMessageReactV1 = (
+export const requestMessageReact = (
   token: string,
   messageId: number,
   reactId: number
@@ -199,7 +199,7 @@ export const requestMessageReactV1 = (
   });
 };
 
-export const requestMessageUnReactV1 = (
+export const requestMessageUnReact = (
   token: string,
   messageId: number,
   reactId: number
@@ -211,88 +211,88 @@ export const requestMessageUnReactV1 = (
   });
 };
 
-export const requestMessagePinV1 = (token: string, messageId: number) => {
+export const requestMessagePin = (token: string, messageId: number) => {
   return httpRequestHandle('POST', '/message/pin/v1', {
     token,
     messageId,
   });
 };
 
-export const requestMessageUnPinV1 = (token: string, messageId: number) => {
+export const requestMessageUnPin = (token: string, messageId: number) => {
   return httpRequestHandle('POST', '/message/unpin/v1', {
     token,
     messageId,
   });
 };
 
-export const requestDmCreateV1 = (token: string, uIds: Array<number>) => {
-  return httpRequestHandle('POST', '/dm/create/v1', { token, uIds });
+export const requestDmCreate = (token: string, uIds: Array<number>) => {
+  return httpRequestHandle('POST', '/dm/create/v2', { token, uIds });
 };
 
-export const requestDmListV1 = (token: string) => {
-  return httpRequestHandle('GET', '/dm/list/v1', { token });
+export const requestDmList = (token: string) => {
+  return httpRequestHandle('GET', '/dm/list/v2', { token });
 };
 
-export const requestDmRemoveV1 = (token: string, dmId: number) => {
-  return httpRequestHandle('DELETE', '/dm/remove/v1', { token, dmId });
+export const requestDmRemove = (token: string, dmId: number) => {
+  return httpRequestHandle('DELETE', '/dm/remove/v2', { token, dmId });
 };
 
-export const requestDmDetailsV1 = (token: string, dmId: number) => {
-  return httpRequestHandle('GET', '/dm/details/v1', { token, dmId });
+export const requestDmDetails = (token: string, dmId: number) => {
+  return httpRequestHandle('GET', '/dm/details/v2', { token, dmId });
 };
 
-export const requestDmLeaveV1 = (token: string, dmId: number) => {
-  return httpRequestHandle('POST', '/dm/leave/v1', { token, dmId });
+export const requestDmLeave = (token: string, dmId: number) => {
+  return httpRequestHandle('POST', '/dm/leave/v2', { token, dmId });
 };
 
-export const requestDmMessagesV1 = (
+export const requestDmMessages = (
   token: string,
   dmId: number,
   start: number
 ) => {
-  return httpRequestHandle('GET', '/dm/messages/v1', { token, dmId, start });
+  return httpRequestHandle('GET', '/dm/messages/v2', { token, dmId, start });
 };
 
-export const requestMessageSendDmV1 = (
+export const requestMessageSendDm = (
   token: string,
   dmId: number,
   message: string
 ) => {
-  return httpRequestHandle('POST', '/message/senddm/v1', {
+  return httpRequestHandle('POST', '/message/senddm/v2', {
     token,
     dmId,
     message,
   });
 };
 
-export const requestUsersAllV1 = (token: string) => {
-  return httpRequestHandle('GET', '/users/all/v1', { token });
+export const requestUsersAll = (token: string) => {
+  return httpRequestHandle('GET', '/users/all/v2', { token });
 };
 
-export const requestUserProfileSetNameV1 = (
+export const requestUserProfileSetName = (
   token: string,
   nameFirst: string,
   nameLast: string
 ) => {
-  return httpRequestHandle('PUT', '/user/profile/setname/v1', {
+  return httpRequestHandle('PUT', '/user/profile/setname/v2', {
     token,
     nameFirst,
     nameLast,
   });
 };
 
-export const requestUserProfileSetEmailV1 = (token: string, email: string) => {
-  return httpRequestHandle('PUT', '/user/profile/setemail/v1', {
+export const requestUserProfileSetEmail = (token: string, email: string) => {
+  return httpRequestHandle('PUT', '/user/profile/setemail/v2', {
     token,
     email,
   });
 };
 
-export const requestUserProfileSetHandleV1 = (
+export const requestUserProfileSetHandle = (
   token: string,
   handleStr: string
 ) => {
-  return httpRequestHandle('PUT', '/user/profile/sethandle/v1', {
+  return httpRequestHandle('PUT', '/user/profile/sethandle/v2', {
     token,
     handleStr,
   });

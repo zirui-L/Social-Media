@@ -10,6 +10,9 @@ import {
 } from './helperFunctions/helperFunctions';
 import validator from 'validator';
 
+import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
+import HTTPError from 'http-errors';
+
 type UserObject = {
   user: User;
 };
@@ -29,16 +32,15 @@ type UsersObject = {
  *  @returns {Error} - return if there is invalid autherUserId or invalid uId
  */
 
-export const userProfileV2 = (
-  token: string,
-  uId: number
-): UserObject | Error => {
+export const userProfileV3 = (token: string, uId: number): UserObject => {
   const data = getData();
   // check validity of inputs
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!isAuthUserIdValid(uId)) {
-    return { error: 'uId does not refer to a valid user' };
+    throw HTTPError(BAD_REQUEST, 'uId does not refer to a valid user');
   }
   // return user's detail
   for (const user of data.users) {
@@ -66,11 +68,13 @@ export const userProfileV2 = (
  *
  */
 
-export const usersAllV1 = (token: string): UsersObject | Error => {
+export const usersAllV2 = (token: string): UsersObject => {
   const data = getData();
   // check validity of input
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   }
   // push all users' detail into a new array
   const usersArray = [];
@@ -102,20 +106,22 @@ export const usersAllV1 = (token: string): UsersObject | Error => {
  * @returns {} - return when error condition are avoided
  *
  */
-export const userProfileSetNameV1 = (
+export const userProfileSetNameV2 = (
   token: string,
   nameFirst: string,
   nameLast: string
-): Record<string, never> | Error => {
+): Record<string, never> => {
   const data = getData();
   // check validity of inputs
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!nameInRange(nameFirst) || !nameInRange(nameLast)) {
-    return { error: 'Invalid name length' };
+    throw HTTPError(BAD_REQUEST, 'Invalid name length');
   }
   // find user
-  const autherUserId = findUserFromToken(token);
+  const autherUserId = findUserFromToken(tokenId);
 
   const user = findUser(autherUserId);
   // change name
@@ -139,21 +145,23 @@ export const userProfileSetNameV1 = (
  * @returns {} - return when error condition are avoided
  *
  */
-export const userProfileSetEmailV1 = (
+export const userProfileSetEmailV2 = (
   token: string,
   email: string
 ): Record<string, never> | Error => {
   const data = getData();
   // check validaity of inputs
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!validator.isEmail(email)) {
-    return { error: 'Invalid email' };
+    throw HTTPError(BAD_REQUEST, 'Invalid email');
   } else if (!isAvaliableEmail(email, data.users)) {
-    return { error: 'Email already exist' };
+    throw HTTPError(BAD_REQUEST, 'Email already exist');
   }
   // Find user
-  const autherUserId = findUserFromToken(token);
+  const autherUserId = findUserFromToken(tokenId);
 
   const user = findUser(autherUserId);
   // change user's email and updated to data
@@ -178,24 +186,29 @@ export const userProfileSetEmailV1 = (
  * @returns {} - return when error condition are avoided
  *
  */
-export const userProfileSetHandleV1 = (
+export const userProfileSetHandleV2 = (
   token: string,
   handleStr: string
-): Record<string, never> | Error => {
+): Record<string, never> => {
   const data = getData();
   // check validaity of inputs
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (handleStr.length < 3 || handleStr.length > 20) {
-    return { error: 'Invalid handle string length' };
+    throw HTTPError(BAD_REQUEST, 'Invalid handle string length');
   } else if (!/^[0-9a-zA-Z]+$/.test(handleStr)) {
     // test wether the string is alphanumerical using regular expression
-    return { error: 'handleStr contains characters that are not alphanumeric' };
+    throw HTTPError(
+      BAD_REQUEST,
+      'handleStr contains characters that are not alphanumeric'
+    );
   } else if (!isAvaliableHandleString(handleStr)) {
-    return { error: 'handle is already used by another user' };
+    throw HTTPError(BAD_REQUEST, 'handle is already used by another user');
   }
   // find user
-  const autherUserId = findUserFromToken(token);
+  const autherUserId = findUserFromToken(tokenId);
 
   const user = findUser(autherUserId);
   // change handleStr and updated to data

@@ -1,19 +1,19 @@
 import {
-  requestAuthRegisterV2,
-  requestChannelJoinV2,
-  requestChannelMessagesV2,
-  requestChannelsCreateV2,
-  requestClearV1,
-  requestMessageSendV1,
-  requestMessageEditV1,
-  requestMessageRemoveV1,
-  requestMessageSendDmV1,
-  requestDmMessagesV1,
-  requestDmCreateV1,
-  requestMessageReactV1,
-  // requestMessageUnReactV1,
-  // requestMessagePinV1,
-  // requestMessageUnPinV1,
+  requestAuthRegister,
+  requestChannelJoin,
+  requestChannelMessages,
+  requestChannelsCreate,
+  requestClear,
+  requestMessageSend,
+  requestMessageEdit,
+  requestMessageRemove,
+  requestMessageSendDm,
+  requestDmMessages,
+  requestDmCreate,
+  requestMessageReact,
+  // requestMessageUnReact,
+  // requestMessagePin,
+  // requestMessageUnPin,
 } from '../helperFunctions/helperServer';
 
 const OK = 200;
@@ -22,27 +22,27 @@ const FORBIDDEN = 403;
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
-  requestClearV1();
+  requestClear();
 });
 
 afterEach(() => {
-  requestClearV1();
+  requestClear();
 });
 
 describe('Testing /message/send/v1', () => {
   test('Test-1: Error, channelId does not refer to a valid channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
-    const messageSendObj = requestMessageSendV1(
+    const messageSendObj = requestMessageSend(
       test1.bodyObj.token,
       channelId.bodyObj.channelId + 1,
       'HelloWorld'
@@ -53,20 +53,20 @@ describe('Testing /message/send/v1', () => {
   });
 
   test('Test-2: Error, length of message is less than 1 or over 1000 characters', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
 
     // length of the message is less than 1
-    const messageSendObj = requestMessageSendV1(
+    const messageSendObj = requestMessageSend(
       test1.bodyObj.token,
       channelId.bodyObj.channelId,
       ''
@@ -76,7 +76,7 @@ describe('Testing /message/send/v1', () => {
     expect(messageSendObj.bodyObj).toStrictEqual(ERROR);
 
     // length of the message is more than 1000
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.bodyObj.token,
       channelId.bodyObj.channelId,
       'HelloWorld'.repeat(101)
@@ -87,26 +87,26 @@ describe('Testing /message/send/v1', () => {
   });
 
   test('Test-3: Error, channelId is valid and the authorised user is not a member of the channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
     // the authorised user is not a member of the channel
-    const messageSendObj = requestMessageSendV1(
+    const messageSendObj = requestMessageSend(
       test2.bodyObj.token,
       channelId.bodyObj.channelId,
       'firstMessage'
@@ -117,20 +117,20 @@ describe('Testing /message/send/v1', () => {
   });
 
   test('Test-4: Error, token is invalid', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
 
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
 
-    const messageSendObj = requestMessageSendV1(
+    const messageSendObj = requestMessageSend(
       test1.bodyObj.token + '1',
       channelId.bodyObj.channelId,
       'firstMessage'
@@ -141,20 +141,20 @@ describe('Testing /message/send/v1', () => {
   });
 
   test('Test-5: Success, send 1 message', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
 
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
 
-    const messageSendObj = requestMessageSendV1(
+    const messageSendObj = requestMessageSend(
       test1.bodyObj.token,
       channelId.bodyObj.channelId,
       'firstMessage'
@@ -166,7 +166,7 @@ describe('Testing /message/send/v1', () => {
     });
     // check the message details
     expect(
-      requestChannelMessagesV2(
+      requestChannelMessages(
         test1.bodyObj.token,
         channelId.bodyObj.channelId,
         0
@@ -188,40 +188,40 @@ describe('Testing /message/send/v1', () => {
   });
 
   test('Test-6: Success, multiple message from multiple users', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
 
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
-    requestChannelJoinV2(test2.bodyObj.token, channelId.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channelId.bodyObj.channelId);
 
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.bodyObj.token,
       channelId.bodyObj.channelId,
       'firstMessage'
     );
 
-    const messageSendObj2 = requestMessageSendV1(
+    const messageSendObj2 = requestMessageSend(
       test2.bodyObj.token,
       channelId.bodyObj.channelId,
       'secondMessage'
     );
 
-    const messageSendObj3 = requestMessageSendV1(
+    const messageSendObj3 = requestMessageSend(
       test2.bodyObj.token,
       channelId.bodyObj.channelId,
       'thirdMessage'
@@ -242,7 +242,7 @@ describe('Testing /message/send/v1', () => {
 
     // check messages details
     expect(
-      requestChannelMessagesV2(
+      requestChannelMessages(
         test1.bodyObj.token,
         channelId.bodyObj.channelId,
         0
@@ -282,23 +282,23 @@ describe('Testing /message/send/v1', () => {
 
 describe('Testing /message/edit/v1', () => {
   test('Test-1: Error, length of message is over 1000 characters', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.bodyObj.token,
       channelId.bodyObj.channelId,
       'firstMessage'
     );
-    const messageEditObj = requestMessageEditV1(
+    const messageEditObj = requestMessageEdit(
       test1.bodyObj.token,
       messageSendObj1.bodyObj.messageId,
       'HelloWorld'.repeat(101)
@@ -309,23 +309,23 @@ describe('Testing /message/edit/v1', () => {
   });
 
   test('Test-2: Error, messageId does not refer to a valid message', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.bodyObj.token,
       channelId.bodyObj.channelId,
       'firstMessage'
     );
-    const messageEditObj = requestMessageEditV1(
+    const messageEditObj = requestMessageEdit(
       test1.bodyObj.token,
       messageSendObj1.bodyObj.messageId + 1,
       'HelloWorld'
@@ -336,31 +336,31 @@ describe('Testing /message/edit/v1', () => {
   });
 
   test('Test-3: Error, user not a member of the channel where the message is in', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
-    const channelId1 = requestChannelsCreateV2(
+    const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
-    requestChannelsCreateV2(test2.bodyObj.token, 'secondChannel', true);
-    const messageSendObj1 = requestMessageSendV1(
+    requestChannelsCreate(test2.bodyObj.token, 'secondChannel', true);
+    const messageSendObj1 = requestMessageSend(
       test1.bodyObj.token,
       channelId1.bodyObj.channelId,
       'firstMessage'
     );
     // user is not a member of the channel
-    const messageEditObj = requestMessageEditV1(
+    const messageEditObj = requestMessageEdit(
       test2.bodyObj.token,
       messageSendObj1.bodyObj.messageId,
       'HelloWorld'
@@ -371,34 +371,34 @@ describe('Testing /message/edit/v1', () => {
   });
 
   test('Test-4: Error, user not a member of the dm where the message is in', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
-    const test3 = requestAuthRegisterV2(
+    const test3 = requestAuthRegister(
       'test3@gmail.com',
       'password3',
       'firstName3',
       'lastName3'
     );
-    const dmIdObj = requestDmCreateV1(test2.bodyObj.token, [
+    const dmIdObj = requestDmCreate(test2.bodyObj.token, [
       test1.bodyObj.authUserId,
     ]);
-    const messageIdObj = requestMessageSendDmV1(
+    const messageIdObj = requestMessageSendDm(
       test1.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       'firstMessage'
     );
     // user not a member of the dm
-    const messageEditObj = requestMessageEditV1(
+    const messageEditObj = requestMessageEdit(
       test3.bodyObj.token,
       messageIdObj.bodyObj.messageId,
       'helloWorld'
@@ -408,30 +408,30 @@ describe('Testing /message/edit/v1', () => {
   });
 
   test('Test-5: Error, the message was not sent by the user (channel), and user is not a owner', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
-    const channelId1 = requestChannelsCreateV2(
+    const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
 
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.bodyObj.token,
       channelId1.bodyObj.channelId,
       'firstMessage'
     );
-    const messageEditObj = requestMessageEditV1(
+    const messageEditObj = requestMessageEdit(
       test2.bodyObj.token,
       messageSendObj1.bodyObj.messageId,
       'HelloWorld'
@@ -442,30 +442,30 @@ describe('Testing /message/edit/v1', () => {
   });
 
   test('Test-6: Error, the message was not sent by the user (dm), and user is not a owner', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
 
-    const dmIdObj = requestDmCreateV1(test1.bodyObj.token, [
+    const dmIdObj = requestDmCreate(test1.bodyObj.token, [
       test2.bodyObj.authUserId,
     ]);
 
-    const messageIdObj = requestMessageSendDmV1(
+    const messageIdObj = requestMessageSendDm(
       test1.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       'firstMessage'
     );
 
-    const messageEditObj = requestMessageEditV1(
+    const messageEditObj = requestMessageEdit(
       test2.bodyObj.token,
       messageIdObj.bodyObj.messageId,
       'helloWorld'
@@ -475,24 +475,24 @@ describe('Testing /message/edit/v1', () => {
   });
 
   test('Test-7: Error, token is invalid', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
 
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.bodyObj.token,
       channelId.bodyObj.channelId,
       'firstMessage'
     );
-    const messageEditObj = requestMessageEditV1(
+    const messageEditObj = requestMessageEdit(
       test1.bodyObj.token + '1',
       messageSendObj1.bodyObj.messageId,
       'HelloWorld'
@@ -503,32 +503,32 @@ describe('Testing /message/edit/v1', () => {
   });
 
   test('Test-8: Success, edit message in a channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
-    const channelId1 = requestChannelsCreateV2(
+    const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channelId1.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
 
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test2.bodyObj.token,
       channelId1.bodyObj.channelId,
       'firstMessage'
     );
-    const messageEditObj = requestMessageEditV1(
+    const messageEditObj = requestMessageEdit(
       test2.bodyObj.token,
       messageSendObj1.bodyObj.messageId,
       'HelloWorld'
@@ -538,7 +538,7 @@ describe('Testing /message/edit/v1', () => {
     expect(messageEditObj.bodyObj).toStrictEqual({});
 
     expect(
-      requestChannelMessagesV2(
+      requestChannelMessages(
         test1.bodyObj.token,
         channelId1.bodyObj.channelId,
         0
@@ -560,32 +560,32 @@ describe('Testing /message/edit/v1', () => {
   });
 
   test("Test-9: Success, channel owner edit other user's message in a channel", () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
-    const channelId1 = requestChannelsCreateV2(
+    const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channelId1.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
 
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test2.bodyObj.token,
       channelId1.bodyObj.channelId,
       'firstMessage'
     );
-    const messageEditObj = requestMessageEditV1(
+    const messageEditObj = requestMessageEdit(
       test1.bodyObj.token,
       messageSendObj1.bodyObj.messageId,
       'HelloWorld'
@@ -595,7 +595,7 @@ describe('Testing /message/edit/v1', () => {
     expect(messageEditObj.bodyObj).toStrictEqual({});
 
     expect(
-      requestChannelMessagesV2(
+      requestChannelMessages(
         test1.bodyObj.token,
         channelId1.bodyObj.channelId,
         0
@@ -618,32 +618,32 @@ describe('Testing /message/edit/v1', () => {
 
   test("Test-10: Success, global owner edit other user's message in a channel", () => {
     // test1 is the global owner
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
-    const channelId1 = requestChannelsCreateV2(
+    const channelId1 = requestChannelsCreate(
       test2.bodyObj.token,
       'firstChannel',
       true
     );
 
-    requestChannelJoinV2(test1.bodyObj.token, channelId1.bodyObj.channelId);
+    requestChannelJoin(test1.bodyObj.token, channelId1.bodyObj.channelId);
 
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test2.bodyObj.token,
       channelId1.bodyObj.channelId,
       'firstMessage'
     );
-    const messageEditObj = requestMessageEditV1(
+    const messageEditObj = requestMessageEdit(
       test1.bodyObj.token,
       messageSendObj1.bodyObj.messageId,
       'HelloWorld'
@@ -653,7 +653,7 @@ describe('Testing /message/edit/v1', () => {
     expect(messageEditObj.bodyObj).toStrictEqual({});
 
     expect(
-      requestChannelMessagesV2(
+      requestChannelMessages(
         test2.bodyObj.token,
         channelId1.bodyObj.channelId,
         0
@@ -674,30 +674,30 @@ describe('Testing /message/edit/v1', () => {
     });
   });
   test('Test-11: Success, edit message in a dm', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
 
-    const dmIdObj = requestDmCreateV1(test2.bodyObj.token, [
+    const dmIdObj = requestDmCreate(test2.bodyObj.token, [
       test1.bodyObj.authUserId,
     ]);
 
-    const messageSendObj1 = requestMessageSendDmV1(
+    const messageSendObj1 = requestMessageSendDm(
       test1.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       'firstMessage'
     );
 
-    const messageEditObj = requestMessageEditV1(
+    const messageEditObj = requestMessageEdit(
       test1.bodyObj.token,
       messageSendObj1.bodyObj.messageId,
       'helloWorld'
@@ -706,7 +706,7 @@ describe('Testing /message/edit/v1', () => {
     expect(messageEditObj.statusCode).toBe(OK);
 
     expect(
-      requestDmMessagesV1(test1.bodyObj.token, dmIdObj.bodyObj.dmId, 0).bodyObj
+      requestDmMessages(test1.bodyObj.token, dmIdObj.bodyObj.dmId, 0).bodyObj
     ).toStrictEqual({
       messages: [
         {
@@ -724,30 +724,30 @@ describe('Testing /message/edit/v1', () => {
   });
 
   test("Test-11: Success, owner edit other user's message in a dm", () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
 
-    const dmIdObj = requestDmCreateV1(test2.bodyObj.token, [
+    const dmIdObj = requestDmCreate(test2.bodyObj.token, [
       test1.bodyObj.authUserId,
     ]);
 
-    const messageSendObj1 = requestMessageSendDmV1(
+    const messageSendObj1 = requestMessageSendDm(
       test1.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       'firstMessage'
     );
 
-    const messageEditObj = requestMessageEditV1(
+    const messageEditObj = requestMessageEdit(
       test2.bodyObj.token,
       messageSendObj1.bodyObj.messageId,
       'helloWorld'
@@ -756,7 +756,7 @@ describe('Testing /message/edit/v1', () => {
     expect(messageEditObj.statusCode).toBe(OK);
 
     expect(
-      requestDmMessagesV1(test1.bodyObj.token, dmIdObj.bodyObj.dmId, 0).bodyObj
+      requestDmMessages(test1.bodyObj.token, dmIdObj.bodyObj.dmId, 0).bodyObj
     ).toStrictEqual({
       messages: [
         {
@@ -776,23 +776,23 @@ describe('Testing /message/edit/v1', () => {
 
 describe('Testing /message/remove/v1', () => {
   test('Test-1: Error, messageId does not refer to a valid message', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'RicardoChannel',
       true
     );
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.bodyObj.token,
       channelId.bodyObj.channelId,
       'firstMessage'
     );
-    const messageRemoveObj = requestMessageRemoveV1(
+    const messageRemoveObj = requestMessageRemove(
       test1.bodyObj.token,
       messageSendObj1.bodyObj.messageId + 1
     );
@@ -802,30 +802,30 @@ describe('Testing /message/remove/v1', () => {
   });
 
   test('Test-2: Error, user is not a member of the channel where the message is in', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
-    const channelId1 = requestChannelsCreateV2(
+    const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
-    requestChannelsCreateV2(test2.bodyObj.token, 'secondChannel', true);
-    const messageSendObj1 = requestMessageSendV1(
+    requestChannelsCreate(test2.bodyObj.token, 'secondChannel', true);
+    const messageSendObj1 = requestMessageSend(
       test1.bodyObj.token,
       channelId1.bodyObj.channelId,
       'firstMessage'
     );
-    const messageRemoveObj = requestMessageRemoveV1(
+    const messageRemoveObj = requestMessageRemove(
       test2.bodyObj.token,
       messageSendObj1.bodyObj.messageId
     );
@@ -835,34 +835,34 @@ describe('Testing /message/remove/v1', () => {
   });
 
   test('Test-3: Error, user is not a member of the dm where the message is in', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
-    const test3 = requestAuthRegisterV2(
+    const test3 = requestAuthRegister(
       'test3@gmail.com',
       'password3',
       'firstName3',
       'lastName3'
     );
-    const dmIdObj = requestDmCreateV1(test2.bodyObj.token, [
+    const dmIdObj = requestDmCreate(test2.bodyObj.token, [
       test1.bodyObj.authUserId,
     ]);
-    const messageIdObj = requestMessageSendDmV1(
+    const messageIdObj = requestMessageSendDm(
       test1.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       'firstMessage'
     );
 
-    const messageRemoveObj = requestMessageRemoveV1(
+    const messageRemoveObj = requestMessageRemove(
       test3.bodyObj.token,
       messageIdObj.bodyObj.messageId
     );
@@ -871,30 +871,30 @@ describe('Testing /message/remove/v1', () => {
   });
 
   test('Test-4: Error, the message was not sent by the user (channel), and user is not a owner', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
-    const channelId1 = requestChannelsCreateV2(
+    const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
 
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.bodyObj.token,
       channelId1.bodyObj.channelId,
       'firstMessage'
     );
-    const messageRemoveObj = requestMessageRemoveV1(
+    const messageRemoveObj = requestMessageRemove(
       test2.bodyObj.token,
       messageSendObj1.bodyObj.messageId
     );
@@ -904,30 +904,30 @@ describe('Testing /message/remove/v1', () => {
   });
 
   test('Test-5: Error, the message was not sent by the user (dm), and user is not a owner', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
 
-    const dmIdObj = requestDmCreateV1(test1.bodyObj.token, [
+    const dmIdObj = requestDmCreate(test1.bodyObj.token, [
       test2.bodyObj.authUserId,
     ]);
 
-    const messageIdObj = requestMessageSendDmV1(
+    const messageIdObj = requestMessageSendDm(
       test1.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       'firstMessage'
     );
 
-    const messageRemoveObj = requestMessageRemoveV1(
+    const messageRemoveObj = requestMessageRemove(
       test2.bodyObj.token,
       messageIdObj.bodyObj.messageId
     );
@@ -936,24 +936,24 @@ describe('Testing /message/remove/v1', () => {
   });
 
   test('Test-6: Error, token is invalid', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
 
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.bodyObj.token,
       channelId.bodyObj.channelId,
       'firstMessage'
     );
-    const messageRemoveObj = requestMessageRemoveV1(
+    const messageRemoveObj = requestMessageRemove(
       test1.bodyObj.token + '1',
       messageSendObj1.bodyObj.messageId
     );
@@ -963,32 +963,32 @@ describe('Testing /message/remove/v1', () => {
   });
 
   test('Test-7: Success, remove message in a channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
-    const channelId1 = requestChannelsCreateV2(
+    const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channelId1.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
 
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test2.bodyObj.token,
       channelId1.bodyObj.channelId,
       'firstMessage'
     );
-    const messageRemoveObj = requestMessageRemoveV1(
+    const messageRemoveObj = requestMessageRemove(
       test2.bodyObj.token,
       messageSendObj1.bodyObj.messageId
     );
@@ -997,7 +997,7 @@ describe('Testing /message/remove/v1', () => {
     expect(messageRemoveObj.bodyObj).toStrictEqual({});
 
     expect(
-      requestChannelMessagesV2(
+      requestChannelMessages(
         test1.bodyObj.token,
         channelId1.bodyObj.channelId,
         0
@@ -1010,32 +1010,32 @@ describe('Testing /message/remove/v1', () => {
   });
 
   test("Test-8: Success, owner remove other user's message in a channel", () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
-    const channelId1 = requestChannelsCreateV2(
+    const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
 
-    requestChannelJoinV2(test2.bodyObj.token, channelId1.bodyObj.channelId);
+    requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
 
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test2.bodyObj.token,
       channelId1.bodyObj.channelId,
       'firstMessage'
     );
-    const messageRemoveObj = requestMessageRemoveV1(
+    const messageRemoveObj = requestMessageRemove(
       test1.bodyObj.token,
       messageSendObj1.bodyObj.messageId
     );
@@ -1044,7 +1044,7 @@ describe('Testing /message/remove/v1', () => {
     expect(messageRemoveObj.bodyObj).toStrictEqual({});
 
     expect(
-      requestChannelMessagesV2(
+      requestChannelMessages(
         test1.bodyObj.token,
         channelId1.bodyObj.channelId,
         0
@@ -1058,32 +1058,32 @@ describe('Testing /message/remove/v1', () => {
 
   test("Test-9: Success, global owner remove other user's message in a channel", () => {
     // test1 is the global owner
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
-    const channelId1 = requestChannelsCreateV2(
+    const channelId1 = requestChannelsCreate(
       test2.bodyObj.token,
       'firstChannel',
       true
     );
 
-    requestChannelJoinV2(test1.bodyObj.token, channelId1.bodyObj.channelId);
+    requestChannelJoin(test1.bodyObj.token, channelId1.bodyObj.channelId);
 
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test2.bodyObj.token,
       channelId1.bodyObj.channelId,
       'firstMessage'
     );
-    const messageRemoveObj = requestMessageRemoveV1(
+    const messageRemoveObj = requestMessageRemove(
       test1.bodyObj.token,
       messageSendObj1.bodyObj.messageId
     );
@@ -1092,7 +1092,7 @@ describe('Testing /message/remove/v1', () => {
     expect(messageRemoveObj.bodyObj).toStrictEqual({});
 
     expect(
-      requestChannelMessagesV2(
+      requestChannelMessages(
         test2.bodyObj.token,
         channelId1.bodyObj.channelId,
         0
@@ -1105,30 +1105,30 @@ describe('Testing /message/remove/v1', () => {
   });
 
   test('Test-10: Success, remove message in a dm', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
 
-    const dmIdObj = requestDmCreateV1(test2.bodyObj.token, [
+    const dmIdObj = requestDmCreate(test2.bodyObj.token, [
       test1.bodyObj.authUserId,
     ]);
 
-    const messageSendObj1 = requestMessageSendDmV1(
+    const messageSendObj1 = requestMessageSendDm(
       test1.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       'firstMessage'
     );
 
-    const messageRemoveObj = requestMessageRemoveV1(
+    const messageRemoveObj = requestMessageRemove(
       test1.bodyObj.token,
       messageSendObj1.bodyObj.messageId
     );
@@ -1136,7 +1136,7 @@ describe('Testing /message/remove/v1', () => {
     expect(messageRemoveObj.statusCode).toBe(OK);
 
     expect(
-      requestDmMessagesV1(test1.bodyObj.token, dmIdObj.bodyObj.dmId, 0).bodyObj
+      requestDmMessages(test1.bodyObj.token, dmIdObj.bodyObj.dmId, 0).bodyObj
     ).toStrictEqual({
       messages: [],
       start: 0,
@@ -1145,30 +1145,30 @@ describe('Testing /message/remove/v1', () => {
   });
 
   test("Test-11: Success, owner remove other user's message in a dm", () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
 
-    const dmIdObj = requestDmCreateV1(test2.bodyObj.token, [
+    const dmIdObj = requestDmCreate(test2.bodyObj.token, [
       test1.bodyObj.authUserId,
     ]);
 
-    const messageSendObj1 = requestMessageSendDmV1(
+    const messageSendObj1 = requestMessageSendDm(
       test1.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       'firstMessage'
     );
 
-    const messageRemoveObj = requestMessageRemoveV1(
+    const messageRemoveObj = requestMessageRemove(
       test2.bodyObj.token,
       messageSendObj1.bodyObj.messageId
     );
@@ -1176,7 +1176,7 @@ describe('Testing /message/remove/v1', () => {
     expect(messageRemoveObj.statusCode).toBe(OK);
 
     expect(
-      requestDmMessagesV1(test1.bodyObj.token, dmIdObj.bodyObj.dmId, 0).bodyObj
+      requestDmMessages(test1.bodyObj.token, dmIdObj.bodyObj.dmId, 0).bodyObj
     ).toStrictEqual({
       messages: [],
       start: 0,
@@ -1187,24 +1187,24 @@ describe('Testing /message/remove/v1', () => {
 
 describe('Testing /message/senddm/v1', () => {
   test('Test-1: Error, dmId does not refer to a valid DM', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
 
-    const dmIdObj = requestDmCreateV1(test2.bodyObj.token, [
+    const dmIdObj = requestDmCreate(test2.bodyObj.token, [
       test1.bodyObj.authUserId,
     ]);
 
-    const messageSendDmObj1 = requestMessageSendDmV1(
+    const messageSendDmObj1 = requestMessageSendDm(
       test1.bodyObj.token,
       dmIdObj.bodyObj.dmId + 1,
       'firstMessage'
@@ -1215,25 +1215,25 @@ describe('Testing /message/senddm/v1', () => {
   });
 
   test('Test-2: Error, length of message is less than 1 or over 1000 characters', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
 
-    const dmIdObj = requestDmCreateV1(test2.bodyObj.token, [
+    const dmIdObj = requestDmCreate(test2.bodyObj.token, [
       test1.bodyObj.authUserId,
     ]);
 
     // length of the message is less than 1
-    const messageSendDmObj1 = requestMessageSendDmV1(
+    const messageSendDmObj1 = requestMessageSendDm(
       test1.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       ''
@@ -1243,7 +1243,7 @@ describe('Testing /message/senddm/v1', () => {
     expect(messageSendDmObj1.statusCode).toBe(OK);
 
     // length of the message is more than 1000
-    const messageSendDmObj2 = requestMessageSendDmV1(
+    const messageSendDmObj2 = requestMessageSendDm(
       test1.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       'HelloWorld'.repeat(101)
@@ -1254,31 +1254,31 @@ describe('Testing /message/senddm/v1', () => {
   });
 
   test('Test-3: Error, channelId is valid and the authorised user is not a member of the channel', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
 
-    const test3 = requestAuthRegisterV2(
+    const test3 = requestAuthRegister(
       'test3@gmail.com',
       'password3',
       'firstName3',
       'lastName3'
     );
 
-    const dmIdObj = requestDmCreateV1(test2.bodyObj.token, [
+    const dmIdObj = requestDmCreate(test2.bodyObj.token, [
       test1.bodyObj.authUserId,
     ]);
 
-    const messageSendDmObj1 = requestMessageSendDmV1(
+    const messageSendDmObj1 = requestMessageSendDm(
       test3.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       'helloWorld'
@@ -1289,24 +1289,24 @@ describe('Testing /message/senddm/v1', () => {
   });
 
   test('Test-4: Error, token is invalid', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
 
-    const dmIdObj = requestDmCreateV1(test2.bodyObj.token, [
+    const dmIdObj = requestDmCreate(test2.bodyObj.token, [
       test1.bodyObj.authUserId,
     ]);
 
-    const messageSendDmObj1 = requestMessageSendDmV1(
+    const messageSendDmObj1 = requestMessageSendDm(
       test1.bodyObj.token + 1,
       dmIdObj.bodyObj.dmId,
       'helloWorld'
@@ -1317,24 +1317,24 @@ describe('Testing /message/senddm/v1', () => {
   });
 
   test('Test-5: Success, send 1 message', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
 
-    const dmIdObj = requestDmCreateV1(test2.bodyObj.token, [
+    const dmIdObj = requestDmCreate(test2.bodyObj.token, [
       test1.bodyObj.authUserId,
     ]);
 
-    const messageSendDmObj1 = requestMessageSendDmV1(
+    const messageSendDmObj1 = requestMessageSendDm(
       test1.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       'helloWorld'
@@ -1347,7 +1347,7 @@ describe('Testing /message/senddm/v1', () => {
 
     // check messages details
     expect(
-      requestDmMessagesV1(test1.bodyObj.token, dmIdObj.bodyObj.dmId, 0).bodyObj
+      requestDmMessages(test1.bodyObj.token, dmIdObj.bodyObj.dmId, 0).bodyObj
     ).toStrictEqual({
       messages: [
         {
@@ -1365,35 +1365,35 @@ describe('Testing /message/senddm/v1', () => {
   });
 
   test('Test-6: Success, multiple messages from multiple users', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
 
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     );
 
-    const dmIdObj = requestDmCreateV1(test2.bodyObj.token, [
+    const dmIdObj = requestDmCreate(test2.bodyObj.token, [
       test1.bodyObj.authUserId,
     ]);
 
-    const messageSendDmObj1 = requestMessageSendDmV1(
+    const messageSendDmObj1 = requestMessageSendDm(
       test1.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       'firstMessage'
     );
-    const messageSendDmObj2 = requestMessageSendDmV1(
+    const messageSendDmObj2 = requestMessageSendDm(
       test2.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       'secondMessage'
     );
-    const messageSendDmObj3 = requestMessageSendDmV1(
+    const messageSendDmObj3 = requestMessageSendDm(
       test2.bodyObj.token,
       dmIdObj.bodyObj.dmId,
       'thirdMessage'
@@ -1414,7 +1414,7 @@ describe('Testing /message/senddm/v1', () => {
 
     // check messages details
     expect(
-      requestDmMessagesV1(test1.bodyObj.token, dmIdObj.bodyObj.dmId, 0).bodyObj
+      requestDmMessages(test1.bodyObj.token, dmIdObj.bodyObj.dmId, 0).bodyObj
     ).toStrictEqual({
       messages: [
         {
@@ -1450,25 +1450,25 @@ describe('Testing /message/senddm/v1', () => {
 
 describe('Testing /message/react/v1', () => {
   test('Test-1: Error, token is invalid', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     ).bodyObj;
 
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.token,
       'firstChannel',
       true
     ).bodyObj;
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.token,
       channelId.channelId,
       'firstMessage'
     ).bodyObj;
 
-    const res = requestMessageReactV1(
+    const res = requestMessageReact(
       test1.token + '1',
       messageSendObj1.messageId,
       1
@@ -1478,23 +1478,23 @@ describe('Testing /message/react/v1', () => {
   });
 
   test('Test-2: Error, messageId does not refer to a valid message', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     ).bodyObj;
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.token,
       'RicardoChannel',
       true
     ).bodyObj;
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.token,
       channelId.channelId,
       'firstMessage'
     ).bodyObj;
-    const res = requestMessageReactV1(
+    const res = requestMessageReact(
       test1.token,
       messageSendObj1.messageId + 1,
       1
@@ -1504,148 +1504,132 @@ describe('Testing /message/react/v1', () => {
   });
 
   test('Test-3: Error, user is not a member of the channel where the message is in', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     ).bodyObj;
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     ).bodyObj;
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.token,
       'RicardoChannel',
       true
     ).bodyObj;
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.token,
       channelId.channelId,
       'firstMessage'
     ).bodyObj;
-    const res = requestMessageReactV1(
-      test2.token,
-      messageSendObj1.messageId,
-      1
-    );
+    const res = requestMessageReact(test2.token, messageSendObj1.messageId, 1);
     expect(res.statusCode).toBe(BAD_REQUEST);
   });
 
   test('Test-4: Error, user is not a member of the dm where the message is in', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     ).bodyObj;
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     ).bodyObj;
-    const test3 = requestAuthRegisterV2(
+    const test3 = requestAuthRegister(
       'test3@gmail.com',
       'password3',
       'firstName3',
       'lastName3'
     ).bodyObj;
-    const dmIdObj = requestDmCreateV1(test2.token, [test1.authUserId]).bodyObj;
-    const messageIdObj = requestMessageSendDmV1(
+    const dmIdObj = requestDmCreate(test2.token, [test1.authUserId]).bodyObj;
+    const messageIdObj = requestMessageSendDm(
       test1.token,
       dmIdObj.dmId,
       'firstMessage'
     ).bodyObj;
-    const res = requestMessageReactV1(test3.token, messageIdObj.messageId, 1);
+    const res = requestMessageReact(test3.token, messageIdObj.messageId, 1);
     expect(res.statusCode).toBe(BAD_REQUEST);
   });
 
   test('Test-5: Error, invalid reactId', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     ).bodyObj;
 
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.token,
       'firstChannel',
       true
     ).bodyObj;
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.token,
       channelId.channelId,
       'firstMessage'
     ).bodyObj;
 
-    const res = requestMessageReactV1(
-      test1.token,
-      messageSendObj1.messageId,
-      2
-    );
+    const res = requestMessageReact(test1.token, messageSendObj1.messageId, 2);
 
     expect(res.statusCode).toBe(BAD_REQUEST);
   });
 
   test('Test-6: Error, already exist reactId', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     ).bodyObj;
 
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.token,
       'firstChannel',
       true
     ).bodyObj;
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.token,
       channelId.channelId,
       'firstMessage'
     ).bodyObj;
 
-    requestMessageReactV1(test1.token, messageSendObj1.messageId, 1);
-    const res = requestMessageReactV1(
-      test1.token,
-      messageSendObj1.messageId,
-      1
-    );
+    requestMessageReact(test1.token, messageSendObj1.messageId, 1);
+    const res = requestMessageReact(test1.token, messageSendObj1.messageId, 1);
 
     expect(res.statusCode).toBe(BAD_REQUEST);
   });
 
   test('Test-7: Success react in a channel, checking side effects', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     ).bodyObj;
-    const channelId = requestChannelsCreateV2(
+    const channelId = requestChannelsCreate(
       test1.token,
       'firstChannel',
       true
     ).bodyObj;
-    const messageSendObj1 = requestMessageSendV1(
+    const messageSendObj1 = requestMessageSend(
       test1.token,
       channelId.channelId,
       'firstMessage'
     ).bodyObj;
-    const res = requestMessageReactV1(
-      test1.token,
-      messageSendObj1.messageId,
-      1
-    );
+    const res = requestMessageReact(test1.token, messageSendObj1.messageId, 1);
     expect(res.statusCode).toStrictEqual(OK);
     expect(res.bodyObj).toStrictEqual({});
 
-    const channelMessages = requestChannelMessagesV2(
+    const channelMessages = requestChannelMessages(
       test1.token,
       channelId.channelId,
       0
@@ -1673,29 +1657,29 @@ describe('Testing /message/react/v1', () => {
   });
 
   test('Test-8: Success react in a dm', () => {
-    const test1 = requestAuthRegisterV2(
+    const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     ).bodyObj;
-    const test2 = requestAuthRegisterV2(
+    const test2 = requestAuthRegister(
       'test2@gmail.com',
       'password2',
       'firstName2',
       'lastName2'
     ).bodyObj;
-    const dmIdObj = requestDmCreateV1(test1.token, [test2.authUserId]).bodyObj;
-    const messageIdObj = requestMessageSendDmV1(
+    const dmIdObj = requestDmCreate(test1.token, [test2.authUserId]).bodyObj;
+    const messageIdObj = requestMessageSendDm(
       test1.token,
       dmIdObj.dmId,
       'firstMessage'
     ).bodyObj;
-    const res = requestMessageReactV1(test2.token, messageIdObj.messageId, 1);
+    const res = requestMessageReact(test2.token, messageIdObj.messageId, 1);
     expect(res.statusCode).toStrictEqual(OK);
     expect(res.bodyObj).toStrictEqual({});
 
-    const dmMessages = requestDmMessagesV1(test1.token, dmIdObj.dmId, 0);
+    const dmMessages = requestDmMessages(test1.token, dmIdObj.dmId, 0);
     expect(dmMessages.bodyObj).toStrictEqual({
       messages: [
         {
