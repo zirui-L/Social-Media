@@ -11,7 +11,7 @@ import {
   isDuplicate,
   isDmOwner,
   isDmMember,
-} from './helperFunctions';
+} from './helperFunctions/helperFunctions';
 
 type DmId = {
   dmId: number;
@@ -40,7 +40,10 @@ type DmDetails = {
  * is invalid or there are duplicate 'uId's in uIds
  */
 
-export const dmCreateV1 = (token: string, uIds: Array<number>): DmId | Error => {
+export const dmCreateV1 = (
+  token: string,
+  uIds: Array<number>
+): DmId | Error => {
   const data = getData();
   // check input's validity
   if (!isTokenValid(token)) {
@@ -118,7 +121,10 @@ export const dmListV1 = (token: string): { dms: Array<DmObject> } | Error => {
  * is invalid or authorised user is not a owner/member of the dm
  */
 
-export const dmRemoveV1 = (token: string, dmId: number): Record<string, never> | Error => {
+export const dmRemoveV1 = (
+  token: string,
+  dmId: number
+): Record<string, never> | Error => {
   const data = getData();
   if (!isDmValid(dmId)) {
     return { error: 'Invalid dmId' };
@@ -134,7 +140,7 @@ export const dmRemoveV1 = (token: string, dmId: number): Record<string, never> |
   const Dm = findDm(dmId);
   for (const uId of Dm.allMembers) {
     const user = findUser(uId); // Remove dm from user's profile
-    user.dms = user.dms.filter((DmId) => DmId !== dmId);
+    user.dms = user.dms.filter((DmId: number) => DmId !== dmId);
   }
   // Remove dm from dm list
   data.dms = data.dms.filter((Dm) => Dm.dmId !== dmId);
@@ -205,7 +211,10 @@ export const dmDetailsV1 = (token: string, dmId: number): DmDetails | Error => {
  * is invalid or authorised user is not a member of the dm
  */
 
-export const dmLeaveV1 = (token: string, dmId: number): Record<string, never> | Error => {
+export const dmLeaveV1 = (
+  token: string,
+  dmId: number
+): Record<string, never> | Error => {
   const data = getData();
   // check validity of input
   if (!isDmValid(dmId)) {
@@ -219,12 +228,12 @@ export const dmLeaveV1 = (token: string, dmId: number): Record<string, never> | 
   }
   // remove dm from user's detail
   const user = findUser(authUserId);
-  user.dms = user.dms.filter((DmId) => DmId !== dmId);
+  user.dms = user.dms.filter((DmId: number) => DmId !== dmId);
 
   const Dm = findDm(dmId);
   // remove member from dm
-  Dm.allMembers = Dm.allMembers.filter((uId) => uId !== authUserId);
-  Dm.ownerMembers = Dm.ownerMembers.filter((uId) => uId !== authUserId);
+  Dm.allMembers = Dm.allMembers.filter((uId: number) => uId !== authUserId);
+  Dm.ownerMembers = Dm.ownerMembers.filter((uId: number) => uId !== authUserId);
   setData(data);
   return {};
 };

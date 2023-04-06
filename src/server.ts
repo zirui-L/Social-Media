@@ -36,7 +36,7 @@ import {
   dmRemoveV1,
 } from './dm';
 import { clearV1 } from './other';
-import { storeData } from './helperFunctions';
+import { storeData } from './helperFunctions/helperFunctions';
 import { setData } from './dataStore';
 import express, { json, Request, Response } from 'express';
 import { echo } from './echo';

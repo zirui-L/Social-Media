@@ -6,7 +6,7 @@ import {
   nameInRange,
   isAvaliableEmail,
   isTokenValid,
-} from './helperFunctions';
+} from './helperFunctions/helperFunctions';
 
 type UIdAndToken = { token: string; authUserId: number }; // Reture object type
 

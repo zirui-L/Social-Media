@@ -1,4 +1,4 @@
-import { Error, getData, setData } from './dataStore';
+import { Error, getData, setData, React } from './dataStore';
 import {
   isMember,
   isOwner,
@@ -12,7 +12,7 @@ import {
   findStoredMessageFromId,
   findUser,
   findDm,
-} from './helperFunctions';
+} from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
 
 type messageIdObj = {
@@ -45,9 +45,9 @@ export const messageSendV1 = (
   const data = getData();
   const channel = findChannel(channelId);
   if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };// Token is invalid
+    return { error: 'Invalid token' }; // Token is invalid
   } else if (channel === undefined) {
-    return { error: 'Invalid channelId' };// ChannelId does not refer to a valid channel
+    return { error: 'Invalid channelId' }; // ChannelId does not refer to a valid channel
   } else if (message.length < 1 || message.length > 1000) {
     // Length of message is less than 1 or over 1000 characters
     return { error: 'Invalid message length' };
@@ -101,7 +101,7 @@ export const messageEditV1 = (
   const data = getData();
 
   if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };// token is invalid
+    return { error: 'Invalid token' }; // token is invalid
   } else if (!isMessageValid(messageId)) {
     // messageId does not refer to a valid message
     return { error: 'Invalid massage Id' };
@@ -147,7 +147,8 @@ export const messageEditV1 = (
   if (message.length === 0) {
     // If the new message is an empty string, the message is deleted
     messageRemoveV1(token, messageId);
-  } else { // Edit the message
+  } else {
+    // Edit the message
     MessageToEdit.message = message;
   }
   setData(data);
@@ -177,9 +178,9 @@ export const messageRemoveV1 = (
   const data = getData();
 
   if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };// token is invalid
+    return { error: 'Invalid token' }; // token is invalid
   } else if (!isMessageValid(messageId)) {
-    return { error: 'Invalid massage Id' };// messageId does not refer to a valid message
+    return { error: 'Invalid massage Id' }; // messageId does not refer to a valid message
   }
 
   const MessageToDelete = findStoredMessageFromId(messageId);
@@ -188,8 +189,10 @@ export const messageRemoveV1 = (
 
   // messageId does not refer to a valid message within a channel/DM
   // that the authorised user has joined
-  if (!storedUser.channels.includes(MessageToDelete.dmOrChannelId) &&
-      !storedUser.dms.includes(MessageToDelete.dmOrChannelId)) {
+  if (
+    !storedUser.channels.includes(MessageToDelete.dmOrChannelId) &&
+    !storedUser.dms.includes(MessageToDelete.dmOrChannelId)
+  ) {
     return { error: "Message is not in user's chat" };
   }
   // the message was not sent by the authorised user making this request
@@ -214,11 +217,13 @@ export const messageRemoveV1 = (
   if (MessageToDelete.isChannelMessage) {
     const channel = findChannel(MessageToDelete.dmOrChannelId);
     channel.messages = channel.messages.filter(
-      (message) => message !== messageId
+      (message: number) => message !== messageId
     );
   } else {
     const Dm = findDm(MessageToDelete.dmOrChannelId);
-    Dm.messages = Dm.messages.filter((message) => message !== messageId);
+    Dm.messages = Dm.messages.filter(
+      (message: number) => message !== messageId
+    );
   }
   data.messages = data.messages.filter(
     (message) => message.messageId !== messageId
@@ -249,9 +254,9 @@ export const messageSendDmV1 = (
   const data = getData();
   const Dm = findDm(dmId);
   if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };// token is invalid
+    return { error: 'Invalid token' }; // token is invalid
   } else if (Dm === undefined) {
-    return { error: 'Invalid DmId' };// dmId does not refer to a valid DM
+    return { error: 'Invalid DmId' }; // dmId does not refer to a valid DM
   } else if (message.length < 1 || message.length > 1000) {
     // length of message is less than 1 or over 1000 characters
     return { error: 'Invalid message length' };
@@ -272,7 +277,7 @@ export const messageSendDmV1 = (
     reacts: [],
     isPinned: false,
   });
-  Dm.messages.unshift(messageId);// unshift the most recent message to the front
+  Dm.messages.unshift(messageId); // unshift the most recent message to the front
   setData(data);
   return { messageId };
 };
@@ -298,12 +303,16 @@ export const messageReactV1 = (
 
   // messageId does not refer to a valid message within a channel/DM
   // that the authorised user has joined
-  if (!user.channels.includes(message.dmOrChannelId) &&
-      !user.dms.includes(message.dmOrChannelId)) {
+  if (
+    !user.channels.includes(message.dmOrChannelId) &&
+    !user.dms.includes(message.dmOrChannelId)
+  ) {
     throw HTTPError(BAD_REQUEST, "Message is not in user's chat");
   }
 
-  const react = message.reacts.find((react) => react.reactId === reactId);
+  const react = message.reacts.find(
+    (react: React) => react.reactId === reactId
+  );
   if (react && react.uIds.includes(uId)) {
     throw HTTPError(BAD_REQUEST, 'Already reacted');
   }

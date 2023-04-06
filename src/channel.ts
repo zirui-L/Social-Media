@@ -9,7 +9,7 @@ import {
   findChannel,
   findMessageFromId,
   isOwner,
-} from './helperFunctions';
+} from './helperFunctions/helperFunctions';
 
 type ChannelDetails = {
   name: string;
@@ -248,7 +248,9 @@ export const channelMessagesV2 = (
 
   // Push the message information according to given message Id
   for (let i = start; i < start + lengthOfMessage; i++) {
-    paginatedMessages.push(findMessageFromId(authUserId, newChannel.messages[i]));
+    paginatedMessages.push(
+      findMessageFromId(authUserId, newChannel.messages[i])
+    );
   }
 
   return {
@@ -293,14 +295,16 @@ export const channelLeaveV1 = (
   // remove meember from channel
   const channel = findChannel(channelId);
 
-  channel.allMembers = channel.allMembers.filter((user) => user !== authUserId);
+  channel.allMembers = channel.allMembers.filter(
+    (user: number) => user !== authUserId
+  );
   channel.ownerMembers = channel.ownerMembers.filter(
-    (user) => user !== authUserId
+    (user: number) => user !== authUserId
   );
   // remove channel from user's detail
   const user = findUser(authUserId);
 
-  user.channels.filter((channel) => channel !== channelId);
+  user.channels.filter((channel: number) => channel !== channelId);
 
   setData(data);
 
@@ -411,7 +415,9 @@ export const channelRemoveOwnerV1 = (
     return { error: 'User is the only owner of the channel' };
   }
   // remove user from ownermember list
-  channel.ownerMembers = channel.ownerMembers.filter((user) => user !== uId);
+  channel.ownerMembers = channel.ownerMembers.filter(
+    (user: number) => user !== uId
+  );
 
   setData(data);
 

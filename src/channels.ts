@@ -4,7 +4,7 @@ import {
   createUniqueId,
   findUserFromToken,
   findUser,
-} from './helperFunctions';
+} from './helperFunctions/helperFunctions';
 
 type ChannelId = {
   channelId: number;

@@ -7,7 +7,7 @@ import {
   isAvaliableHandleString,
   findUser,
   findUserFromToken,
-} from './helperFunctions';
+} from './helperFunctions/helperFunctions';
 import validator from 'validator';
 
 type UserObject = {
