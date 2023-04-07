@@ -1,4 +1,3 @@
-import { STATUS_CODES } from 'http';
 import {
   requestAuthLogin,
   requestAuthRegister,
@@ -6,7 +5,6 @@ import {
   requestClear,
   requestAuthLogOut,
   BAD_REQUEST,
-  FORBIDDEN,
 } from '../helperFunctions/helperServer';
 
 const OK = 200;

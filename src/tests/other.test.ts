@@ -2,8 +2,6 @@ import {
   requestAuthRegister,
   requestClear,
   requestUserProfile,
-  BAD_REQUEST,
-  FORBIDDEN,
   OK,
 } from '../helperFunctions/helperServer';
 

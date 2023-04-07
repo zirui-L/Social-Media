@@ -7,7 +7,6 @@ import {
   requestUsersAll,
   requestClear,
   BAD_REQUEST,
-  FORBIDDEN,
   OK,
 } from '../helperFunctions/helperServer';
 
