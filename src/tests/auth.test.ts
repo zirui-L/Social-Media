@@ -10,7 +10,6 @@ import {
 } from '../helperFunctions/helperServer';
 
 const OK = 200;
-const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
   requestClear();
@@ -20,7 +19,7 @@ afterEach(() => {
   requestClear();
 });
 
-describe('/auth/login/v2 testing', () => {
+describe('/auth/login/v3 testing', () => {
   test('Test-1: correct login email and password', () => {
     requestAuthRegister('test@gmail.com', '123455', 'firstName', 'lastName');
     const loginAuthUserId = requestAuthLogin('test@gmail.com', '123455');
@@ -49,7 +48,7 @@ describe('/auth/login/v2 testing', () => {
   });
 });
 
-describe('/auth/register/v2 testing - generating authUserId', () => {
+describe('/auth/register/v3 testing - generating authUserId', () => {
   test.each([
     {
       email: 'test@gmail.com', // Success case
@@ -142,7 +141,7 @@ describe('/auth/register/v2 testing - generating authUserId', () => {
       statusCode: OK,
     },
   ])(
-    '/auth/register/v2 testing',
+    '/auth/register/v3 testing',
     ({ email, password, nameFirst, nameLast, expected, statusCode }) => {
       const loginDetails = requestAuthRegister(
         email,
@@ -157,7 +156,7 @@ describe('/auth/register/v2 testing - generating authUserId', () => {
   );
 });
 
-describe('/auth/register/v2 testing - generating handle string / email duplication', () => {
+describe('/auth/register/v3 testing - generating handle string / email duplication', () => {
   test('Test-1: concatenation of casted-to-lowercase alphaumeric first/last name, and cut off if it is longer than 20', () => {
     const detail = requestAuthRegister(
       'test@gmail.com',
@@ -165,6 +164,7 @@ describe('/auth/register/v2 testing - generating handle string / email duplicati
       'firstName',
       'lastName31415'
     );
+
     const userProfile = requestUserProfile(
       detail.bodyObj.token,
       detail.bodyObj.authUserId
@@ -264,7 +264,7 @@ describe('/auth/register/v2 testing - generating handle string / email duplicati
   });
 });
 
-describe('/auth/logout/v1 testing', () => {
+describe('/auth/logout/v2 testing', () => {
   test('Test-1: Error, Invalid Token', () => {
     const registerAuthUserId = requestAuthRegister(
       'test@gmail.com',
@@ -313,8 +313,8 @@ describe('/auth/logout/v1 testing', () => {
     const userProfile = requestUserProfile(
       registerAuthUserId.bodyObj.token,
       registerAuthUserId.bodyObj.authUserId
-    ).bodyObj;
-    expect(userProfile).toStrictEqual(BAD_REQUEST);
+    );
+    expect(userProfile.statusCode).toStrictEqual(BAD_REQUEST);
   });
 
   test('Test-4: Success, Logout with 3 people existing', () => {
@@ -335,7 +335,7 @@ describe('/auth/logout/v1 testing', () => {
     const userProfile = requestUserProfile(
       registerAuthUserId1.bodyObj.token,
       registerAuthUserId1.bodyObj.authUserId
-    ).bodyObj;
-    expect(userProfile).toStrictEqual(BAD_REQUEST);
+    );
+    expect(userProfile.statusCode).toStrictEqual(BAD_REQUEST);
   });
 });

@@ -138,7 +138,7 @@ export const isTokenValid = (token: string): string => {
   const data = getData();
   for (const existingtoken of data.tokens) {
     if (getHashOf(existingtoken.token + SECRET) === token) {
-      return token;
+      return existingtoken.token;
     }
   }
 

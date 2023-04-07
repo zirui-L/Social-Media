@@ -36,7 +36,8 @@ export const userProfileV3 = (token: string, uId: number): UserObject => {
   const data = getData();
   // check validity of inputs
   const tokenId = isTokenValid(token);
-
+  console.log(token);
+  console.log(tokenId);
   if (!tokenId) {
     throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!isAuthUserIdValid(uId)) {
