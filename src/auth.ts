@@ -1,4 +1,4 @@
-import { getData, setData, Error } from './dataStore';
+import { getData, setData } from './dataStore';
 import validator from 'validator';
 import {
   generateHandleStr,
@@ -10,7 +10,7 @@ import {
   SECRET,
 } from './helperFunctions/helperFunctions';
 
-import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
+import { BAD_REQUEST } from './helperFunctions/helperServer';
 
 import HTTPError from 'http-errors';
 

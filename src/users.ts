@@ -10,7 +10,7 @@ import {
 } from './helperFunctions/helperFunctions';
 import validator from 'validator';
 
-import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
+import { BAD_REQUEST } from './helperFunctions/helperServer';
 import HTTPError from 'http-errors';
 
 type UserObject = {

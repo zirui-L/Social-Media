@@ -1,4 +1,3 @@
-import { BADSTR } from 'dns';
 import { getData, setData, User, Error, paginatedMessage } from './dataStore';
 import {
   isTokenValid,
