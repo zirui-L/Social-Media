@@ -4,7 +4,10 @@ import {
   createUniqueId,
   findUserFromToken,
   findUser,
-} from './helperFunctions';
+} from './helperFunctions/helperFunctions';
+
+import { BAD_REQUEST } from './helperFunctions/helperServer';
+import HTTPError from 'http-errors';
 
 type ChannelId = {
   channelId: number;
@@ -26,25 +29,28 @@ type Channels = {
  * @param {string} name - The name of channel to be created
  * @param {boolean} isPublic - Whether the channel will be public
  *
- * @returns {{error: "error"}} - Error case: Either the length of channel name
+ * @throws {Error} - Error case: Either the length of channel name
  * is non-compliant or the authUserId is invalid
  * @returns {{channelId}} - Returns the Id of the created channel
  */
 
-export const channelsCreateV2 = (
+export const channelsCreateV3 = (
   token: string,
   name: string,
   isPublic: boolean
 ): ChannelId | Error => {
   const data = getData();
   if (name.length < 1 || name.length > 20) {
-    return { error: 'Invalid channel name length' };
-  } else if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+    throw HTTPError(BAD_REQUEST, 'Invalid channel name length');
+  }
+
+  const tokenId = isTokenValid(token);
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   }
 
   const channelId = createUniqueId();
-  const authUserId = findUserFromToken(token);
+  const authUserId = findUserFromToken(tokenId);
   const user = findUser(authUserId);
 
   user.channels.push(channelId);
@@ -72,21 +78,20 @@ export const channelsCreateV2 = (
  * @param {integer} authUserId - The Id of the user that participates in the
  * returned channels
  *
- * @returns {{error: "error"}} - Error case when the input user Id is invalid
+ * @throws {Error} - Error case when the input user Id is invalid
  * @returns {{channels}} - A array of channels and their details that the user
  * is part of
  */
 
-export const channelsListV2 = (token: string): Channels | Error => {
+export const channelsListV3 = (token: string): Channels | Error => {
   const data = getData();
 
-  if (!isTokenValid(token)) {
-    return {
-      error: 'Invalid token',
-    };
+  const tokenId = isTokenValid(token);
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   }
 
-  const authUserId = findUserFromToken(token);
+  const authUserId = findUserFromToken(tokenId);
 
   const getChannels = [];
 
@@ -110,17 +115,16 @@ export const channelsListV2 = (token: string): Channels | Error => {
  *
  * @param {integer} authUserId - The user Id
  *
- * @returns {{error : "error"}}} - Error case when the input user Id is invalid
+ * @throws {Error} - Error case when the input user Id is invalid
  * @returns {{channels}} - A array of all channels and their details
  */
 
-export const channelsListAllV2 = (token: string): Channels | Error => {
+export const channelsListAllV3 = (token: string): Channels => {
   const data = getData();
 
-  if (!isTokenValid(token)) {
-    return {
-      error: 'Invalid token',
-    };
+  const tokenId = isTokenValid(token);
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   }
 
   const getChannels = [];

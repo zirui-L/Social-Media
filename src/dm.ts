@@ -1,4 +1,4 @@
-import { getData, setData, Error, User, paginatedMessage } from './dataStore';
+import { getData, setData, User, paginatedMessage } from './dataStore';
 import {
   isTokenValid,
   findUserFromToken,
@@ -11,7 +11,10 @@ import {
   isDuplicate,
   isDmOwner,
   isDmMember,
-} from './helperFunctions';
+} from './helperFunctions/helperFunctions';
+
+import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
+import HTTPError from 'http-errors';
 
 type DmId = {
   dmId: number;
@@ -40,19 +43,21 @@ type DmDetails = {
  * is invalid or there are duplicate 'uId's in uIds
  */
 
-export const dmCreateV1 = (token: string, uIds: Array<number>): DmId | Error => {
+export const dmCreateV2 = (token: string, uIds: Array<number>): DmId => {
   const data = getData();
   // check input's validity
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!isUIdsValid(uIds)) {
-    return { error: 'Invalid uId(s)' };
+    throw HTTPError(BAD_REQUEST, 'Invalid uId(s)');
   }
 
-  const authUserId = findUserFromToken(token);
+  const authUserId = findUserFromToken(tokenId);
   uIds.unshift(authUserId);
   if (isDuplicate(uIds)) {
-    return { error: 'Duplicate uIds' };
+    throw HTTPError(BAD_REQUEST, 'Duplicate uId');
   }
   const dmId = createUniqueId();
 
@@ -88,11 +93,13 @@ export const dmCreateV1 = (token: string, uIds: Array<number>): DmId | Error => 
  * @returns {Error} - when authUserId is invalid
  */
 
-export const dmListV1 = (token: string): { dms: Array<DmObject> } | Error => {
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+export const dmListV2 = (token: string): { dms: Array<DmObject> } => {
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   }
-  const authUserId = findUserFromToken(token);
+  const authUserId = findUserFromToken(tokenId);
   const authUser = findUser(authUserId);
   const dmList = [];
   for (const dmId of authUser.dms) {
@@ -118,23 +125,35 @@ export const dmListV1 = (token: string): { dms: Array<DmObject> } | Error => {
  * is invalid or authorised user is not a owner/member of the dm
  */
 
-export const dmRemoveV1 = (token: string, dmId: number): Record<string, never> | Error => {
+export const dmRemoveV2 = (
+  token: string,
+  dmId: number
+): Record<string, never> => {
   const data = getData();
-  if (!isDmValid(dmId)) {
-    return { error: 'Invalid dmId' };
-  } else if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   }
-  const authUserId = findUserFromToken(token);
+
+  if (!isDmValid(dmId)) {
+    throw HTTPError(BAD_REQUEST, 'Invalid dmId');
+  }
+
+  const authUserId = findUserFromToken(tokenId);
   if (!isDmMember(authUserId, dmId)) {
-    return { error: 'The authorised user is not in the DM' };
+    throw HTTPError(FORBIDDEN, 'The authorised user is not in the DM');
   } else if (!isDmOwner(authUserId, dmId)) {
-    return { error: 'The authorised user is not the owner of the DM' };
+    throw HTTPError(
+      FORBIDDEN,
+      'The authorised user is not the owner of the DM'
+    );
   }
   const Dm = findDm(dmId);
   for (const uId of Dm.allMembers) {
     const user = findUser(uId); // Remove dm from user's profile
-    user.dms = user.dms.filter((DmId) => DmId !== dmId);
+    user.dms = user.dms.filter((DmId: number) => DmId !== dmId);
   }
   // Remove dm from dm list
   data.dms = data.dms.filter((Dm) => Dm.dmId !== dmId);
@@ -160,16 +179,20 @@ export const dmRemoveV1 = (token: string, dmId: number): Record<string, never> |
  * is invalid or authorised user is not a member of the dm
  */
 
-export const dmDetailsV1 = (token: string, dmId: number): DmDetails | Error => {
+export const dmDetailsV2 = (token: string, dmId: number): DmDetails => {
   // check validity of input
-  if (!isDmValid(dmId)) {
-    return { error: 'Invalid dmId' };
-  } else if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   }
-  const authUserId = findUserFromToken(token);
+
+  if (!isDmValid(dmId)) {
+    throw HTTPError(BAD_REQUEST, 'Invalid dmId');
+  }
+  const authUserId = findUserFromToken(tokenId);
   if (!isDmMember(authUserId, dmId)) {
-    return { error: 'The authorised user is not in the DM' };
+    throw HTTPError(FORBIDDEN, 'The authorised user is not in the DM');
   }
   const Dm = findDm(dmId);
   const members = [];
@@ -205,26 +228,34 @@ export const dmDetailsV1 = (token: string, dmId: number): DmDetails | Error => {
  * is invalid or authorised user is not a member of the dm
  */
 
-export const dmLeaveV1 = (token: string, dmId: number): Record<string, never> | Error => {
+export const dmLeaveV2 = (
+  token: string,
+  dmId: number
+): Record<string, never> => {
   const data = getData();
   // check validity of input
-  if (!isDmValid(dmId)) {
-    return { error: 'Invalid dmId' };
-  } else if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   }
-  const authUserId = findUserFromToken(token);
+
+  if (!isDmValid(dmId)) {
+    throw HTTPError(BAD_REQUEST, 'Invalid dmId');
+  }
+
+  const authUserId = findUserFromToken(tokenId);
   if (!isDmMember(authUserId, dmId)) {
-    return { error: 'The authorised user is not in the DM' };
+    throw HTTPError(FORBIDDEN, 'The authorised user is not in the DM');
   }
   // remove dm from user's detail
   const user = findUser(authUserId);
-  user.dms = user.dms.filter((DmId) => DmId !== dmId);
+  user.dms = user.dms.filter((DmId: number) => DmId !== dmId);
 
   const Dm = findDm(dmId);
   // remove member from dm
-  Dm.allMembers = Dm.allMembers.filter((uId) => uId !== authUserId);
-  Dm.ownerMembers = Dm.ownerMembers.filter((uId) => uId !== authUserId);
+  Dm.allMembers = Dm.allMembers.filter((uId: number) => uId !== authUserId);
+  Dm.ownerMembers = Dm.ownerMembers.filter((uId: number) => uId !== authUserId);
   setData(data);
   return {};
 };
@@ -246,22 +277,29 @@ export const dmLeaveV1 = (token: string, dmId: number): Record<string, never> | 
  * or start is greater than the total number of messages in the dm
  */
 
-export const dmMessagesV1 = (
+export const dmMessagesV2 = (
   token: string,
   dmId: number,
   start: number
-): paginatedMessage | Error => {
-  if (!isDmValid(dmId)) {
-    return { error: 'Invalid dmId' };
-  } else if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+): paginatedMessage => {
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   }
-  const authUserId = findUserFromToken(token);
+
+  if (!isDmValid(dmId)) {
+    throw HTTPError(BAD_REQUEST, 'Invalid dmId');
+  }
+  const authUserId = findUserFromToken(tokenId);
   const Dm = findDm(dmId);
   if (!isDmMember(authUserId, dmId)) {
-    return { error: 'The authorised user is not in the DM' };
+    throw HTTPError(FORBIDDEN, 'The authorised user is not in the DM');
   } else if (start > Dm.messages.length) {
-    return { error: 'Start is greater than the total number of messages' };
+    throw HTTPError(
+      BAD_REQUEST,
+      'Start is greater than the total number of messages'
+    );
   }
   let lengthOfMessage;
   let end;

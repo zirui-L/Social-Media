@@ -1,4 +1,4 @@
-import { port, url } from './config.json';
+import { port, url } from '../config.json';
 import request from 'sync-request';
 
 const OK = 200;

@@ -1,4 +1,4 @@
-import { Error, getData, setData } from './dataStore';
+import { Error, getData, setData, React } from './dataStore';
 import {
   isMember,
   isOwner,
@@ -12,15 +12,13 @@ import {
   findStoredMessageFromId,
   findUser,
   findDm,
-} from './helperFunctions';
+} from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
+import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
 
 type messageIdObj = {
   messageId: number;
 };
-
-const BAD_REQUEST = 400;
-const FORBIDDEN = 403;
 
 /**
  * <Send a message from authorised user to the channel specified by channelId.>
@@ -37,26 +35,29 @@ const FORBIDDEN = 403;
  * @returns {messageIdObj} - return if all error cases are avoided
  *
  */
-export const messageSendV1 = (
+export const messageSendV2 = (
   token: string,
   channelId: number,
   message: string
-): messageIdObj | Error => {
+): messageIdObj => {
   const data = getData();
   const channel = findChannel(channelId);
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };// Token is invalid
+
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (channel === undefined) {
-    return { error: 'Invalid channelId' };// ChannelId does not refer to a valid channel
+    throw HTTPError(BAD_REQUEST, 'Invalid channelId'); // ChannelId does not refer to a valid channel
   } else if (message.length < 1 || message.length > 1000) {
     // Length of message is less than 1 or over 1000 characters
-    return { error: 'Invalid message length' };
+    throw HTTPError(BAD_REQUEST, 'Invalid message length');
   }
 
-  const uId = findUserFromToken(token);
+  const uId = findUserFromToken(tokenId);
   if (!isMember(uId, channelId)) {
     // ChannelId is valid and the authorised user is not a member of the channel
-    return { error: 'The user is not a member of the channel' };
+    throw HTTPError(FORBIDDEN, 'The user is not a member of the channel');
   }
   const messageId = createUniqueId();
   data.messages.unshift({
@@ -93,25 +94,27 @@ export const messageSendV1 = (
  * @returns {} - return if all error cases are avoided
  *
  */
-export const messageEditV1 = (
+export const messageEditV2 = (
   token: string,
   messageId: number,
   message: string
-): Record<string, never> | Error => {
+): Record<string, never> => {
   const data = getData();
 
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };// token is invalid
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!isMessageValid(messageId)) {
     // messageId does not refer to a valid message
-    return { error: 'Invalid massage Id' };
+    throw HTTPError(BAD_REQUEST, 'Invalid message Id');
   } else if (message.length > 1000) {
     // length of message is over 1000 characters
-    return { error: 'Invalid message length' };
+    throw HTTPError(BAD_REQUEST, 'Invalid message length');
   }
 
   const MessageToEdit = findStoredMessageFromId(messageId);
-  const uId = findUserFromToken(token);
+  const uId = findUserFromToken(tokenId);
   const User = findUser(uId);
 
   // messageId does not refer to a valid message within a channel/DM
@@ -120,7 +123,7 @@ export const messageEditV1 = (
     !User.channels.includes(MessageToEdit.dmOrChannelId) &&
     !User.dms.includes(MessageToEdit.dmOrChannelId)
   ) {
-    return { error: "Message is not in user's chat" };
+    throw HTTPError(BAD_REQUEST, "Message is not in user's chat");
   }
 
   // the message was not sent by the authorised user making this request and
@@ -132,7 +135,7 @@ export const messageEditV1 = (
       !isOwner(uId, MessageToEdit.dmOrChannelId) &&
       findUser(uId).permissionId !== 1 // user is not global owner
     ) {
-      return { error: "User doesn't have permission" };
+      throw HTTPError(BAD_REQUEST, "User doesn't have permission");
     }
   } else {
     // Dm messages
@@ -140,14 +143,15 @@ export const messageEditV1 = (
       uId !== MessageToEdit.uId &&
       !isDmOwner(uId, MessageToEdit.dmOrChannelId)
     ) {
-      return { error: "User doesn't have permission" };
+      throw HTTPError(BAD_REQUEST, "User doesn't have permission");
     }
   }
 
   if (message.length === 0) {
     // If the new message is an empty string, the message is deleted
-    messageRemoveV1(token, messageId);
-  } else { // Edit the message
+    messageRemoveV2(token, messageId);
+  } else {
+    // Edit the message
     MessageToEdit.message = message;
   }
   setData(data);
@@ -170,27 +174,31 @@ export const messageEditV1 = (
  * @returns {} - return if all error cases are avoided
  *
  */
-export const messageRemoveV1 = (
+export const messageRemoveV2 = (
   token: string,
   messageId: number
 ): Record<string, never> | Error => {
   const data = getData();
 
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };// token is invalid
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!isMessageValid(messageId)) {
-    return { error: 'Invalid massage Id' };// messageId does not refer to a valid message
+    throw HTTPError(BAD_REQUEST, 'Invalid message Id');
   }
 
   const MessageToDelete = findStoredMessageFromId(messageId);
-  const uId = findUserFromToken(token);
+  const uId = findUserFromToken(tokenId);
   const storedUser = findUser(uId);
 
   // messageId does not refer to a valid message within a channel/DM
   // that the authorised user has joined
-  if (!storedUser.channels.includes(MessageToDelete.dmOrChannelId) &&
-      !storedUser.dms.includes(MessageToDelete.dmOrChannelId)) {
-    return { error: "Message is not in user's chat" };
+  if (
+    !storedUser.channels.includes(MessageToDelete.dmOrChannelId) &&
+    !storedUser.dms.includes(MessageToDelete.dmOrChannelId)
+  ) {
+    throw HTTPError(BAD_REQUEST, "Message is not in user's chat");
   }
   // the message was not sent by the authorised user making this request
   // and the user does not have owner permissions in the channel/DM
@@ -200,25 +208,27 @@ export const messageRemoveV1 = (
       !isOwner(uId, MessageToDelete.dmOrChannelId) &&
       findUser(uId).permissionId !== 1 // User is not global owner
     ) {
-      return { error: "User doesn't have permission" };
+      throw HTTPError(BAD_REQUEST, "User doesn't have permission");
     }
   } else {
     if (
       uId !== MessageToDelete.uId &&
       !isDmOwner(uId, MessageToDelete.dmOrChannelId)
     ) {
-      return { error: "User doesn't have permission" };
+      throw HTTPError(BAD_REQUEST, "User doesn't have permission");
     }
   }
 
   if (MessageToDelete.isChannelMessage) {
     const channel = findChannel(MessageToDelete.dmOrChannelId);
     channel.messages = channel.messages.filter(
-      (message) => message !== messageId
+      (message: number) => message !== messageId
     );
   } else {
     const Dm = findDm(MessageToDelete.dmOrChannelId);
-    Dm.messages = Dm.messages.filter((message) => message !== messageId);
+    Dm.messages = Dm.messages.filter(
+      (message: number) => message !== messageId
+    );
   }
   data.messages = data.messages.filter(
     (message) => message.messageId !== messageId
@@ -241,25 +251,28 @@ export const messageRemoveV1 = (
  * @returns {messageIdObj} - return if all error cases are avoided
  *
  */
-export const messageSendDmV1 = (
+export const messageSendDmV2 = (
   token: string,
   dmId: number,
   message: string
 ): messageIdObj | Error => {
   const data = getData();
   const Dm = findDm(dmId);
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };// token is invalid
+
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (Dm === undefined) {
-    return { error: 'Invalid DmId' };// dmId does not refer to a valid DM
+    throw HTTPError(BAD_REQUEST, 'Invalid DmId');
   } else if (message.length < 1 || message.length > 1000) {
     // length of message is less than 1 or over 1000 characters
-    return { error: 'Invalid message length' };
+    throw HTTPError(BAD_REQUEST, 'Invalid message length');
   }
-  const uId = findUserFromToken(token);
+  const uId = findUserFromToken(tokenId);
   if (!Dm.allMembers.includes(uId)) {
     // dmId is valid and the authorised user is not a member of the DM
-    return { error: 'The user is not a member of the channel' };
+    throw HTTPError(FORBIDDEN, 'The user is not a member of the dm');
   }
   const messageId = createUniqueId();
   data.messages.unshift({
@@ -272,7 +285,7 @@ export const messageSendDmV1 = (
     reacts: [],
     isPinned: false,
   });
-  Dm.messages.unshift(messageId);// unshift the most recent message to the front
+  Dm.messages.unshift(messageId); // unshift the most recent message to the front
   setData(data);
   return { messageId };
 };
@@ -284,8 +297,10 @@ export const messageReactV1 = (
 ): Record<string, never> => {
   const data = getData();
 
-  if (!isTokenValid(token)) {
-    throw HTTPError(FORBIDDEN, 'Invalid token'); // token is invalid
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!isMessageValid(messageId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid message id'); // messageId does not refer to a valid message
   } else if (!isReactIdValid(reactId)) {
@@ -293,17 +308,21 @@ export const messageReactV1 = (
   }
 
   const message = findStoredMessageFromId(messageId);
-  const uId = findUserFromToken(token);
+  const uId = findUserFromToken(tokenId);
   const user = findUser(uId);
 
   // messageId does not refer to a valid message within a channel/DM
   // that the authorised user has joined
-  if (!user.channels.includes(message.dmOrChannelId) &&
-      !user.dms.includes(message.dmOrChannelId)) {
+  if (
+    !user.channels.includes(message.dmOrChannelId) &&
+    !user.dms.includes(message.dmOrChannelId)
+  ) {
     throw HTTPError(BAD_REQUEST, "Message is not in user's chat");
   }
 
-  const react = message.reacts.find((react) => react.reactId === reactId);
+  const react = message.reacts.find(
+    (react: React) => react.reactId === reactId
+  );
   if (react && react.uIds.includes(uId)) {
     throw HTTPError(BAD_REQUEST, 'Already reacted');
   }

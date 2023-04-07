@@ -1,4 +1,4 @@
-import { getData, setData, Error } from './dataStore';
+import { getData, setData } from './dataStore';
 import validator from 'validator';
 import {
   generateHandleStr,
@@ -6,7 +6,13 @@ import {
   nameInRange,
   isAvaliableEmail,
   isTokenValid,
-} from './helperFunctions';
+  getHashOf,
+  SECRET,
+} from './helperFunctions/helperFunctions';
+
+import { BAD_REQUEST } from './helperFunctions/helperServer';
+
+import HTTPError from 'http-errors';
 
 type UIdAndToken = { token: string; authUserId: number }; // Reture object type
 
@@ -20,14 +26,11 @@ type UIdAndToken = { token: string; authUserId: number }; // Reture object type
  *
  * @returns {UIdAndToken} - there exist an user with matching email and
  * passwords
- * @returns {Error} - email or password non-exise or mismatch from
+ * @throws {400 ERROR} - email or password non-exise or mismatch from
  * the stored user informations
  */
 
-export const authLoginV2 = (
-  email: string,
-  password: string
-): UIdAndToken | Error => {
+export const authLoginV3 = (email: string, password: string): UIdAndToken => {
   const data = getData();
 
   for (const user of data.users) {
@@ -38,13 +41,17 @@ export const authLoginV2 = (
         uId: user.authUserId,
         token: token,
       });
+
+      setData(data);
+
       return {
-        token: token,
+        token: getHashOf(token + SECRET),
         authUserId: user.authUserId,
       };
     }
   }
-  return { error: 'Incorrect emaill or password' };
+
+  throw HTTPError(BAD_REQUEST, 'Incorrect emaill or password');
 };
 
 /**
@@ -59,28 +66,26 @@ export const authLoginV2 = (
  *
  * @returns {UIdAndToken} - valid email, password with more than 6
  * characters, and the length of name is between 1 and 50 inclusive
- *  @returns {Error} - invalid or alreade registered email,
+ * @throws {400 ERROR} - invalid or alreade registered email,
  * length of passwor is lower than 6, length of names is outside of the range [1,50]
  */
 
-export const authRegisterV2 = (
+export const authRegisterV3 = (
   email: string,
   password: string,
   nameFirst: string,
   nameLast: string
-): UIdAndToken | Error => {
+): UIdAndToken => {
   const data = getData();
 
   if (!validator.isEmail(email)) {
-    return { error: 'Invalid email formate' };
+    throw HTTPError(BAD_REQUEST, 'Invalid email formate');
   } else if (!nameInRange(nameFirst) || !nameInRange(nameLast)) {
-    return { error: 'Invalid user name length' };
+    throw HTTPError(BAD_REQUEST, 'Invalid user name length');
   } else if (!isAvaliableEmail(email, data.users)) {
-    return { error: 'Email already used' };
+    throw HTTPError(BAD_REQUEST, 'Email already used');
   } else if (password.length < 6) {
-    return {
-      error: 'Invalid password length',
-    };
+    throw HTTPError(BAD_REQUEST, 'Invalid password length');
   }
 
   // create a unqiue user id in numbers
@@ -112,7 +117,7 @@ export const authRegisterV2 = (
   setData(data);
 
   return {
-    token: token,
+    token: getHashOf(token + SECRET),
     authUserId: newUserId,
   };
 };
@@ -123,20 +128,22 @@ export const authRegisterV2 = (
  * @param {string} token - token representing a session for an user
  *
  * @returns {{}} - valid email token, where the token would be logged out
- *  @returns {Error} - invalid token
+ * @throws {400 ERROR} - invalid token
  */
 
-export const authLogOutV1 = (token: string): Record<string, never> | Error => {
+export const authLogOutV2 = (token: string): Record<string, never> => {
   const data = getData();
 
-  if (!isTokenValid(token)) {
-    return { error: 'Invalid token' };
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(BAD_REQUEST, 'Invalid token');
   }
 
   // find the index of the token that need to be removed, and using splice method
   // to remove it from the data store
   const indexToDelete = data.tokens.findIndex(
-    (existingToken) => existingToken.token === token
+    (existingToken) => existingToken.token === tokenId
   );
 
   data.tokens.splice(indexToDelete, 1);
