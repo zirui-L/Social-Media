@@ -374,7 +374,7 @@ export const channelAddOwnerV2 = (
     throw HTTPError(BAD_REQUEST, 'User is already an owner');
   }
 
-  const authUserId = findUserFromToken(token);
+  const authUserId = findUserFromToken(tokenId);
 
   if (!isOwner(authUserId, channelId)) {
     throw HTTPError(
@@ -431,7 +431,7 @@ export const channelRemoveOwnerV2 = (
     throw HTTPError(BAD_REQUEST, 'User is not an owner of the channel');
   }
 
-  const authUserId = findUserFromToken(token);
+  const authUserId = findUserFromToken(tokenId);
 
   if (!isOwner(authUserId, channelId)) {
     throw HTTPError(

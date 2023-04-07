@@ -4,10 +4,9 @@ import {
   requestChannelsCreate,
   requestChannelsListAll,
   requestChannelsList,
+  BAD_REQUEST,
+  OK,
 } from '../helperFunctions/helperServer';
-
-const OK = 200;
-const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
   requestClear();
@@ -27,8 +26,8 @@ describe('requestChannelsCreate function testing', () => {
     );
     const longName = 'someNameThatExceedLenthOf20';
     const channelId = requestChannelsCreate(user.bodyObj.token, longName, true);
-    expect(channelId.statusCode).toBe(OK);
-    expect(channelId.bodyObj).toStrictEqual(ERROR);
+    expect(channelId.statusCode).toBe(BAD_REQUEST);
+    expect(channelId.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: lenth of name less than 1', () => {
@@ -44,7 +43,7 @@ describe('requestChannelsCreate function testing', () => {
       shortName,
       true
     );
-    expect(channelId.bodyObj).toStrictEqual(ERROR);
+    expect(channelId.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Invalid authUserId', () => {
@@ -56,8 +55,8 @@ describe('requestChannelsCreate function testing', () => {
     );
     const name = 'validName';
     const channelId = requestChannelsCreate(user.bodyObj.token + 1, name, true);
-    expect(channelId.statusCode).toBe(OK);
-    expect(channelId.bodyObj).toStrictEqual(ERROR);
+    expect(channelId.statusCode).toBe(BAD_REQUEST);
+    expect(channelId.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Successful private channel creation', () => {
@@ -101,8 +100,8 @@ describe('requestChannelsList function testing', () => {
     );
 
     const channelsListObj = requestChannelsList(user1.bodyObj.token + 1);
-    expect(channelsListObj.statusCode).toBe(OK);
-    expect(channelsListObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelsListObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelsListObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Testing requestChannelsList with valid authUserId who is a member of one channel', () => {
@@ -247,9 +246,9 @@ describe('requestChannelsListAll function testing', () => {
     );
 
     const channelsListAllObj = requestChannelsListAll(user1.bodyObj.token + 1);
-    expect(channelsListAllObj.statusCode).toBe(OK);
+    expect(channelsListAllObj.statusCode).toBe(BAD_REQUEST);
 
-    expect(channelsListAllObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelsListAllObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Successful function implementation', () => {

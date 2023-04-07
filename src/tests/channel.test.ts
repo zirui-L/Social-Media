@@ -11,10 +11,10 @@ import {
   requestChannelsListAll,
   requestClear,
   requestMessageSend,
+  BAD_REQUEST,
+  FORBIDDEN,
+  OK,
 } from '../helperFunctions/helperServer';
-
-const OK = 200;
-const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
   requestClear();
@@ -24,7 +24,7 @@ afterEach(() => {
   requestClear();
 });
 
-describe('Testing /channel/details/v2', () => {
+describe('Testing /channel/details/v3', () => {
   test('Test-1: Error, incorrect channelId', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
@@ -37,8 +37,8 @@ describe('Testing /channel/details/v2', () => {
       test1.bodyObj.token,
       test1.bodyObj.channelId + 1
     );
-    expect(channelDetails.statusCode).toBe(OK);
-    expect(channelDetails.bodyObj).toStrictEqual(ERROR);
+    expect(channelDetails.statusCode).toBe(BAD_REQUEST);
+    expect(channelDetails.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, invalid token', () => {
@@ -57,8 +57,8 @@ describe('Testing /channel/details/v2', () => {
       test1.bodyObj.token + 1,
       channelId.bodyObj.channelId
     );
-    expect(channelDetails.statusCode).toBe(OK);
-    expect(channelDetails.bodyObj).toStrictEqual(ERROR);
+    expect(channelDetails.statusCode).toBe(BAD_REQUEST);
+    expect(channelDetails.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, User inputed is not in the existing channel', () => {
@@ -83,8 +83,8 @@ describe('Testing /channel/details/v2', () => {
       test2.bodyObj.token,
       channelId.bodyObj.channelId
     );
-    expect(channelDetails.statusCode).toBe(OK);
-    expect(channelDetails.bodyObj).toStrictEqual(ERROR);
+    expect(channelDetails.statusCode).toBe(FORBIDDEN);
+    expect(channelDetails.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4, correct input parameters', () => {
@@ -202,7 +202,7 @@ describe('Testing /channel/details/v2', () => {
   });
 });
 
-describe('Testing /channel/join/v2', () => {
+describe('Testing /channel/join/v3', () => {
   test('Test-1: Error, channelId does not refer to a valid channel', () => {
     const user1 = requestAuthRegister(
       'ricky@gmail.com',
@@ -228,8 +228,8 @@ describe('Testing /channel/join/v2', () => {
       user1.bodyObj.token,
       channel1.bodyObj.channelId + 5
     );
-    expect(channelJoinObj.statusCode).toBe(OK);
-    expect(channelJoinObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelJoinObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelJoinObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, token is invalid', () => {
@@ -250,8 +250,8 @@ describe('Testing /channel/join/v2', () => {
       user1.bodyObj.token + 1,
       channel1.bodyObj.channelId
     );
-    expect(channelJoinObj.statusCode).toBe(OK);
-    expect(channelJoinObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelJoinObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelJoinObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, user is already a member of the channel', () => {
@@ -272,11 +272,11 @@ describe('Testing /channel/join/v2', () => {
       user1.bodyObj.token,
       channel1.bodyObj.channelId
     );
-    expect(channelJoinObj.statusCode).toBe(OK);
-    expect(channelJoinObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelJoinObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelJoinObj.bodyObj).toStrictEqual(undefined);
   });
 
-  test('Test-3: Error, private channel, and user is not a global owner', () => {
+  test('Test-4: Error, private channel, and user is not a global owner', () => {
     const user1 = requestAuthRegister(
       'ricky@gmail.com',
       '123455',
@@ -301,11 +301,11 @@ describe('Testing /channel/join/v2', () => {
       user2.bodyObj.token,
       channel1.bodyObj.channelId
     );
-    expect(channelJoinObj.statusCode).toBe(OK);
-    expect(channelJoinObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelJoinObj.statusCode).toBe(FORBIDDEN);
+    expect(channelJoinObj.bodyObj).toStrictEqual(undefined);
   });
 
-  test('Test-4: successiful case', () => {
+  test('Test-5: successiful case', () => {
     const user1 = requestAuthRegister(
       'ricky@gmail.com',
       '123455',
@@ -333,7 +333,7 @@ describe('Testing /channel/join/v2', () => {
     expect(channelJoinObj.bodyObj).toStrictEqual({});
   });
 
-  test('Test-5: private channel, but the user is a global owner', () => {
+  test('Test-6: private channel, but the user is a global owner', () => {
     const user1 = requestAuthRegister(
       'ricky@gmail.com',
       '123455',
@@ -362,7 +362,7 @@ describe('Testing /channel/join/v2', () => {
   });
 });
 
-describe('/channel/invite/v2 testing', () => {
+describe('/channel/invite/v3 testing', () => {
   test('Test-1: Error, invalid channelId', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
@@ -382,8 +382,8 @@ describe('/channel/invite/v2 testing', () => {
       0,
       test2.bodyObj.authUserId
     );
-    expect(channelInviteObj.statusCode).toBe(OK);
-    expect(channelInviteObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelInviteObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelInviteObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, Invalid uIs', () => {
@@ -404,8 +404,8 @@ describe('/channel/invite/v2 testing', () => {
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId + 1
     );
-    expect(channelInviteObj.statusCode).toBe(OK);
-    expect(channelInviteObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelInviteObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelInviteObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, uId belong to a user who is already in the channel', () => {
@@ -433,8 +433,8 @@ describe('/channel/invite/v2 testing', () => {
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
     );
-    expect(channelInviteObj.statusCode).toBe(OK);
-    expect(channelInviteObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelInviteObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelInviteObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Error, channelId is valid and the authorised user is not a member of the channel', () => {
@@ -467,8 +467,8 @@ describe('/channel/invite/v2 testing', () => {
       channel.bodyObj.channelId,
       test3.bodyObj.authUserId
     );
-    expect(channelInviteObj.statusCode).toBe(OK);
-    expect(channelInviteObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelInviteObj.statusCode).toBe(FORBIDDEN);
+    expect(channelInviteObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-5: Error, invalid token', () => {
@@ -489,8 +489,8 @@ describe('/channel/invite/v2 testing', () => {
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId
     );
-    expect(channelInviteObj.statusCode).toBe(OK);
-    expect(channelInviteObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelInviteObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelInviteObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-6: Error, user inviting themselves', () => {
@@ -511,8 +511,8 @@ describe('/channel/invite/v2 testing', () => {
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId
     );
-    expect(channelInviteObj.statusCode).toBe(OK);
-    expect(channelInviteObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelInviteObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelInviteObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-7: Successful invite', () => {
@@ -642,7 +642,7 @@ describe('/channel/invite/v2 testing', () => {
   });
 });
 
-describe('Testing /channel/messages/v2', () => {
+describe('Testing /channel/messages/v3', () => {
   test('Test-1: Error, invalid channelId', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
@@ -662,8 +662,8 @@ describe('Testing /channel/messages/v2', () => {
       channel.bodyObj.channelId + 1,
       0
     );
-    expect(channelMessageObj.statusCode).toBe(OK);
-    expect(channelMessageObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelMessageObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelMessageObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, Invalid token', () => {
@@ -685,8 +685,8 @@ describe('Testing /channel/messages/v2', () => {
       channel.bodyObj.channelId,
       0
     );
-    expect(channelMessageObj.statusCode).toBe(OK);
-    expect(channelMessageObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelMessageObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelMessageObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, channel is valid but authorised user is not in the channel', () => {
@@ -713,8 +713,8 @@ describe('Testing /channel/messages/v2', () => {
       channel.bodyObj.channelId,
       0
     );
-    expect(channelMessageObj.statusCode).toBe(OK);
-    expect(channelMessageObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelMessageObj.statusCode).toBe(FORBIDDEN);
+    expect(channelMessageObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Error, Start greater than total numebr of messages', () => {
@@ -735,8 +735,8 @@ describe('Testing /channel/messages/v2', () => {
       channel.bodyObj.channelId,
       5
     );
-    expect(channelMessageObj.statusCode).toBe(OK);
-    expect(channelMessageObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelMessageObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelMessageObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-5: Success, 0 message output', () => {
@@ -1010,7 +1010,7 @@ describe('Testing /channel/messages/v2', () => {
   });
 });
 
-describe('Testing /channel/leave/v1', () => {
+describe('Testing /channel/leave/v2', () => {
   test('Test-1: Error, invalid channelId', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
@@ -1029,8 +1029,8 @@ describe('Testing /channel/leave/v1', () => {
       test1.bodyObj.token,
       channel.bodyObj.channelId + 1
     );
-    expect(channelLeaveObj.statusCode).toBe(OK);
-    expect(channelLeaveObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelLeaveObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelLeaveObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, channelId is valid and the authorised user is not a member of the channel', () => {
@@ -1058,8 +1058,8 @@ describe('Testing /channel/leave/v1', () => {
       NotChannelMmember.bodyObj.token,
       channel.bodyObj.channelId
     );
-    expect(channelLeaveObj.statusCode).toBe(OK);
-    expect(channelLeaveObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelLeaveObj.statusCode).toBe(FORBIDDEN);
+    expect(channelLeaveObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, token is invalid', () => {
@@ -1080,8 +1080,8 @@ describe('Testing /channel/leave/v1', () => {
       user.bodyObj.token + '1',
       channel.bodyObj.channelId
     );
-    expect(channelLeaveObj.statusCode).toBe(OK);
-    expect(channelLeaveObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelLeaveObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelLeaveObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Success case of leave channel', () => {
@@ -1262,7 +1262,7 @@ describe('Testing /channel/leave/v1', () => {
   });
 });
 
-describe('Testing /channel/addowner/v1', () => {
+describe('Testing /channel/addowner/v2', () => {
   test('Test-1: Error, invalid channelId', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
@@ -1291,8 +1291,8 @@ describe('Testing /channel/addowner/v1', () => {
       channel.bodyObj.channelId + 1,
       test2.bodyObj.authUserId
     );
-    expect(channelAddOwnerObj.statusCode).toBe(OK);
-    expect(channelAddOwnerObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelAddOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelAddOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, uId does not refer to a valid user', () => {
@@ -1314,8 +1314,8 @@ describe('Testing /channel/addowner/v1', () => {
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId + 1
     );
-    expect(channelAddOwnerObj.statusCode).toBe(OK);
-    expect(channelAddOwnerObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelAddOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelAddOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, uId refers to a user who is not a member of the channel', () => {
@@ -1344,8 +1344,8 @@ describe('Testing /channel/addowner/v1', () => {
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
     );
-    expect(channelAddOwnerObj.statusCode).toBe(OK);
-    expect(channelAddOwnerObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelAddOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelAddOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Error, uId refers to a user who is already an owner of the channel', () => {
@@ -1367,8 +1367,8 @@ describe('Testing /channel/addowner/v1', () => {
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId
     );
-    expect(channelAddOwnerObj.statusCode).toBe(OK);
-    expect(channelAddOwnerObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelAddOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelAddOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-5: Error, channelId is valid and the authorised user does not have owner permissions in the channel', () => {
@@ -1399,8 +1399,8 @@ describe('Testing /channel/addowner/v1', () => {
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
     );
-    expect(channelAddOwnerObj.statusCode).toBe(OK);
-    expect(channelAddOwnerObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelAddOwnerObj.statusCode).toBe(FORBIDDEN);
+    expect(channelAddOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-6: Error, token is invalid', () => {
@@ -1431,11 +1431,11 @@ describe('Testing /channel/addowner/v1', () => {
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
     );
-    expect(channelAddOwnerObj.statusCode).toBe(OK);
-    expect(channelAddOwnerObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelAddOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelAddOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
-  test('Test-6: Success, member been added as a owner', () => {
+  test('Test-7: Success, member been added as a owner', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
@@ -1508,7 +1508,7 @@ describe('Testing /channel/addowner/v1', () => {
     });
   });
 
-  test('Test-7: add multiple owners', () => {
+  test('Test-8: add multiple owners', () => {
     const owner = requestAuthRegister(
       'test0@gmail.com',
       '123456',
@@ -1661,7 +1661,7 @@ describe('Testing /channel/addowner/v1', () => {
   });
 });
 
-describe('Testing /channel/removeowner/v1', () => {
+describe('Testing /channel/removeowner/v2', () => {
   test('Test-1: Error, invalid channelId', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
@@ -1681,8 +1681,8 @@ describe('Testing /channel/removeowner/v1', () => {
       channel.bodyObj.channelId + 1,
       test1.bodyObj.authUserId
     );
-    expect(channelRemoveOwnerObj.statusCode).toBe(OK);
-    expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelRemoveOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, uId does not refer to a valid user', () => {
@@ -1704,8 +1704,8 @@ describe('Testing /channel/removeowner/v1', () => {
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId + 1
     );
-    expect(channelRemoveOwnerObj.statusCode).toBe(OK);
-    expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelRemoveOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, uId refers to a user who is not an owner of the channel', () => {
@@ -1736,8 +1736,8 @@ describe('Testing /channel/removeowner/v1', () => {
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
     );
-    expect(channelRemoveOwnerObj.statusCode).toBe(OK);
-    expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelRemoveOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Error, uId refers to a user who is currently the only owner of the channel', () => {
@@ -1769,8 +1769,8 @@ describe('Testing /channel/removeowner/v1', () => {
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId
     );
-    expect(channelRemoveOwnerObj.statusCode).toBe(OK);
-    expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelRemoveOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-5: Error, channelId is valid and the authorised user does not have owner permissions in the channel', () => {
@@ -1815,8 +1815,8 @@ describe('Testing /channel/removeowner/v1', () => {
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
     );
-    expect(channelRemoveOwnerObj.statusCode).toBe(OK);
-    expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelRemoveOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-6: Error, token is invalid', () => {
@@ -1847,8 +1847,8 @@ describe('Testing /channel/removeowner/v1', () => {
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
     );
-    expect(channelRemoveOwnerObj.statusCode).toBe(OK);
-    expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(ERROR);
+    expect(channelRemoveOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-7: Success case with removing a owner', () => {

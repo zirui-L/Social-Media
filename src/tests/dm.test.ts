@@ -8,10 +8,10 @@ import {
   requestDmLeave,
   requestDmMessages,
   requestMessageSendDm,
+  BAD_REQUEST,
+  FORBIDDEN,
+  OK,
 } from '../helperFunctions/helperServer';
-
-const OK = 200;
-const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
   requestClear();
@@ -21,7 +21,7 @@ afterEach(() => {
   requestClear();
 });
 
-describe('Testing /dm/create/v1', () => {
+describe('Testing /dm/create/v2', () => {
   test('Test-1: Error, incorrect uId in uIds', () => {
     const user1 = requestAuthRegister(
       'test1@gmail.com',
@@ -36,8 +36,8 @@ describe('Testing /dm/create/v1', () => {
       'Chen'
     ).bodyObj;
     const DmCreate = requestDmCreate(user1.token, [user2.authUserId + 1]);
-    expect(DmCreate.statusCode).toBe(OK);
-    expect(DmCreate.bodyObj).toStrictEqual(ERROR);
+    expect(DmCreate.statusCode).toBe(BAD_REQUEST);
+    expect(DmCreate.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, duplicate uId in uIds', () => {
@@ -57,8 +57,8 @@ describe('Testing /dm/create/v1', () => {
       user2.authUserId,
       user2.authUserId,
     ]);
-    expect(DmCreate.statusCode).toBe(OK);
-    expect(DmCreate.bodyObj).toStrictEqual(ERROR);
+    expect(DmCreate.statusCode).toBe(BAD_REQUEST);
+    expect(DmCreate.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, creator.uId in uIds', () => {
@@ -78,8 +78,8 @@ describe('Testing /dm/create/v1', () => {
       user1.authUserId,
       user2.authUserId,
     ]);
-    expect(DmCreate.statusCode).toBe(OK);
-    expect(DmCreate.bodyObj).toStrictEqual(ERROR);
+    expect(DmCreate.statusCode).toBe(BAD_REQUEST);
+    expect(DmCreate.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Error, invalid token', () => {
@@ -96,8 +96,8 @@ describe('Testing /dm/create/v1', () => {
       'Chen'
     ).bodyObj;
     const DmCreate = requestDmCreate(user1.token + 1, [user2.authUserId]);
-    expect(DmCreate.statusCode).toBe(OK);
-    expect(DmCreate.bodyObj).toStrictEqual(ERROR);
+    expect(DmCreate.statusCode).toBe(BAD_REQUEST);
+    expect(DmCreate.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-5: Success, correct input parameters', () => {
@@ -119,7 +119,7 @@ describe('Testing /dm/create/v1', () => {
   });
 });
 
-describe('Testing /dm/list/v1', () => {
+describe('Testing /dm/list/v2', () => {
   test('Test-1: Error, invalid token', () => {
     const user1 = requestAuthRegister(
       'test1@gmail.com',
@@ -128,8 +128,8 @@ describe('Testing /dm/list/v1', () => {
       'Li'
     ).bodyObj;
     const DmList = requestDmList(user1.token + 1);
-    expect(DmList.statusCode).toBe(OK);
-    expect(DmList.bodyObj).toStrictEqual(ERROR);
+    expect(DmList.statusCode).toBe(BAD_REQUEST);
+    expect(DmList.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2, correct input parameters', () => {
@@ -178,7 +178,7 @@ describe('Testing /dm/list/v1', () => {
   });
 });
 
-describe('Testing /dm/remove/v1', () => {
+describe('Testing /dm/remove/v2', () => {
   test('Test-1: Error, invalid dmId', () => {
     const user1 = requestAuthRegister(
       'test1@gmail.com',
@@ -194,8 +194,8 @@ describe('Testing /dm/remove/v1', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmRemove = requestDmRemove(user1.token, dmId + 1);
-    expect(DmRemove.statusCode).toBe(OK);
-    expect(DmRemove.bodyObj).toStrictEqual(ERROR);
+    expect(DmRemove.statusCode).toBe(BAD_REQUEST);
+    expect(DmRemove.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, authorised user is not DM creator', () => {
@@ -213,8 +213,8 @@ describe('Testing /dm/remove/v1', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmRemove = requestDmRemove(user2.token, dmId);
-    expect(DmRemove.statusCode).toBe(OK);
-    expect(DmRemove.bodyObj).toStrictEqual(ERROR);
+    expect(DmRemove.statusCode).toBe(FORBIDDEN);
+    expect(DmRemove.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, authorised user no longer in the DM', () => {
@@ -233,8 +233,8 @@ describe('Testing /dm/remove/v1', () => {
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     requestDmLeave(user1.token, dmId);
     const DmRemove = requestDmRemove(user1.token, dmId);
-    expect(DmRemove.statusCode).toBe(OK);
-    expect(DmRemove.bodyObj).toStrictEqual(ERROR);
+    expect(DmRemove.statusCode).toBe(FORBIDDEN);
+    expect(DmRemove.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Error, invalid token', () => {
@@ -252,8 +252,8 @@ describe('Testing /dm/remove/v1', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmRemove = requestDmRemove(user1.token + 1, dmId);
-    expect(DmRemove.statusCode).toBe(OK);
-    expect(DmRemove.bodyObj).toStrictEqual(ERROR);
+    expect(DmRemove.statusCode).toBe(BAD_REQUEST);
+    expect(DmRemove.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-5, correct input parameters', () => {
@@ -276,7 +276,7 @@ describe('Testing /dm/remove/v1', () => {
   });
 });
 
-describe('Testing /dm/details/v1', () => {
+describe('Testing /dm/details/v2', () => {
   test('Test-1: Error, invalid dmId', () => {
     const user1 = requestAuthRegister(
       'test1@gmail.com',
@@ -292,8 +292,8 @@ describe('Testing /dm/details/v1', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmDetails = requestDmDetails(user1.token, dmId + 1);
-    expect(DmDetails.statusCode).toBe(OK);
-    expect(DmDetails.bodyObj).toStrictEqual(ERROR);
+    expect(DmDetails.statusCode).toBe(BAD_REQUEST);
+    expect(DmDetails.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, authorised user is not a member', () => {
@@ -317,8 +317,8 @@ describe('Testing /dm/details/v1', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmDetails = requestDmDetails(user3.token, dmId);
-    expect(DmDetails.statusCode).toBe(OK);
-    expect(DmDetails.bodyObj).toStrictEqual(ERROR);
+    expect(DmDetails.statusCode).toBe(FORBIDDEN);
+    expect(DmDetails.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, invalid token', () => {
@@ -336,8 +336,8 @@ describe('Testing /dm/details/v1', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmDetails = requestDmDetails(user1.token + 1, dmId);
-    expect(DmDetails.statusCode).toBe(OK);
-    expect(DmDetails.bodyObj).toStrictEqual(ERROR);
+    expect(DmDetails.statusCode).toBe(BAD_REQUEST);
+    expect(DmDetails.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4, correct input parameters', () => {
@@ -422,7 +422,7 @@ describe('Testing /dm/details/v1', () => {
   });
 });
 
-describe('Testing /dm/leave/v1', () => {
+describe('Testing /dm/leave/v2', () => {
   test('Test-1: Error, invalid dmId', () => {
     const user1 = requestAuthRegister(
       'test1@gmail.com',
@@ -438,8 +438,8 @@ describe('Testing /dm/leave/v1', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmLeave = requestDmLeave(user1.token, dmId + 1);
-    expect(DmLeave.statusCode).toBe(OK);
-    expect(DmLeave.bodyObj).toStrictEqual(ERROR);
+    expect(DmLeave.statusCode).toBe(BAD_REQUEST);
+    expect(DmLeave.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, authorised user is not a member', () => {
@@ -463,8 +463,8 @@ describe('Testing /dm/leave/v1', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmLeave = requestDmLeave(user3.token, dmId);
-    expect(DmLeave.statusCode).toBe(OK);
-    expect(DmLeave.bodyObj).toStrictEqual(ERROR);
+    expect(DmLeave.statusCode).toBe(FORBIDDEN);
+    expect(DmLeave.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, invalid token', () => {
@@ -482,8 +482,8 @@ describe('Testing /dm/leave/v1', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmLeave = requestDmLeave(user1.token + 1, dmId);
-    expect(DmLeave.statusCode).toBe(OK);
-    expect(DmLeave.bodyObj).toStrictEqual(ERROR);
+    expect(DmLeave.statusCode).toBe(BAD_REQUEST);
+    expect(DmLeave.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4, correct input parameters', () => {
@@ -536,7 +536,7 @@ describe('Testing /dm/leave/v1', () => {
   });
 });
 
-describe('Testing /dm/messages/v1', () => {
+describe('Testing /dm/messages/v2', () => {
   test('Test-1: Error, invalid dmId', () => {
     const user1 = requestAuthRegister(
       'test1@gmail.com',
@@ -552,8 +552,8 @@ describe('Testing /dm/messages/v1', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmMessages = requestDmMessages(user1.token, dmId + 1, 0);
-    expect(DmMessages.statusCode).toBe(OK);
-    expect(DmMessages.bodyObj).toStrictEqual(ERROR);
+    expect(DmMessages.statusCode).toBe(BAD_REQUEST);
+    expect(DmMessages.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, start greater than total number of messages', () => {
@@ -571,8 +571,8 @@ describe('Testing /dm/messages/v1', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmMessages = requestDmMessages(user1.token, dmId, 100);
-    expect(DmMessages.statusCode).toBe(OK);
-    expect(DmMessages.bodyObj).toStrictEqual(ERROR);
+    expect(DmMessages.statusCode).toBe(BAD_REQUEST);
+    expect(DmMessages.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, authorised user not a member', () => {
@@ -596,8 +596,8 @@ describe('Testing /dm/messages/v1', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmMessages = requestDmMessages(user3.token, dmId, 0);
-    expect(DmMessages.statusCode).toBe(OK);
-    expect(DmMessages.bodyObj).toStrictEqual(ERROR);
+    expect(DmMessages.statusCode).toBe(FORBIDDEN);
+    expect(DmMessages.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Error, invalid token', () => {
@@ -615,8 +615,8 @@ describe('Testing /dm/messages/v1', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmMessages = requestDmMessages(user1.token + 1, dmId, 0);
-    expect(DmMessages.statusCode).toBe(OK);
-    expect(DmMessages.bodyObj).toStrictEqual(ERROR);
+    expect(DmMessages.statusCode).toBe(BAD_REQUEST);
+    expect(DmMessages.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-5, Success, start is 0, and there are in total 0 messages', () => {

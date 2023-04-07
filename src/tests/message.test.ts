@@ -14,12 +14,10 @@ import {
   // requestMessageUnReact,
   // requestMessagePin,
   // requestMessageUnPin,
+  BAD_REQUEST,
+  FORBIDDEN,
+  OK,
 } from '../helperFunctions/helperServer';
-
-const OK = 200;
-const BAD_REQUEST = 400;
-const FORBIDDEN = 403;
-const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
   requestClear();
@@ -29,7 +27,7 @@ afterEach(() => {
   requestClear();
 });
 
-describe('Testing /message/send/v1', () => {
+describe('Testing /message/send/v2', () => {
   test('Test-1: Error, channelId does not refer to a valid channel', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
@@ -48,8 +46,8 @@ describe('Testing /message/send/v1', () => {
       'HelloWorld'
     );
 
-    expect(messageSendObj.statusCode).toBe(OK);
-    expect(messageSendObj.bodyObj).toStrictEqual(ERROR);
+    expect(messageSendObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageSendObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, length of message is less than 1 or over 1000 characters', () => {
@@ -72,8 +70,8 @@ describe('Testing /message/send/v1', () => {
       ''
     );
 
-    expect(messageSendObj.statusCode).toBe(OK);
-    expect(messageSendObj.bodyObj).toStrictEqual(ERROR);
+    expect(messageSendObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageSendObj.bodyObj).toStrictEqual(undefined);
 
     // length of the message is more than 1000
     const messageSendObj1 = requestMessageSend(
@@ -82,8 +80,8 @@ describe('Testing /message/send/v1', () => {
       'HelloWorld'.repeat(101)
     );
 
-    expect(messageSendObj1.statusCode).toBe(OK);
-    expect(messageSendObj1.bodyObj).toStrictEqual(ERROR);
+    expect(messageSendObj1.statusCode).toBe(BAD_REQUEST);
+    expect(messageSendObj1.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, channelId is valid and the authorised user is not a member of the channel', () => {
@@ -112,8 +110,8 @@ describe('Testing /message/send/v1', () => {
       'firstMessage'
     );
 
-    expect(messageSendObj.statusCode).toBe(OK);
-    expect(messageSendObj.bodyObj).toStrictEqual(ERROR);
+    expect(messageSendObj.statusCode).toBe(FORBIDDEN);
+    expect(messageSendObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Error, token is invalid', () => {
@@ -136,8 +134,8 @@ describe('Testing /message/send/v1', () => {
       'firstMessage'
     );
 
-    expect(messageSendObj.statusCode).toBe(OK);
-    expect(messageSendObj.bodyObj).toStrictEqual(ERROR);
+    expect(messageSendObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageSendObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-5: Success, send 1 message', () => {
@@ -280,7 +278,7 @@ describe('Testing /message/send/v1', () => {
   });
 });
 
-describe('Testing /message/edit/v1', () => {
+describe('Testing /message/edit/v2', () => {
   test('Test-1: Error, length of message is over 1000 characters', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
@@ -304,8 +302,8 @@ describe('Testing /message/edit/v1', () => {
       'HelloWorld'.repeat(101)
     );
 
-    expect(messageEditObj.statusCode).toBe(OK);
-    expect(messageEditObj.bodyObj).toStrictEqual(ERROR);
+    expect(messageEditObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageEditObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, messageId does not refer to a valid message', () => {
@@ -331,8 +329,8 @@ describe('Testing /message/edit/v1', () => {
       'HelloWorld'
     );
 
-    expect(messageEditObj.statusCode).toBe(OK);
-    expect(messageEditObj.bodyObj).toStrictEqual(ERROR);
+    expect(messageEditObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageEditObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, user not a member of the channel where the message is in', () => {
@@ -366,8 +364,8 @@ describe('Testing /message/edit/v1', () => {
       'HelloWorld'
     );
 
-    expect(messageEditObj.statusCode).toBe(OK);
-    expect(messageEditObj.bodyObj).toStrictEqual(ERROR);
+    expect(messageEditObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageEditObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Error, user not a member of the dm where the message is in', () => {
@@ -403,8 +401,8 @@ describe('Testing /message/edit/v1', () => {
       messageIdObj.bodyObj.messageId,
       'helloWorld'
     );
-    expect(messageEditObj.bodyObj).toStrictEqual(ERROR);
-    expect(messageEditObj.statusCode).toBe(OK);
+    expect(messageEditObj.bodyObj).toStrictEqual(undefined);
+    expect(messageEditObj.statusCode).toBe(BAD_REQUEST);
   });
 
   test('Test-5: Error, the message was not sent by the user (channel), and user is not a owner', () => {
@@ -437,8 +435,8 @@ describe('Testing /message/edit/v1', () => {
       'HelloWorld'
     );
 
-    expect(messageEditObj.statusCode).toBe(OK);
-    expect(messageEditObj.bodyObj).toStrictEqual(ERROR);
+    expect(messageEditObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageEditObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-6: Error, the message was not sent by the user (dm), and user is not a owner', () => {
@@ -470,8 +468,8 @@ describe('Testing /message/edit/v1', () => {
       messageIdObj.bodyObj.messageId,
       'helloWorld'
     );
-    expect(messageEditObj.bodyObj).toStrictEqual(ERROR);
-    expect(messageEditObj.statusCode).toBe(OK);
+    expect(messageEditObj.bodyObj).toStrictEqual(undefined);
+    expect(messageEditObj.statusCode).toBe(BAD_REQUEST);
   });
 
   test('Test-7: Error, token is invalid', () => {
@@ -498,8 +496,8 @@ describe('Testing /message/edit/v1', () => {
       'HelloWorld'
     );
 
-    expect(messageEditObj.statusCode).toBe(OK);
-    expect(messageEditObj.bodyObj).toStrictEqual(ERROR);
+    expect(messageEditObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageEditObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-8: Success, edit message in a channel', () => {
@@ -774,7 +772,7 @@ describe('Testing /message/edit/v1', () => {
   });
 });
 
-describe('Testing /message/remove/v1', () => {
+describe('Testing /message/remove/v2', () => {
   test('Test-1: Error, messageId does not refer to a valid message', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
@@ -797,8 +795,8 @@ describe('Testing /message/remove/v1', () => {
       messageSendObj1.bodyObj.messageId + 1
     );
 
-    expect(messageRemoveObj.statusCode).toBe(OK);
-    expect(messageRemoveObj.bodyObj).toStrictEqual(ERROR);
+    expect(messageRemoveObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageRemoveObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, user is not a member of the channel where the message is in', () => {
@@ -830,8 +828,8 @@ describe('Testing /message/remove/v1', () => {
       messageSendObj1.bodyObj.messageId
     );
 
-    expect(messageRemoveObj.statusCode).toBe(OK);
-    expect(messageRemoveObj.bodyObj).toStrictEqual(ERROR);
+    expect(messageRemoveObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageRemoveObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, user is not a member of the dm where the message is in', () => {
@@ -866,8 +864,8 @@ describe('Testing /message/remove/v1', () => {
       test3.bodyObj.token,
       messageIdObj.bodyObj.messageId
     );
-    expect(messageRemoveObj.bodyObj).toStrictEqual(ERROR);
-    expect(messageRemoveObj.statusCode).toBe(OK);
+    expect(messageRemoveObj.bodyObj).toStrictEqual(undefined);
+    expect(messageRemoveObj.statusCode).toBe(BAD_REQUEST);
   });
 
   test('Test-4: Error, the message was not sent by the user (channel), and user is not a owner', () => {
@@ -899,8 +897,8 @@ describe('Testing /message/remove/v1', () => {
       messageSendObj1.bodyObj.messageId
     );
 
-    expect(messageRemoveObj.statusCode).toBe(OK);
-    expect(messageRemoveObj.bodyObj).toStrictEqual(ERROR);
+    expect(messageRemoveObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageRemoveObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-5: Error, the message was not sent by the user (dm), and user is not a owner', () => {
@@ -931,8 +929,8 @@ describe('Testing /message/remove/v1', () => {
       test2.bodyObj.token,
       messageIdObj.bodyObj.messageId
     );
-    expect(messageRemoveObj.bodyObj).toStrictEqual(ERROR);
-    expect(messageRemoveObj.statusCode).toBe(OK);
+    expect(messageRemoveObj.bodyObj).toStrictEqual(undefined);
+    expect(messageRemoveObj.statusCode).toBe(BAD_REQUEST);
   });
 
   test('Test-6: Error, token is invalid', () => {
@@ -958,8 +956,8 @@ describe('Testing /message/remove/v1', () => {
       messageSendObj1.bodyObj.messageId
     );
 
-    expect(messageRemoveObj.statusCode).toBe(OK);
-    expect(messageRemoveObj.bodyObj).toStrictEqual(ERROR);
+    expect(messageRemoveObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageRemoveObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-7: Success, remove message in a channel', () => {
@@ -1185,7 +1183,7 @@ describe('Testing /message/remove/v1', () => {
   });
 });
 
-describe('Testing /message/senddm/v1', () => {
+describe('Testing /message/senddm/v2', () => {
   test('Test-1: Error, dmId does not refer to a valid DM', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
@@ -1210,8 +1208,8 @@ describe('Testing /message/senddm/v1', () => {
       'firstMessage'
     );
 
-    expect(messageSendDmObj1.bodyObj).toStrictEqual(ERROR);
-    expect(messageSendDmObj1.statusCode).toBe(OK);
+    expect(messageSendDmObj1.bodyObj).toStrictEqual(undefined);
+    expect(messageSendDmObj1.statusCode).toBe(BAD_REQUEST);
   });
 
   test('Test-2: Error, length of message is less than 1 or over 1000 characters', () => {
@@ -1239,8 +1237,8 @@ describe('Testing /message/senddm/v1', () => {
       ''
     );
 
-    expect(messageSendDmObj1.bodyObj).toStrictEqual(ERROR);
-    expect(messageSendDmObj1.statusCode).toBe(OK);
+    expect(messageSendDmObj1.bodyObj).toStrictEqual(undefined);
+    expect(messageSendDmObj1.statusCode).toBe(BAD_REQUEST);
 
     // length of the message is more than 1000
     const messageSendDmObj2 = requestMessageSendDm(
@@ -1249,8 +1247,8 @@ describe('Testing /message/senddm/v1', () => {
       'HelloWorld'.repeat(101)
     );
 
-    expect(messageSendDmObj2.bodyObj).toStrictEqual(ERROR);
-    expect(messageSendDmObj2.statusCode).toBe(OK);
+    expect(messageSendDmObj2.bodyObj).toStrictEqual(undefined);
+    expect(messageSendDmObj2.statusCode).toBe(BAD_REQUEST);
   });
 
   test('Test-3: Error, channelId is valid and the authorised user is not a member of the channel', () => {
@@ -1284,8 +1282,8 @@ describe('Testing /message/senddm/v1', () => {
       'helloWorld'
     );
 
-    expect(messageSendDmObj1.bodyObj).toStrictEqual(ERROR);
-    expect(messageSendDmObj1.statusCode).toBe(OK);
+    expect(messageSendDmObj1.bodyObj).toStrictEqual(undefined);
+    expect(messageSendDmObj1.statusCode).toBe(FORBIDDEN);
   });
 
   test('Test-4: Error, token is invalid', () => {
@@ -1312,8 +1310,8 @@ describe('Testing /message/senddm/v1', () => {
       'helloWorld'
     );
 
-    expect(messageSendDmObj1.bodyObj).toStrictEqual(ERROR);
-    expect(messageSendDmObj1.statusCode).toBe(OK);
+    expect(messageSendDmObj1.bodyObj).toStrictEqual(undefined);
+    expect(messageSendDmObj1.statusCode).toBe(BAD_REQUEST);
   });
 
   test('Test-5: Success, send 1 message', () => {
@@ -1448,7 +1446,7 @@ describe('Testing /message/senddm/v1', () => {
   });
 });
 
-describe('Testing /message/react/v1', () => {
+describe('Testing /message/react/v2', () => {
   test('Test-1: Error, token is invalid', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
@@ -1474,7 +1472,7 @@ describe('Testing /message/react/v1', () => {
       1
     );
 
-    expect(res.statusCode).toBe(FORBIDDEN);
+    expect(res.statusCode).toBe(BAD_REQUEST);
   });
 
   test('Test-2: Error, messageId does not refer to a valid message', () => {

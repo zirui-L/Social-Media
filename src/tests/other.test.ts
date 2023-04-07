@@ -2,10 +2,10 @@ import {
   requestAuthRegister,
   requestClear,
   requestUserProfile,
+  BAD_REQUEST,
+  FORBIDDEN,
+  OK,
 } from '../helperFunctions/helperServer';
-
-const OK = 200;
-const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
   requestClear();
@@ -32,7 +32,7 @@ test('clear all register users', () => {
     test1.bodyObj.authUserId
   );
 
-  expect(userProfileObj.bodyObj).toStrictEqual(ERROR);
+  expect(userProfileObj.bodyObj).toStrictEqual(undefined);
 });
 
 test('clear empty channels and users', () => {

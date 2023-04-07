@@ -6,10 +6,11 @@ import {
   requestUserProfileSetName,
   requestUsersAll,
   requestClear,
+  BAD_REQUEST,
+  FORBIDDEN,
+  OK,
 } from '../helperFunctions/helperServer';
 
-const OK = 200;
-const ERROR = { error: expect.any(String) };
 // clear data before each test
 beforeEach(() => {
   requestClear();
@@ -19,7 +20,7 @@ afterEach(() => {
   requestClear();
 });
 
-describe('Testing /user/profile/v2 route', () => {
+describe('Testing /user/profile/v3 route', () => {
   test('Test-1: Error, invalid token and valid uId', () => {
     // create a new user
     const test1 = requestAuthRegister(
@@ -34,8 +35,8 @@ describe('Testing /user/profile/v2 route', () => {
       test1.bodyObj.authUserId
     );
     // expect funtion to run and return an error
-    expect(userProfileObj.statusCode).toBe(OK);
-    expect(userProfileObj.bodyObj).toStrictEqual(ERROR);
+    expect(userProfileObj.statusCode).toBe(BAD_REQUEST);
+    expect(userProfileObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, valid token and invalid uId', () => {
@@ -52,16 +53,16 @@ describe('Testing /user/profile/v2 route', () => {
       test1.bodyObj.authUserId + 1
     );
     // expect function to run and return an error
-    expect(userProfileObj.statusCode).toBe(OK);
-    expect(userProfileObj.bodyObj).toStrictEqual(ERROR);
+    expect(userProfileObj.statusCode).toBe(BAD_REQUEST);
+    expect(userProfileObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, invalid token and invalid uId', () => {
     // test function with invalid token and invalid authUserId
     const userProfileObj = requestUserProfile('0', 0);
     // expect funtion to run and return an error
-    expect(userProfileObj.statusCode).toBe(OK);
-    expect(userProfileObj.bodyObj).toStrictEqual(ERROR);
+    expect(userProfileObj.statusCode).toBe(BAD_REQUEST);
+    expect(userProfileObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Sucess case', () => {
@@ -125,7 +126,7 @@ describe('Testing /user/profile/v2 route', () => {
   });
 });
 
-describe('Testing /users/all/v1 route', () => {
+describe('Testing /users/all/v2 route', () => {
   test('Test-1: Error, invalid token', () => {
     // create a new user
     const test1 = requestAuthRegister(
@@ -137,8 +138,8 @@ describe('Testing /users/all/v1 route', () => {
     // test function with invalid token
     const usersAllObj = requestUsersAll(test1.bodyObj.token + 1);
     // expect function to run and return an error
-    expect(usersAllObj.statusCode).toBe(OK);
-    expect(usersAllObj.bodyObj).toStrictEqual(ERROR);
+    expect(usersAllObj.statusCode).toBe(BAD_REQUEST);
+    expect(usersAllObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Success, only one user', () => {
@@ -220,7 +221,7 @@ describe('Testing /users/all/v1 route', () => {
   });
 });
 
-describe('Testing /user/profile/setname/v1 route', () => {
+describe('Testing /user/profile/setname/v2 route', () => {
   test('Test-1: Error, invalid token', () => {
     // create a new user
     const test1 = requestAuthRegister(
@@ -236,8 +237,8 @@ describe('Testing /user/profile/setname/v1 route', () => {
       'Lee'
     );
     // expect function to run and return an error
-    expect(usersProfileSetnameObj.statusCode).toBe(OK);
-    expect(usersProfileSetnameObj.bodyObj).toStrictEqual(ERROR);
+    expect(usersProfileSetnameObj.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetnameObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, length of first name is not between 1 and 50', () => {
@@ -256,8 +257,8 @@ describe('Testing /user/profile/setname/v1 route', () => {
       'Lee'
     );
     // expect function to run and return an error
-    expect(usersProfileSetnameObj.statusCode).toBe(OK);
-    expect(usersProfileSetnameObj.bodyObj).toStrictEqual(ERROR);
+    expect(usersProfileSetnameObj.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetnameObj.bodyObj).toStrictEqual(undefined);
 
     // test function with invalid first name (length greater than 50)
     const usersProfileSetnameObj1 = requestUserProfileSetName(
@@ -266,8 +267,8 @@ describe('Testing /user/profile/setname/v1 route', () => {
       'Lee'
     );
     // expect function to run and return an error
-    expect(usersProfileSetnameObj1.statusCode).toBe(OK);
-    expect(usersProfileSetnameObj1.bodyObj).toStrictEqual(ERROR);
+    expect(usersProfileSetnameObj1.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetnameObj1.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, length of last name is not between 1 and 50', () => {
@@ -286,8 +287,8 @@ describe('Testing /user/profile/setname/v1 route', () => {
       ''
     );
     // expect function to run and return an error
-    expect(usersProfileSetnameObj.statusCode).toBe(OK);
-    expect(usersProfileSetnameObj.bodyObj).toStrictEqual(ERROR);
+    expect(usersProfileSetnameObj.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetnameObj.bodyObj).toStrictEqual(undefined);
 
     //  test funciton with invalid last name (length greater than 50)
     const usersProfileSetnameObj1 = requestUserProfileSetName(
@@ -296,8 +297,8 @@ describe('Testing /user/profile/setname/v1 route', () => {
       '3.1415926535897932384626433832795028841971693993751'
     );
     // expect function to run and return an error
-    expect(usersProfileSetnameObj1.statusCode).toBe(OK);
-    expect(usersProfileSetnameObj1.bodyObj).toStrictEqual(ERROR);
+    expect(usersProfileSetnameObj1.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetnameObj1.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Success in resetting name', () => {
@@ -335,7 +336,7 @@ describe('Testing /user/profile/setname/v1 route', () => {
   });
 });
 
-describe('Testing /user/profile/setemail/v1 route', () => {
+describe('Testing /user/profile/setemail/v2 route', () => {
   test('Test-1: Error, invalid token', () => {
     // create a new user
     const test1 = requestAuthRegister(
@@ -350,8 +351,8 @@ describe('Testing /user/profile/setemail/v1 route', () => {
       'test1@ad.unsw.edu.au'
     );
     // expect funtion to run and return an error
-    expect(usersProfileSetEmailObj.statusCode).toBe(OK);
-    expect(usersProfileSetEmailObj.bodyObj).toStrictEqual(ERROR);
+    expect(usersProfileSetEmailObj.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetEmailObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, email entered is not a valid email', () => {
@@ -368,8 +369,8 @@ describe('Testing /user/profile/setemail/v1 route', () => {
       'test1##ad.unsw.edu.au'
     );
     // expect funtion to run and return an error
-    expect(usersProfileSetEmailObj.statusCode).toBe(OK);
-    expect(usersProfileSetEmailObj.bodyObj).toStrictEqual(ERROR);
+    expect(usersProfileSetEmailObj.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetEmailObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, email address is already being used by another user', () => {
@@ -393,8 +394,8 @@ describe('Testing /user/profile/setemail/v1 route', () => {
       'test2@gmail.com'
     );
     // expect funtion to run and return an error
-    expect(usersProfileSetEmailObj.statusCode).toBe(OK);
-    expect(usersProfileSetEmailObj.bodyObj).toStrictEqual(ERROR);
+    expect(usersProfileSetEmailObj.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetEmailObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Success in resetting email', () => {
@@ -431,7 +432,7 @@ describe('Testing /user/profile/setemail/v1 route', () => {
   });
 });
 
-describe('Testing /user/profile/sethandle/v1 route', () => {
+describe('Testing /user/profile/sethandle/v2 route', () => {
   test('Test-1: Error, invalid token', () => {
     // create a new user
     const test1 = requestAuthRegister(
@@ -447,8 +448,8 @@ describe('Testing /user/profile/sethandle/v1 route', () => {
     );
     // expect function to run and return an error
 
-    expect(usersProfileSetHandleObj.statusCode).toBe(OK);
-    expect(usersProfileSetHandleObj.bodyObj).toStrictEqual(ERROR);
+    expect(usersProfileSetHandleObj.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetHandleObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-2: Error, length of handleStr is not between 3 and 20 characters inclusive', () => {
@@ -466,8 +467,8 @@ describe('Testing /user/profile/sethandle/v1 route', () => {
       '12'
     );
     // expect function to run and return an error
-    expect(usersProfileSetHandleObj.statusCode).toBe(OK);
-    expect(usersProfileSetHandleObj.bodyObj).toStrictEqual(ERROR);
+    expect(usersProfileSetHandleObj.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetHandleObj.bodyObj).toStrictEqual(undefined);
 
     // test function with invalid handleStr (length of handleStr is greater than 20)
     const usersProfileSetHandleObj1 = requestUserProfileSetHandle(
@@ -475,8 +476,8 @@ describe('Testing /user/profile/sethandle/v1 route', () => {
       '314159265358979323846264338327'
     );
     // expect function to run and return an error
-    expect(usersProfileSetHandleObj1.statusCode).toBe(OK);
-    expect(usersProfileSetHandleObj1.bodyObj).toStrictEqual(ERROR);
+    expect(usersProfileSetHandleObj1.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetHandleObj1.bodyObj).toStrictEqual(undefined);
 
     // test function with empty handle string
     const usersProfileSetHandleObj2 = requestUserProfileSetHandle(
@@ -484,8 +485,8 @@ describe('Testing /user/profile/sethandle/v1 route', () => {
       ''
     );
     // expect function to run and return an error
-    expect(usersProfileSetHandleObj2.statusCode).toBe(OK);
-    expect(usersProfileSetHandleObj2.bodyObj).toStrictEqual(ERROR);
+    expect(usersProfileSetHandleObj2.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetHandleObj2.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-3: Error, handleStr contains characters that are not alphanumeric', () => {
@@ -502,8 +503,8 @@ describe('Testing /user/profile/sethandle/v1 route', () => {
       '!@#$%%^&*()(*&^%$#@'
     );
     // expect function to run and return an error
-    expect(usersProfileSetHandleObj.statusCode).toBe(OK);
-    expect(usersProfileSetHandleObj.bodyObj).toStrictEqual(ERROR);
+    expect(usersProfileSetHandleObj.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetHandleObj.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-4: Error, the handle is already used by another user', () => {
@@ -534,8 +535,8 @@ describe('Testing /user/profile/sethandle/v1 route', () => {
       '12345'
     );
     // expect function to run and return an error
-    expect(usersProfileSetHandleObj1.statusCode).toBe(OK);
-    expect(usersProfileSetHandleObj1.bodyObj).toStrictEqual(ERROR);
+    expect(usersProfileSetHandleObj1.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetHandleObj1.bodyObj).toStrictEqual(undefined);
   });
 
   test('Test-5: Success in resetting handleStr', () => {
