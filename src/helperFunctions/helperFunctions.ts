@@ -237,18 +237,18 @@ export const isOwner = (authUserId: number, channelId: number): boolean => {
 };
 
 /**
- * <Check if a specific user is an owner of the Dm>
+ * <Check if a specific user is an owner of the dm>
  *
  * @param {string} authUserId - user id of the enquiring user
- * @param {string} DmId - Dm id
+ * @param {string} dmId - dm id
  *
- * @returns {true} - user is a owner of the Dm
- * @returns {false} - user doesn't belong to a Dm
+ * @returns {true} - user is a owner of the dm
+ * @returns {false} - user doesn't belong to a dm
  *
  */
-export const isDmOwner = (authUserId: number, DmId: number): boolean => {
-  const Dm = findDm(DmId);
-  return Dm.ownerMembers.includes(authUserId);
+export const isDmOwner = (authUserId: number, dmId: number): boolean => {
+  const dm = findDm(dmId);
+  return dm.ownerMembers.includes(authUserId);
 };
 
 /**
@@ -383,8 +383,8 @@ export const isDuplicate = (uIds: Array<number>): boolean => {
 };
 
 export const isDmMember = (UId: number, dmId: number): boolean => {
-  const Dm = findDm(dmId);
-  return Dm.allMembers.includes(UId);
+  const dm = findDm(dmId);
+  return dm.allMembers.includes(UId);
 };
 
 /**
