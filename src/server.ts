@@ -45,6 +45,10 @@ import config from './config.json';
 import cors from 'cors';
 import fs from 'fs';
 import errorHandler from 'middleware-http-errors';
+import {
+  requestAuthPasswordresetRequest,
+  requestAuthPasswordresetReset,
+} from './helperFunctions/helperServer';
 
 // Set up web app
 const app = express();
@@ -259,6 +263,18 @@ app.get('/dm/messages/v2', (req: Request, res: Response) => {
   const dmId = parseInt(String(req.query.dmId));
   const start = parseInt(String(req.query.start));
   res.json(dmMessagesV2(token, dmId, start));
+  storeData();
+});
+
+app.post('auth/passwordreset/request/v1', (req: Request, res: Response) => {
+  const { email } = req.body;
+  res.json(requestAuthPasswordresetRequest(email));
+  storeData();
+});
+
+app.post('auth/passwordreset/reset/v1', (req: Request, res: Response) => {
+  const { email, resetCode } = req.body;
+  res.json(requestAuthPasswordresetReset(email, resetCode));
   storeData();
 });
 

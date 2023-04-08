@@ -8,13 +8,98 @@ import {
   isTokenValid,
   getHashOf,
   SECRET,
+  findUser,
 } from './helperFunctions/helperFunctions';
 
 import { BAD_REQUEST } from './helperFunctions/helperServer';
 
 import HTTPError from 'http-errors';
+import { sendPasswordResetEmail } from './helperFunctions/emailHelper';
 
 type UIdAndToken = { token: string; authUserId: number }; // Reture object type
+
+/**
+ * <Given an email address, if the email address belongs to a registered user,
+ * sends them an email containing a secret password reset code. This code, when
+ * supplied to auth/passwordreset/reset, shows that the user trying to reset the
+ * password is the same user who got sent the email contaning the code. No error
+ * should be raised when given an invalid email, as that would pose a
+ * security/privacy concern. When a user requests a password reset, they should
+ * be logged out of all current sessions.>
+ *
+ * @param {string} email - email address of the registered users
+ *
+ * @returns {} - Return type if no error:
+ *
+ */
+
+export const authPasswordresetRequestV1 = (email: string) => {
+  // invalid email raises no errors
+  const data = getData();
+  const user = data.users.find((user) => user.email === email);
+  if (user === undefined) {
+    return {};
+  }
+
+  const resetCode = getHashOf(email);
+  data.resetCodes.push({
+    authUserId: user.authUserId,
+    resetCode: resetCode,
+    valid: true,
+  });
+
+  // Send email for resetting password
+  sendPasswordResetEmail(email, resetCode);
+
+  // log user out of all sessions
+  for (const existingToken of data.tokens) {
+    if (existingToken.uId === user.authUserId) {
+      const indexToDelete = data.tokens.findIndex(
+        (userToken) => userToken.token === existingToken.token
+      );
+
+      data.tokens.splice(indexToDelete, 1);
+    }
+  }
+  setData(data);
+  return {};
+};
+
+/**
+ * <Given a reset code for a user, sets that user's new password to the password
+ *  provided. Once a reset code has been used, it is then invalidated.>
+ *
+ * @param {string} email - email address of the registered users
+ * @param {string} newPassword - new password of the registered users
+ *
+ * @returns {} - Return type if no error:
+ * @throws {400 ERROR} - when any of:
+ * 1. resetCode is not a valid reset code
+ * 2. newPassword is less than 6 characters long
+ */
+
+export const authPasswordresetResetV1 = (
+  resetCode: string,
+  newPassword: string
+) => {
+  const data = getData();
+
+  const storedResetCodes = data.resetCodes.find(
+    (storedResetCodes) => storedResetCodes.resetCode === resetCode
+  );
+  if (storedResetCodes === undefined || storedResetCodes.valid === false) {
+    throw HTTPError(BAD_REQUEST, 'resetCode is not a valid reset code');
+  } else if (newPassword.length < 6) {
+    throw HTTPError(BAD_REQUEST, 'newPassword is less than 6 characters long');
+  }
+
+  // invalidate the resetCode and change password for the user
+  const user = findUser(storedResetCodes.authUserId);
+  user.password = getHashOf(newPassword + SECRET);
+  storedResetCodes.valid = false;
+  setData(data);
+  return {};
+};
 
 /**
  * <Allow the existing user to login to the system with their registered email

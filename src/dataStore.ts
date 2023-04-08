@@ -4,12 +4,12 @@ export type Error = {
 export type React = {
   reactId: number;
   uIds: Array<number>;
-}
+};
 export type ReactReturn = {
   reactId: number;
   uIds: Array<number>;
   isThisUserReacted: boolean;
-}
+};
 export type storedMessage = {
   messageId: number;
   uId: number;
@@ -71,13 +71,20 @@ export type Token = {
   uId: number;
 };
 
+type ResetCode = {
+  resetCode: string;
+  authUserId: number;
+  valid: boolean;
+};
+
 export type Data = {
   users: Array<storedUser>;
   channels: Array<Channel>;
   messages: Array<storedMessage>;
   dms: Array<Dm>;
   tokens: Array<Token>;
-  reactIds: Array<number>,
+  reactIds: Array<number>;
+  resetCodes: Array<ResetCode>;
 };
 
 export type paginatedMessage = {
@@ -94,6 +101,7 @@ let data: Data = {
   dms: [],
   tokens: [],
   reactIds: [1],
+  resetCodes: [],
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

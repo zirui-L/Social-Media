@@ -4,10 +4,10 @@ import {
   requestUserProfile,
   requestClear,
   requestAuthLogOut,
-  // requestAuthPasswordresetRequest,
-  // requestAuthPasswordresetReset,
   BAD_REQUEST,
   FORBIDDEN,
+  requestAuthPasswordresetRequest,
+  requestAuthPasswordresetReset,
 } from '../helperFunctions/helperServer';
 
 const OK = 200;
@@ -384,12 +384,7 @@ describe('auth/passwordreset/request/v1', () => {
 
 describe('auth/passwordreset/reset/v1', () => {
   test('Test-1: Success, where the user can use the new password to login', () => {
-    const test1 = requestAuthRegister(
-      'test1@gmail.com',
-      '123456',
-      'firstName',
-      'lastName'
-    );
+    requestAuthRegister('test1@gmail.com', '123456', 'firstName', 'lastName');
 
     requestAuthPasswordresetRequest('test1@gmail.edu.au');
 
