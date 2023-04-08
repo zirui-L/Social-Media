@@ -11,9 +11,9 @@ import {
   requestDmMessages,
   requestDmCreate,
   requestMessageReact,
-  // requestMessageUnReact,
-  // requestMessagePin,
-  // requestMessageUnPin,
+  requestMessageUnReact,
+  requestMessagePin,
+  requestMessageUnPin,
   BAD_REQUEST,
   FORBIDDEN,
   OK,
@@ -1446,7 +1446,7 @@ describe('Testing /message/senddm/v2', () => {
   });
 });
 
-describe('Testing /message/react/v2', () => {
+describe('Testing /message/react/v1', () => {
   test('Test-1: Error, token is invalid', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
@@ -1472,7 +1472,7 @@ describe('Testing /message/react/v2', () => {
       1
     );
 
-    expect(res.statusCode).toBe(BAD_REQUEST);
+    expect(res.statusCode).toBe(FORBIDDEN);
   });
 
   test('Test-2: Error, messageId does not refer to a valid message', () => {
@@ -1692,6 +1692,864 @@ describe('Testing /message/react/v2', () => {
               isThisUserReacted: false,
             },
           ],
+          isPinned: false,
+        },
+      ],
+      start: 0,
+      end: -1,
+    });
+  });
+});
+
+describe('Testing /message/unreact/v1', () => {
+  test('Test-1: Error, token is invalid', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessageReact(test1.token, messageSendObj1.messageId, 1);
+    const res = requestMessageUnReact(test1.token + '1', messageSendObj1.messageId, 1);
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Test-2: Error, messageId does not refer to a valid message', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'RicardoChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessageReact(test1.token, messageSendObj1.messageId, 1);
+    const res = requestMessageUnReact(test1.token, messageSendObj1.messageId + 1, 1);
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-3: Error, user is not a member of the channel where the message is in', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'RicardoChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessageReact(test1.token, messageSendObj1.messageId, 1);
+    const res = requestMessageUnReact(test2.token, messageSendObj1.messageId, 1);
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-4: Error, user is not a member of the dm where the message is in', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const test3 = requestAuthRegister(
+      'test3@gmail.com',
+      'password3',
+      'firstName3',
+      'lastName3'
+    ).bodyObj;
+    const dmIdObj = requestDmCreate(test2.token, [test1.authUserId]).bodyObj;
+    const messageIdObj = requestMessageSendDm(
+      test1.token,
+      dmIdObj.dmId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessageReact(test2.token, messageIdObj.messageId, 1);
+    const res = requestMessageUnReact(test3.token, messageIdObj.messageId, 1);
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-5: Error, invalid reactId', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessageReact(test1.token, messageSendObj1.messageId, 1);
+    const res = requestMessageUnReact(test1.token, messageSendObj1.messageId, 2);
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-6: Error, message does not contain react from the user', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessageUnReact(test1.token, messageSendObj1.messageId, 1);
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-7: Success unreact in a channel, checking side effects', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessageReact(test1.token, messageSendObj1.messageId, 1);
+    const res = requestMessageUnReact(test1.token, messageSendObj1.messageId, 1);
+    expect(res.statusCode).toStrictEqual(OK);
+    expect(res.bodyObj).toStrictEqual({});
+    const channelMessages = requestChannelMessages(
+      test1.token,
+      channelId.channelId,
+      0
+    );
+    expect(channelMessages.bodyObj).toStrictEqual({
+      messages: [
+        {
+          messageId: messageSendObj1.messageId,
+          uId: test1.authUserId,
+          message: 'firstMessage',
+          timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
+        },
+      ],
+      start: 0,
+      end: -1,
+    });
+  });
+
+  test('Test-8: Success unreact in a dm', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const dmIdObj = requestDmCreate(test1.token, [test2.authUserId]).bodyObj;
+    const messageIdObj = requestMessageSendDm(
+      test1.token,
+      dmIdObj.dmId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessageReact(test1.token, messageIdObj.messageId, 1);
+    requestMessageReact(test2.token, messageIdObj.messageId, 1);
+    const res = requestMessageUnReact(test1.token, messageIdObj.messageId, 1);
+    expect(res.statusCode).toStrictEqual(OK);
+    expect(res.bodyObj).toStrictEqual({});
+    const dmMessages = requestDmMessages(test1.token, dmIdObj.dmId, 0);
+    expect(dmMessages.bodyObj).toStrictEqual({
+      messages: [
+        {
+          messageId: messageIdObj.messageId,
+          uId: test1.authUserId,
+          message: 'firstMessage',
+          timeSent: expect.any(Number),
+          reacts: [
+            {
+              reactId: 1,
+              uIds: [test2.authUserId],
+              isThisUserReacted: false,
+            },
+          ],
+          isPinned: false,
+        },
+      ],
+      start: 0,
+      end: -1,
+    });
+  });
+});
+
+describe('Testing /message/pin/v1', () => {
+  test('Test-1: Error, token is invalid', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessagePin(test1.token + '1', messageSendObj1.messageId);
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Test-2: Error, messageId does not refer to a valid message', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'RicardoChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessagePin(test1.token, messageSendObj1.messageId + 1);
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-3: Error, user is not a member of the channel where the message is in', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'RicardoChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessagePin(test2.token, messageSendObj1.messageId);
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-4: Error, user is not a member of the dm where the message is in', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const test3 = requestAuthRegister(
+      'test3@gmail.com',
+      'password3',
+      'firstName3',
+      'lastName3'
+    ).bodyObj;
+    const dmIdObj = requestDmCreate(test2.token, [test1.authUserId]).bodyObj;
+    const messageIdObj = requestMessageSendDm(
+      test1.token,
+      dmIdObj.dmId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessagePin(test3.token, messageIdObj.messageId);
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-5: Error, message already pinned', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessagePin(test1.token, messageSendObj1.messageId);
+    const res = requestMessagePin(test1.token, messageSendObj1.messageId);
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+  
+  test('Test-6: Error, user does not have the permission in channel', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    requestChannelJoin(test2.token, channelId.channelId);
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessagePin(test2.token, messageSendObj1.messageId);
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Test-7: Error, user does not have the permission in dm', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const dmIdObj = requestDmCreate(test2.token, [test1.authUserId]).bodyObj;
+    const messageIdObj = requestMessageSendDm(
+      test1.token,
+      dmIdObj.dmId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessagePin(test1.token, messageIdObj.messageId);
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Test-8: Success pin in a channel from channel owner', () => {
+    requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test2.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test2.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessagePin(test2.token, messageSendObj1.messageId);
+    expect(res.statusCode).toStrictEqual(OK);
+    expect(res.bodyObj).toStrictEqual({});
+    const channelMessages = requestChannelMessages(
+      test2.token,
+      channelId.channelId,
+      0
+    );
+    expect(channelMessages.bodyObj).toStrictEqual({
+      messages: [
+        {
+          messageId: messageSendObj1.messageId,
+          uId: test2.authUserId,
+          message: 'firstMessage',
+          timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: true,
+        },
+      ],
+      start: 0,
+      end: -1,
+    });
+  });
+
+  test('Test-9: Success pin in a channel by a global owner', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test2.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    requestChannelJoin(test1.token, channelId.channelId);
+    const messageSendObj1 = requestMessageSend(
+      test2.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessagePin(test1.token, messageSendObj1.messageId);
+    expect(res.statusCode).toStrictEqual(OK);
+    expect(res.bodyObj).toStrictEqual({});
+    const channelMessages = requestChannelMessages(
+      test2.token,
+      channelId.channelId,
+      0
+    );
+    expect(channelMessages.bodyObj).toStrictEqual({
+      messages: [
+        {
+          messageId: messageSendObj1.messageId,
+          uId: test2.authUserId,
+          message: 'firstMessage',
+          timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: true,
+        },
+      ],
+      start: 0,
+      end: -1,
+    });
+  });
+
+  test('Test-10: Success pin in a dm', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const dmIdObj = requestDmCreate(test2.token, [test1.authUserId]).bodyObj;
+    const messageIdObj = requestMessageSendDm(
+      test1.token,
+      dmIdObj.dmId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessagePin(test2.token, messageIdObj.messageId);
+    expect(res.statusCode).toStrictEqual(OK);
+    expect(res.bodyObj).toStrictEqual({});
+    const dmMessages = requestDmMessages(test1.token, dmIdObj.dmId, 0);
+    expect(dmMessages.bodyObj).toStrictEqual({
+      messages: [
+        {
+          messageId: messageIdObj.messageId,
+          uId: test1.authUserId,
+          message: 'firstMessage',
+          timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: true,
+        },
+      ],
+      start: 0,
+      end: -1,
+    });
+  });
+});
+
+describe('Testing /message/unpin/v1', () => {
+  test('Test-1: Error, token is invalid', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessagePin(test1.token, messageSendObj1.messageId);
+    const res = requestMessageUnPin(test1.token + '1', messageSendObj1.messageId);
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Test-2: Error, messageId does not refer to a valid message', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'RicardoChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessagePin(test1.token, messageSendObj1.messageId);
+    const res = requestMessageUnPin(test1.token, messageSendObj1.messageId + 1);
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-3: Error, user is not a member of the channel where the message is in', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'RicardoChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessagePin(test1.token, messageSendObj1.messageId);
+    const res = requestMessageUnPin(test2.token, messageSendObj1.messageId);
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-4: Error, user is not a member of the dm where the message is in', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const test3 = requestAuthRegister(
+      'test3@gmail.com',
+      'password3',
+      'firstName3',
+      'lastName3'
+    ).bodyObj;
+    const dmIdObj = requestDmCreate(test2.token, [test1.authUserId]).bodyObj;
+    const messageIdObj = requestMessageSendDm(
+      test1.token,
+      dmIdObj.dmId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessagePin(test2.token, messageIdObj.messageId);
+    const res = requestMessageUnPin(test3.token, messageIdObj.messageId);
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-5: Error, message not already pinned', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    const res = requestMessageUnPin(test1.token, messageSendObj1.messageId);
+    expect(res.statusCode).toBe(BAD_REQUEST);
+  });
+  
+  test('Test-6: Error, user does not have the permission in channel', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test1.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    requestChannelJoin(test2.token, channelId.channelId);
+    const messageSendObj1 = requestMessageSend(
+      test1.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessagePin(test1.token, messageSendObj1.messageId);
+    const res = requestMessageUnPin(test2.token, messageSendObj1.messageId);
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Test-7: Error, user does not have the permission in dm', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const dmIdObj = requestDmCreate(test2.token, [test1.authUserId]).bodyObj;
+    const messageIdObj = requestMessageSendDm(
+      test1.token,
+      dmIdObj.dmId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessagePin(test2.token, messageIdObj.messageId);
+    const res = requestMessageUnPin(test1.token, messageIdObj.messageId);
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Test-8: Success unpin in a channel from channel owner', () => {
+    requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test2.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    const messageSendObj1 = requestMessageSend(
+      test2.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessagePin(test2.token, messageSendObj1.messageId);
+    const res = requestMessageUnPin(test2.token, messageSendObj1.messageId);
+    expect(res.statusCode).toStrictEqual(OK);
+    expect(res.bodyObj).toStrictEqual({});
+    const channelMessages = requestChannelMessages(
+      test2.token,
+      channelId.channelId,
+      0
+    );
+    expect(channelMessages.bodyObj).toStrictEqual({
+      messages: [
+        {
+          messageId: messageSendObj1.messageId,
+          uId: test2.authUserId,
+          message: 'firstMessage',
+          timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
+        },
+      ],
+      start: 0,
+      end: -1,
+    });
+  });
+
+  test('Test-9: Success unpin in a channel by a global owner', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const channelId = requestChannelsCreate(
+      test2.token,
+      'firstChannel',
+      true
+    ).bodyObj;
+    requestChannelJoin(test1.token, channelId.channelId);
+    const messageSendObj1 = requestMessageSend(
+      test2.token,
+      channelId.channelId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessagePin(test1.token, messageSendObj1.messageId);
+    const res = requestMessageUnPin(test1.token, messageSendObj1.messageId);
+    expect(res.statusCode).toStrictEqual(OK);
+    expect(res.bodyObj).toStrictEqual({});
+    const channelMessages = requestChannelMessages(
+      test2.token,
+      channelId.channelId,
+      0
+    );
+    expect(channelMessages.bodyObj).toStrictEqual({
+      messages: [
+        {
+          messageId: messageSendObj1.messageId,
+          uId: test2.authUserId,
+          message: 'firstMessage',
+          timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
+        },
+      ],
+      start: 0,
+      end: -1,
+    });
+  });
+
+  test('Test-10: Success unpin in a dm', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    ).bodyObj;
+    const test2 = requestAuthRegister(
+      'test2@gmail.com',
+      'password2',
+      'firstName2',
+      'lastName2'
+    ).bodyObj;
+    const dmIdObj = requestDmCreate(test2.token, [test1.authUserId]).bodyObj;
+    const messageIdObj = requestMessageSendDm(
+      test1.token,
+      dmIdObj.dmId,
+      'firstMessage'
+    ).bodyObj;
+    requestMessagePin(test2.token, messageIdObj.messageId);
+    const res = requestMessageUnPin(test2.token, messageIdObj.messageId);
+    expect(res.statusCode).toStrictEqual(OK);
+    expect(res.bodyObj).toStrictEqual({});
+    const dmMessages = requestDmMessages(test1.token, dmIdObj.dmId, 0);
+    expect(dmMessages.bodyObj).toStrictEqual({
+      messages: [
+        {
+          messageId: messageIdObj.messageId,
+          uId: test1.authUserId,
+          message: 'firstMessage',
+          timeSent: expect.any(Number),
+          reacts: [],
           isPinned: false,
         },
       ],

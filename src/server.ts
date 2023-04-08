@@ -26,6 +26,9 @@ import {
   messageSendDmV2,
   messageSendV2,
   messageReactV1,
+  messageUnReactV1,
+  messagePinV1,
+  messageUnPinV1,
 } from './message';
 import {
   dmCreateV2,
@@ -217,6 +220,27 @@ app.post('/message/react/v1', (req: Request, res: Response) => {
   const { messageId, reactId } = req.body;
   const token = req.header('token');
   res.json(messageReactV1(token, messageId, reactId));
+  storeData();
+});
+
+app.post('/message/unreact/v1', (req: Request, res: Response) => {
+  const { messageId, reactId } = req.body;
+  const token = req.header('token');
+  res.json(messageUnReactV1(token, messageId, reactId));
+  storeData();
+});
+
+app.post('/message/pin/v1', (req: Request, res: Response) => {
+  const { messageId } = req.body;
+  const token = req.header('token');
+  res.json(messagePinV1(token, messageId));
+  storeData();
+});
+
+app.post('/message/unpin/v1', (req: Request, res: Response) => {
+  const { messageId } = req.body;
+  const token = req.header('token');
+  res.json(messageUnPinV1(token, messageId));
   storeData();
 });
 

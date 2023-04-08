@@ -300,7 +300,7 @@ export const messageReactV1 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isMessageValid(messageId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid message id'); // messageId does not refer to a valid message
   } else if (!isReactIdValid(reactId)) {
@@ -335,6 +335,150 @@ export const messageReactV1 = (
   } else {
     react.uIds.push(uId);
   }
+
+  setData(data);
+  return {};
+};
+
+export const messageUnReactV1 = (
+  token: string,
+  messageId: number,
+  reactId: number
+): Record<string, never> => {
+  const data = getData();
+
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(FORBIDDEN, 'Invalid token');
+  } else if (!isMessageValid(messageId)) {
+    throw HTTPError(BAD_REQUEST, 'Invalid message id'); // messageId does not refer to a valid message
+  } else if (!isReactIdValid(reactId)) {
+    throw HTTPError(BAD_REQUEST, 'Invalid react id');
+  }
+
+  const message = findStoredMessageFromId(messageId);
+  const uId = findUserFromToken(tokenId);
+  const user = findUser(uId);
+
+  // messageId does not refer to a valid message within a channel/DM
+  // that the authorised user has joined
+  if (
+    !user.channels.includes(message.dmOrChannelId) &&
+    !user.dms.includes(message.dmOrChannelId)
+  ) {
+    throw HTTPError(BAD_REQUEST, "Message is not in user's chat");
+  }
+
+  const react = message.reacts.find(
+    (react: React) => react.reactId === reactId
+  );
+  if (!react || !react.uIds.includes(uId)) {
+    throw HTTPError(BAD_REQUEST, 'Not reacted');
+  }
+
+  react.uIds.splice(react.uIds.indexOf(uId), 1);
+  if (react.uIds.length === 0) {
+    message.reacts.splice(message.reacts.findIndex((reactObj) => reactObj.reactId === reactId), 1);
+  }
+
+  setData(data);
+  return {};
+};
+
+export const messagePinV1 = (
+  token: string,
+  messageId: number
+): Record<string, never> => {
+  const data = getData();
+
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(FORBIDDEN, 'Invalid token');
+  } else if (!isMessageValid(messageId)) {
+    throw HTTPError(BAD_REQUEST, 'Invalid message id'); // messageId does not refer to a valid message
+  }
+
+  const message = findStoredMessageFromId(messageId);
+  const uId = findUserFromToken(tokenId);
+  const user = findUser(uId);
+
+  // messageId does not refer to a valid message within a channel/DM
+  // that the authorised user has joined
+  if (
+    !user.channels.includes(message.dmOrChannelId) &&
+    !user.dms.includes(message.dmOrChannelId)
+  ) {
+    throw HTTPError(BAD_REQUEST, "Message is not in user's chat");
+  }
+
+  // Check if the message is already pinned
+  if (message.isPinned) {
+    throw HTTPError(BAD_REQUEST, 'Already pinned');
+  }
+
+  // Check if the user has the requried permission
+  if (message.isChannelMessage) {
+    if (user.permissionId !== 1 && !isOwner(uId, message.dmOrChannelId)) {
+      throw HTTPError(FORBIDDEN, "User doesn't have owner permission");
+    }
+  } else {
+    if (!isDmOwner(uId, message.dmOrChannelId)) {
+      throw HTTPError(FORBIDDEN, "User doesn't have owner permission");
+    }
+  }
+
+  message.isPinned = true;
+
+  setData(data);
+  return {};
+};
+
+export const messageUnPinV1 = (
+  token: string,
+  messageId: number
+): Record<string, never> => {
+  const data = getData();
+
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(FORBIDDEN, 'Invalid token');
+  } else if (!isMessageValid(messageId)) {
+    throw HTTPError(BAD_REQUEST, 'Invalid message id'); // messageId does not refer to a valid message
+  }
+
+  const message = findStoredMessageFromId(messageId);
+  const uId = findUserFromToken(tokenId);
+  const user = findUser(uId);
+
+  // messageId does not refer to a valid message within a channel/DM
+  // that the authorised user has joined
+  if (
+    !user.channels.includes(message.dmOrChannelId) &&
+    !user.dms.includes(message.dmOrChannelId)
+  ) {
+    throw HTTPError(BAD_REQUEST, "Message is not in user's chat");
+  }
+
+  // Check if the message is not already pinned
+  if (!message.isPinned) {
+    throw HTTPError(BAD_REQUEST, 'Message not pinned');
+  }
+
+  // Check if the user has the requried permission
+  if (message.isChannelMessage) {
+    if (user.permissionId !== 1 && !isOwner(uId, message.dmOrChannelId)) {
+      throw HTTPError(FORBIDDEN, "User doesn't have owner permission");
+    }
+  } else {
+    if (!isDmOwner(uId, message.dmOrChannelId)) {
+      throw HTTPError(FORBIDDEN, "User doesn't have owner permission");
+    }
+  }
+
+  message.isPinned = false;
 
   setData(data);
   return {};
