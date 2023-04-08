@@ -300,7 +300,7 @@ export const messageReactV1 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isMessageValid(messageId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid message id'); // messageId does not refer to a valid message
   } else if (!isReactIdValid(reactId)) {
