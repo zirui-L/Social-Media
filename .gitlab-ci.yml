@@ -6,13 +6,17 @@ stages:
 before_script:
   - npm install
 
+cache:
+  paths:
+    - node_modules
+
 tests with coverage:
   stage: checks
   script:
     - SERVER_LOG=$(mktemp)
     - npm run ts-node-coverage >& $SERVER_LOG &
-    - timeout 10s grep -q "⚡️ Server started on port" <(tail -f $SERVER_LOG) || exit 1
-    - timeout -s SIGINT 180s npm run test || (cat $SERVER_LOG && exit 1)
+    - sleep 8
+    - npm run test src/tests/**.ts || (cat $SERVER_LOG && exit 1)
     - kill -SIGINT %1
     - sleep 2
     - cat $SERVER_LOG
@@ -32,3 +36,5 @@ linting:
   stage: checks
   script:
     - npm run lint
+    - npm run lint-test
+    - npm run lint-helper
