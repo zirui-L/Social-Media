@@ -4,12 +4,12 @@ export type Error = {
 export type React = {
   reactId: number;
   uIds: Array<number>;
-}
+};
 export type ReactReturn = {
   reactId: number;
   uIds: Array<number>;
   isThisUserReacted: boolean;
-}
+};
 export type storedMessage = {
   messageId: number;
   uId: number;
@@ -48,6 +48,7 @@ export type storedUser = {
   permissionId: number;
   channels: Array<number>;
   dms: Array<number>;
+  profileImgUrl: string;
 };
 
 export type User = {
@@ -56,6 +57,7 @@ export type User = {
   nameFirst: string;
   nameLast: string;
   handleStr: string;
+  profileImgUrl: string;
 };
 
 export type Dm = {
@@ -71,13 +73,20 @@ export type Token = {
   uId: number;
 };
 
+export type ResetCode = {
+  resetCode: string;
+  authUserId: number;
+  valid: boolean;
+};
+
 export type Data = {
   users: Array<storedUser>;
   channels: Array<Channel>;
   messages: Array<storedMessage>;
   dms: Array<Dm>;
   tokens: Array<Token>;
-  reactIds: Array<number>,
+  reactIds: Array<number>;
+  resetCodes: Array<ResetCode>;
 };
 
 export type paginatedMessage = {
@@ -93,6 +102,7 @@ let data: Data = {
   messages: [],
   dms: [],
   tokens: [],
+  resetCodes: [],
   reactIds: [1],
 };
 

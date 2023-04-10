@@ -5,9 +5,11 @@ import {
   requestClear,
   requestAuthLogOut,
   BAD_REQUEST,
+  FORBIDDEN,
+  requestAuthPasswordresetRequest,
+  requestAuthPasswordresetReset,
+  OK,
 } from '../helperFunctions/helperServer';
-
-const OK = 200;
 
 beforeEach(() => {
   requestClear();
@@ -302,6 +304,7 @@ describe('/auth/logout/v2 testing', () => {
       'firstName',
       'lastName'
     );
+
     const logoutAuthUserId = requestAuthLogOut(
       registerAuthUserId.bodyObj.token
     );
@@ -335,5 +338,86 @@ describe('/auth/logout/v2 testing', () => {
       registerAuthUserId1.bodyObj.authUserId
     );
     expect(userProfile.statusCode).toStrictEqual(BAD_REQUEST);
+  });
+});
+
+describe('auth/passwordreset/request/v1', () => {
+  test('Test-1: Success, where all user has logged out of all sessions', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      '123455',
+      'firstName',
+      'lastName'
+    );
+
+    const firstSession = requestAuthLogin('test1@gmail.com', '123455');
+    const secondSession = requestAuthLogin('test1@gmail.com', '123455');
+
+    const passwordResetRequest =
+      requestAuthPasswordresetRequest('test1@gmail.com');
+
+    expect(passwordResetRequest.statusCode).toBe(OK);
+    expect(
+      requestUserProfile(test1.bodyObj.token, test1.bodyObj.authUserId)
+        .statusCode
+    ).toBe(BAD_REQUEST);
+    expect(
+      requestUserProfile(firstSession.bodyObj.token, test1.bodyObj.authUserId)
+        .statusCode
+    ).toBe(BAD_REQUEST);
+    expect(
+      requestUserProfile(secondSession.bodyObj.token, test1.bodyObj.authUserId)
+        .statusCode
+    ).toBe(BAD_REQUEST);
+  });
+
+  test('Test-2: Unsuccess, invalid email address but no error message', () => {
+    requestAuthRegister('test1@gmail.com', '123455', 'firstName', 'lastName');
+
+    const passwordResetRequest =
+      requestAuthPasswordresetRequest('test2@gmail.edu.au');
+
+    expect(passwordResetRequest.statusCode).toBe(OK);
+    expect(passwordResetRequest.bodyObj).toStrictEqual({});
+  });
+
+  test('Test-3: real time testing', () => {
+    requestAuthRegister(
+      'zhangzhenbo918@gmail.com',
+      '123455',
+      'firstName',
+      'lastName'
+    );
+
+    const passwordResetRequest = requestAuthPasswordresetRequest(
+      'zhangzhenbo918@gmail.com'
+    );
+
+    expect(passwordResetRequest.statusCode).toBe(OK);
+    expect(passwordResetRequest.bodyObj).toStrictEqual({});
+  });
+});
+
+describe('auth/passwordreset/reset/v1', () => {
+  test('Test-1: Error, resetCode is not a valid reset code', () => {
+    requestAuthRegister('test1@gmail.com', '123456', 'firstName', 'lastName');
+
+    requestAuthPasswordresetRequest('test1@gmail.edu.au');
+
+    const passWordResetObj = requestAuthPasswordresetReset(
+      'resetCodeIsNotAValidResetCode',
+      '1234567'
+    );
+    expect(passWordResetObj.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-2: Error, newPassword is less than 6 characters long', () => {
+    requestAuthRegister('test1@gmail.com', '123456', 'firstName', 'lastName');
+    requestAuthPasswordresetRequest('test1@gmail.edu.au');
+    const passWordResetObj = requestAuthPasswordresetReset(
+      '5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9',
+      '1234'
+    );
+    expect(passWordResetObj.statusCode).toBe(BAD_REQUEST);
   });
 });

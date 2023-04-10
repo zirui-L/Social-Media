@@ -9,6 +9,7 @@ import {
 } from '../dataStore';
 import fs from 'fs';
 import crypto from 'crypto';
+const Jimp = require('jimp');
 
 export const SECRET = 'SECRETSTRING';
 
@@ -407,3 +408,15 @@ export const isReactIdValid = (reactId: number): boolean => {
   const data = getData();
   return data.reactIds.includes(reactId);
 };
+
+export async function configureImgSize(
+  imgUrl: string,
+  imgPath: string,
+  xStart: number,
+  yStart: number,
+  width: number,
+  height: number
+) {
+  const image = await Jimp.read(imgUrl);
+  await image.crop(xStart, yStart, width, height).write(imgPath);
+}

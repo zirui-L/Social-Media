@@ -67,6 +67,7 @@ export const channelDetailsV3 = (
       nameFirst: currentUser.nameFirst,
       nameLast: currentUser.nameLast,
       handleStr: currentUser.handleStr,
+      profileImgUrl: currentUser.profileImgUrl,
     });
   }
 
@@ -79,6 +80,7 @@ export const channelDetailsV3 = (
       nameFirst: currentUser.nameFirst,
       nameLast: currentUser.nameLast,
       handleStr: currentUser.handleStr,
+      profileImgUrl: currentUser.profileImgUrl,
     });
   }
 

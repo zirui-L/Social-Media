@@ -374,6 +374,7 @@ describe('Testing /dm/details/v2', () => {
           nameFirst: 'Richardo',
           nameLast: 'Li',
           handleStr: 'richardoli',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: user2.authUserId,
@@ -381,6 +382,7 @@ describe('Testing /dm/details/v2', () => {
           nameFirst: 'Shenba',
           nameLast: 'Chen',
           handleStr: 'shenbachen',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: user3.authUserId,
@@ -388,6 +390,7 @@ describe('Testing /dm/details/v2', () => {
           nameFirst: 'Kunda',
           nameLast: 'Yu',
           handleStr: 'kundayu',
+          profileImgUrl: expect.any(String),
         },
       ],
     });
@@ -523,6 +526,7 @@ describe('Testing /dm/leave/v2', () => {
           nameFirst: 'Shenba',
           nameLast: 'Chen',
           handleStr: 'shenbachen',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: user3.authUserId,
@@ -530,6 +534,7 @@ describe('Testing /dm/leave/v2', () => {
           nameFirst: 'Kunda',
           nameLast: 'Yu',
           handleStr: 'kundayu',
+          profileImgUrl: expect.any(String),
         },
       ],
     });

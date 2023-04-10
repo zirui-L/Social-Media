@@ -1,6 +1,6 @@
 import request, { HttpVerb } from 'sync-request';
 import { port, url } from '../config.json';
-const SERVER_URL = `${url}:${port}`;
+export const SERVER_URL = `${url}:${port}`;
 
 export const OK = 200;
 export const BAD_REQUEST = 400;
@@ -359,6 +359,42 @@ export const requestUserProfileSetHandle = (
     {
       handleStr,
     },
+    token
+  );
+};
+export const requestAuthPasswordresetRequest = (email: string) => {
+  return httpRequestHandle(
+    'POST',
+    '/auth/passwordreset/request/v1',
+    { email },
+    ''
+  );
+};
+
+export const requestAuthPasswordresetReset = (
+  resetCode: string,
+  newPassword: string
+) => {
+  return httpRequestHandle(
+    'POST',
+    '/auth/passwordreset/reset/v1',
+    { resetCode, newPassword },
+    ''
+  );
+};
+
+export const requestUserProfileUploadPhoto = (
+  token: string,
+  imgUrl: string,
+  xStart: number,
+  yStart: number,
+  xEnd: number,
+  yEnd: number
+) => {
+  return httpRequestHandle(
+    'POST',
+    '/user/profile/uploadphoto/v1',
+    { imgUrl, xStart, yStart, xEnd, yEnd },
     token
   );
 };

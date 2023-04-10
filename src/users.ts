@@ -7,11 +7,20 @@ import {
   isAvaliableHandleString,
   findUser,
   findUserFromToken,
+  configureImgSize,
 } from './helperFunctions/helperFunctions';
 import validator from 'validator';
 
-import { BAD_REQUEST } from './helperFunctions/helperServer';
+import fs from 'fs';
+
+import {
+  BAD_REQUEST,
+  FORBIDDEN,
+  OK,
+  SERVER_URL,
+} from './helperFunctions/helperServer';
 import HTTPError from 'http-errors';
+import request from 'sync-request';
 
 type UserObject = {
   user: User;
@@ -36,13 +45,12 @@ export const userProfileV3 = (token: string, uId: number): UserObject => {
   const data = getData();
   // check validity of inputs
   const tokenId = isTokenValid(token);
-  console.log(token);
-  console.log(tokenId);
   if (!tokenId) {
     throw HTTPError(BAD_REQUEST, 'Invalid token');
   } else if (!isAuthUserIdValid(uId)) {
     throw HTTPError(BAD_REQUEST, 'uId does not refer to a valid user');
   }
+
   // return user's detail
   for (const user of data.users) {
     if (user.authUserId === uId) {
@@ -53,6 +61,7 @@ export const userProfileV3 = (token: string, uId: number): UserObject => {
           nameFirst: user.nameFirst,
           nameLast: user.nameLast,
           handleStr: user.handleStr,
+          profileImgUrl: user.profileImgUrl,
         },
       };
     }
@@ -87,6 +96,7 @@ export const usersAllV2 = (token: string): UsersObject => {
       nameFirst: user.nameFirst,
       nameLast: user.nameLast,
       handleStr: user.handleStr,
+      profileImgUrl: user.profileImgUrl,
     });
   }
 
@@ -215,6 +225,88 @@ export const userProfileSetHandleV2 = (
   // change handleStr and updated to data
   user.handleStr = handleStr;
 
+  setData(data);
+  return {};
+};
+
+/**
+ * <Given a URL of an image on the internet, crops the image within bounds
+ * (xStart, yStart) and (xEnd, yEnd). Position (0,0) is the top left. Please
+ * note: the URL needs to be a non-https URL (it should just have "http://" in
+ * the URL). We will only test with non-https URLs.>
+ *
+ * @param {string} token - token for the requested user
+ * @param {string} imgUrl - updated user handlerStr
+ * @param {number} xStart - updated user handlerStr
+ * @param {number} yStart - updated user handlerStr
+ * @param {number} xEnd - updated user handlerStr
+ * @param {number} yEnd - updated user handlerStr
+ *
+ * @returns {Error} - return when any of:
+ * 1. length of handleStr is not between 3 and 20 characters inclusive
+ * 2. handleStr contains characters that are not alphanumeric
+ * 3. the handle is already used by another user
+ * 4. token is invalid
+ * @returns {} - return when error condition are avoided
+ *
+ */
+export const userProfileUploadPhotoV1 = (
+  token: string,
+  imgUrl: string,
+  xStart: number,
+  yStart: number,
+  xEnd: number,
+  yEnd: number
+) => {
+  const data = getData();
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(FORBIDDEN, 'Invalid token');
+  } else if (xEnd <= xStart || yEnd <= yStart) {
+    throw HTTPError(BAD_REQUEST, 'Incorrect input dimension');
+  } else if (!imgUrl.endsWith('.jpg') || !imgUrl.startsWith('http://')) {
+    throw HTTPError(BAD_REQUEST, 'image uploaded is not a JPG');
+  }
+
+  // Check if the image is valid
+  const res = request('GET', imgUrl);
+  if (res.statusCode !== OK) {
+    throw HTTPError(BAD_REQUEST, 'Error when retrieving the image');
+  }
+
+  const authUserId = findUserFromToken(tokenId);
+  const user = findUser(authUserId);
+  const body = res.getBody();
+
+  // Check if xStart, yStart, xEnd, yEnd are within the dimension of the image
+  let imgPath = 'profileImgs/check_size.jpg';
+  fs.writeFileSync(imgPath, body, { flag: 'w' });
+
+  const imageSize = require('image-size');
+  const dimension = imageSize(imgPath);
+  if (
+    xStart < 0 ||
+    yStart < 0 ||
+    xEnd > dimension.width ||
+    yEnd > dimension.height
+  ) {
+    throw HTTPError(BAD_REQUEST, 'Incorrect input dimension');
+  }
+
+  // Update the image uploaded
+  imgPath = 'profileImgs/' + `${authUserId}` + '.jpg';
+  fs.writeFileSync(imgPath, body, { flag: 'w' });
+  user.profileImgUrl = SERVER_URL + '/' + imgPath;
+
+  configureImgSize(
+    imgUrl,
+    imgPath,
+    xStart,
+    yStart,
+    xEnd - xStart,
+    yEnd - yStart
+  );
   setData(data);
   return {};
 };

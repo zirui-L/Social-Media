@@ -205,6 +205,7 @@ export const dmDetailsV2 = (token: string, dmId: number): DmDetails => {
       nameFirst: member.nameFirst,
       nameLast: member.nameLast,
       handleStr: member.handleStr,
+      profileImgUrl: member.profileImgUrl,
     });
   }
   return {
