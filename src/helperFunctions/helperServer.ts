@@ -382,3 +382,19 @@ export const requestAuthPasswordresetReset = (
     ''
   );
 };
+
+export const requestUserProfileUploadPhoto = (
+  token: string,
+  imgUrl: string,
+  xStart: number,
+  yStart: number,
+  xEnd: number,
+  yEnd: number
+) => {
+  return httpRequestHandle(
+    'POST',
+    '/user/profile/uploadphoto/v1',
+    { imgUrl, xStart, yStart, xEnd, yEnd },
+    token
+  );
+};

@@ -25,6 +25,7 @@ import {
   userProfileSetEmailV2,
   userProfileSetHandleV2,
   userProfileSetNameV2,
+  userProfileUploadPhotoV1,
 } from './users';
 import {
   messageEditV2,
@@ -281,6 +282,13 @@ app.post('/auth/passwordreset/request/v1', (req: Request, res: Response) => {
 app.post('/auth/passwordreset/reset/v1', (req: Request, res: Response) => {
   const { resetCode, newPassword } = req.body;
   res.json(authPasswordresetResetV1(resetCode, newPassword));
+  storeData();
+});
+
+app.post('/user/profile/uploadphoto/v1', (req: Request, res: Response) => {
+  const { imgUrl, xStart, yStart, xEnd, yEnd } = req.body;
+  const token = req.header('token');
+  res.json(userProfileUploadPhotoV1(token, imgUrl, xStart, yStart, xEnd, yEnd));
   storeData();
 });
 

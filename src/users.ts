@@ -10,7 +10,7 @@ import {
 } from './helperFunctions/helperFunctions';
 import validator from 'validator';
 
-import { BAD_REQUEST } from './helperFunctions/helperServer';
+import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
 import HTTPError from 'http-errors';
 
 type UserObject = {
@@ -52,6 +52,7 @@ export const userProfileV3 = (token: string, uId: number): UserObject => {
           nameFirst: user.nameFirst,
           nameLast: user.nameLast,
           handleStr: user.handleStr,
+          profileImgUrl: user.profileImgUrl,
         },
       };
     }
@@ -86,6 +87,7 @@ export const usersAllV2 = (token: string): UsersObject => {
       nameFirst: user.nameFirst,
       nameLast: user.nameLast,
       handleStr: user.handleStr,
+      profileImgUrl: user.profileImgUrl,
     });
   }
 
@@ -217,3 +219,33 @@ export const userProfileSetHandleV2 = (
   setData(data);
   return {};
 };
+
+/**
+ * <Given a URL of an image on the internet, crops the image within bounds
+ * (xStart, yStart) and (xEnd, yEnd). Position (0,0) is the top left. Please
+ * note: the URL needs to be a non-https URL (it should just have "http://" in
+ * the URL). We will only test with non-https URLs.>
+ *
+ * @param {string} token - token for the requested user
+ * @param {string} imgUrl - updated user handlerStr
+ * @param {number} xStart - updated user handlerStr
+ * @param {number} yStart - updated user handlerStr
+ * @param {number} xEnd - updated user handlerStr
+ * @param {number} yEnd - updated user handlerStr
+ *
+ * @returns {Error} - return when any of:
+ * 1. length of handleStr is not between 3 and 20 characters inclusive
+ * 2. handleStr contains characters that are not alphanumeric
+ * 3. the handle is already used by another user
+ * 4. token is invalid
+ * @returns {} - return when error condition are avoided
+ *
+ */
+export const userProfileUploadPhotoV1 = (
+  token: string,
+  imgUrl: string,
+  xStart: number,
+  yStart: number,
+  xEnd: number,
+  yEnd: number
+) => {};

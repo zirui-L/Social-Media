@@ -48,6 +48,7 @@ export type storedUser = {
   permissionId: number;
   channels: Array<number>;
   dms: Array<number>;
+  profileImgUrl: string;
 };
 
 export type User = {
@@ -56,6 +57,7 @@ export type User = {
   nameFirst: string;
   nameLast: string;
   handleStr: string;
+  profileImgUrl: string;
 };
 
 export type Dm = {

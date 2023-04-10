@@ -16,6 +16,9 @@ import { BAD_REQUEST } from './helperFunctions/helperServer';
 import HTTPError from 'http-errors';
 import { sendPasswordResetEmail } from './helperFunctions/emailHelper';
 
+const DEFAULT_PROFILE_PIC =
+  'https://www.personality-insights.com/wp-content/uploads/2017/12/default-profile-pic-e1513291410505.jpg';
+
 type UIdAndToken = { token: string; authUserId: number }; // Reture object type
 
 /**
@@ -185,6 +188,7 @@ export const authRegisterV3 = (
     channels: [],
     permissionId: permissionId,
     dms: [],
+    profileImgUrl: DEFAULT_PROFILE_PIC,
   });
 
   // create a unique token in numbers and convert it to string
