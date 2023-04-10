@@ -115,6 +115,7 @@ describe('Testing /channel/details/v3', () => {
           nameFirst: 'Richardo',
           nameLast: 'Li',
           handleStr: 'richardoli',
+          profileImgUrl: expect.any(String),
         },
       ],
       allMembers: [
@@ -124,6 +125,7 @@ describe('Testing /channel/details/v3', () => {
           nameFirst: 'Richardo',
           nameLast: 'Li',
           handleStr: 'richardoli',
+          profileImgUrl: expect.any(String),
         },
       ],
     });
@@ -173,6 +175,7 @@ describe('Testing /channel/details/v3', () => {
           nameFirst: 'Richardo',
           nameLast: 'Li',
           handleStr: 'richardoli',
+          profileImgUrl: expect.any(String),
         },
       ],
       allMembers: [
@@ -182,6 +185,7 @@ describe('Testing /channel/details/v3', () => {
           nameFirst: 'Richardo',
           nameLast: 'Li',
           handleStr: 'richardoli',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: test2.bodyObj.authUserId,
@@ -189,6 +193,7 @@ describe('Testing /channel/details/v3', () => {
           nameFirst: 'Shenba',
           nameLast: 'Chen',
           handleStr: 'shenbachen',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: test3.bodyObj.authUserId,
@@ -196,6 +201,7 @@ describe('Testing /channel/details/v3', () => {
           nameFirst: 'Kunda',
           nameLast: 'Yu',
           handleStr: 'kundayu',
+          profileImgUrl: expect.any(String),
         },
       ],
     });
@@ -557,6 +563,7 @@ describe('/channel/invite/v3 testing', () => {
           nameFirst: 'Richardo',
           nameLast: 'Lee',
           handleStr: 'richardolee',
+          profileImgUrl: expect.any(String),
         },
       ],
       allMembers: [
@@ -566,6 +573,7 @@ describe('/channel/invite/v3 testing', () => {
           nameFirst: 'Richardo',
           nameLast: 'Lee',
           handleStr: 'richardolee',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: test2.bodyObj.authUserId,
@@ -573,12 +581,13 @@ describe('/channel/invite/v3 testing', () => {
           nameFirst: 'Shenba',
           nameLast: 'Chen',
           handleStr: 'shenbachen',
+          profileImgUrl: expect.any(String),
         },
       ],
     });
   });
 
-  test('Inviting global owner into the channel', () => {
+  test('Test-8: Inviting global owner into the channel', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
@@ -620,6 +629,7 @@ describe('/channel/invite/v3 testing', () => {
           nameFirst: 'Shenba',
           nameLast: 'Chen',
           handleStr: 'shenbachen',
+          profileImgUrl: expect.any(String),
         },
       ],
       allMembers: [
@@ -629,6 +639,7 @@ describe('/channel/invite/v3 testing', () => {
           nameFirst: 'Shenba',
           nameLast: 'Chen',
           handleStr: 'shenbachen',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: test1.bodyObj.authUserId,
@@ -636,6 +647,7 @@ describe('/channel/invite/v3 testing', () => {
           nameFirst: 'Richardo',
           nameLast: 'Lee',
           handleStr: 'richardolee',
+          profileImgUrl: expect.any(String),
         },
       ],
     });
@@ -1133,6 +1145,7 @@ describe('Testing /channel/leave/v2', () => {
           nameFirst: 'Richardo',
           nameLast: 'Lee',
           handleStr: 'richardolee',
+          profileImgUrl: expect.any(String),
         },
       ],
       allMembers: [
@@ -1142,6 +1155,7 @@ describe('Testing /channel/leave/v2', () => {
           nameFirst: 'Richardo',
           nameLast: 'Lee',
           handleStr: 'richardolee',
+          profileImgUrl: expect.any(String),
         },
       ],
     });
@@ -1209,6 +1223,7 @@ describe('Testing /channel/leave/v2', () => {
           nameFirst: 'firstName',
           nameLast: 'lastName',
           handleStr: 'firstnamelastname',
+          profileImgUrl: expect.any(String),
         },
       ],
     });
@@ -1480,6 +1495,7 @@ describe('Testing /channel/addowner/v2', () => {
           nameFirst: 'Richardo',
           nameLast: 'Lee',
           handleStr: 'richardolee',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: test2.bodyObj.authUserId,
@@ -1487,6 +1503,7 @@ describe('Testing /channel/addowner/v2', () => {
           nameFirst: 'firstName',
           nameLast: 'lastName',
           handleStr: 'firstnamelastname',
+          profileImgUrl: expect.any(String),
         },
       ],
       allMembers: [
@@ -1496,6 +1513,7 @@ describe('Testing /channel/addowner/v2', () => {
           nameFirst: 'Richardo',
           nameLast: 'Lee',
           handleStr: 'richardolee',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: test2.bodyObj.authUserId,
@@ -1503,6 +1521,7 @@ describe('Testing /channel/addowner/v2', () => {
           nameFirst: 'firstName',
           nameLast: 'lastName',
           handleStr: 'firstnamelastname',
+          profileImgUrl: expect.any(String),
         },
       ],
     });
@@ -1590,6 +1609,7 @@ describe('Testing /channel/addowner/v2', () => {
           nameFirst: 'firstname0',
           nameLast: 'lastname0',
           handleStr: 'firstname0lastname0',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member1.bodyObj.authUserId,
@@ -1597,6 +1617,7 @@ describe('Testing /channel/addowner/v2', () => {
           nameFirst: 'firstname1',
           nameLast: 'lastname1',
           handleStr: 'firstname1lastname1',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member3.bodyObj.authUserId,
@@ -1604,6 +1625,7 @@ describe('Testing /channel/addowner/v2', () => {
           nameFirst: 'firstname3',
           nameLast: 'lastname3',
           handleStr: 'firstname3lastname3',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member5.bodyObj.authUserId,
@@ -1611,6 +1633,7 @@ describe('Testing /channel/addowner/v2', () => {
           nameFirst: 'firstname5',
           nameLast: 'lastname5',
           handleStr: 'firstname5lastname5',
+          profileImgUrl: expect.any(String),
         },
       ],
       allMembers: [
@@ -1620,6 +1643,7 @@ describe('Testing /channel/addowner/v2', () => {
           nameFirst: 'firstname0',
           nameLast: 'lastname0',
           handleStr: 'firstname0lastname0',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member1.bodyObj.authUserId,
@@ -1627,6 +1651,7 @@ describe('Testing /channel/addowner/v2', () => {
           nameFirst: 'firstname1',
           nameLast: 'lastname1',
           handleStr: 'firstname1lastname1',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member2.bodyObj.authUserId,
@@ -1634,6 +1659,7 @@ describe('Testing /channel/addowner/v2', () => {
           nameFirst: 'firstname2',
           nameLast: 'lastname2',
           handleStr: 'firstname2lastname2',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member3.bodyObj.authUserId,
@@ -1641,6 +1667,7 @@ describe('Testing /channel/addowner/v2', () => {
           nameFirst: 'firstname3',
           nameLast: 'lastname3',
           handleStr: 'firstname3lastname3',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member4.bodyObj.authUserId,
@@ -1648,6 +1675,7 @@ describe('Testing /channel/addowner/v2', () => {
           nameFirst: 'firstname4',
           nameLast: 'lastname4',
           handleStr: 'firstname4lastname4',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member5.bodyObj.authUserId,
@@ -1655,6 +1683,7 @@ describe('Testing /channel/addowner/v2', () => {
           nameFirst: 'firstname5',
           nameLast: 'lastname5',
           handleStr: 'firstname5lastname5',
+          profileImgUrl: expect.any(String),
         },
       ],
     });
@@ -1902,6 +1931,7 @@ describe('Testing /channel/removeowner/v2', () => {
           nameFirst: 'Richardo',
           nameLast: 'Lee',
           handleStr: 'richardolee',
+          profileImgUrl: expect.any(String),
         },
       ],
       allMembers: [
@@ -1911,6 +1941,7 @@ describe('Testing /channel/removeowner/v2', () => {
           nameFirst: 'Richardo',
           nameLast: 'Lee',
           handleStr: 'richardolee',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: test2.bodyObj.authUserId,
@@ -1918,6 +1949,7 @@ describe('Testing /channel/removeowner/v2', () => {
           nameFirst: 'firstName',
           nameLast: 'lastName',
           handleStr: 'firstnamelastname',
+          profileImgUrl: expect.any(String),
         },
       ],
     });
@@ -2028,6 +2060,7 @@ describe('Testing /channel/removeowner/v2', () => {
           nameFirst: 'firstname0',
           nameLast: 'lastname0',
           handleStr: 'firstname0lastname0',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member2.bodyObj.authUserId,
@@ -2035,6 +2068,7 @@ describe('Testing /channel/removeowner/v2', () => {
           nameFirst: 'firstname2',
           nameLast: 'lastname2',
           handleStr: 'firstname2lastname2',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member4.bodyObj.authUserId,
@@ -2042,6 +2076,7 @@ describe('Testing /channel/removeowner/v2', () => {
           nameFirst: 'firstname4',
           nameLast: 'lastname4',
           handleStr: 'firstname4lastname4',
+          profileImgUrl: expect.any(String),
         },
       ],
       allMembers: [
@@ -2051,6 +2086,7 @@ describe('Testing /channel/removeowner/v2', () => {
           nameFirst: 'firstname0',
           nameLast: 'lastname0',
           handleStr: 'firstname0lastname0',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member1.bodyObj.authUserId,
@@ -2058,6 +2094,7 @@ describe('Testing /channel/removeowner/v2', () => {
           nameFirst: 'firstname1',
           nameLast: 'lastname1',
           handleStr: 'firstname1lastname1',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member2.bodyObj.authUserId,
@@ -2065,6 +2102,7 @@ describe('Testing /channel/removeowner/v2', () => {
           nameFirst: 'firstname2',
           nameLast: 'lastname2',
           handleStr: 'firstname2lastname2',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member3.bodyObj.authUserId,
@@ -2072,6 +2110,7 @@ describe('Testing /channel/removeowner/v2', () => {
           nameFirst: 'firstname3',
           nameLast: 'lastname3',
           handleStr: 'firstname3lastname3',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member4.bodyObj.authUserId,
@@ -2079,6 +2118,7 @@ describe('Testing /channel/removeowner/v2', () => {
           nameFirst: 'firstname4',
           nameLast: 'lastname4',
           handleStr: 'firstname4lastname4',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: member5.bodyObj.authUserId,
@@ -2086,6 +2126,7 @@ describe('Testing /channel/removeowner/v2', () => {
           nameFirst: 'firstname5',
           nameLast: 'lastname5',
           handleStr: 'firstname5lastname5',
+          profileImgUrl: expect.any(String),
         },
       ],
     });

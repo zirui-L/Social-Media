@@ -52,10 +52,6 @@ import config from './config.json';
 import cors from 'cors';
 import fs from 'fs';
 import errorHandler from 'middleware-http-errors';
-import {
-  requestAuthPasswordresetRequest,
-  requestAuthPasswordresetReset,
-} from './helperFunctions/helperServer';
 
 // Set up web app
 const app = express();

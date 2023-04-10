@@ -93,6 +93,7 @@ describe('Testing /user/profile/v3 route', () => {
         nameFirst: 'Shenba',
         nameLast: 'Chen',
         handleStr: 'shenbachen',
+        profileImgUrl: expect.any(String),
       },
     });
   });
@@ -120,6 +121,7 @@ describe('Testing /user/profile/v3 route', () => {
         nameFirst: 'Richardo',
         nameLast: 'Lee',
         handleStr: 'richardolee',
+        profileImgUrl: expect.any(String),
       },
     });
   });
@@ -161,6 +163,7 @@ describe('Testing /users/all/v2 route', () => {
           nameFirst: 'Richardo',
           nameLast: 'Lee',
           handleStr: 'richardolee',
+          profileImgUrl: expect.any(String),
         },
       ],
     });
@@ -200,6 +203,7 @@ describe('Testing /users/all/v2 route', () => {
           nameFirst: 'firstName1',
           nameLast: 'lastName1',
           handleStr: 'firstname1lastname1',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: test2.bodyObj.authUserId,
@@ -207,6 +211,7 @@ describe('Testing /users/all/v2 route', () => {
           nameFirst: 'firstName2',
           nameLast: 'lastName2',
           handleStr: 'firstname2lastname2',
+          profileImgUrl: expect.any(String),
         },
         {
           uId: test3.bodyObj.authUserId,
@@ -214,6 +219,7 @@ describe('Testing /users/all/v2 route', () => {
           nameFirst: 'firstName3',
           nameLast: 'lastName3',
           handleStr: 'firstname3lastname3',
+          profileImgUrl: expect.any(String),
         },
       ],
     });
@@ -330,6 +336,7 @@ describe('Testing /user/profile/setname/v2 route', () => {
         nameFirst: 'Richardo',
         nameLast: 'Lee',
         handleStr: 'firstname1lastname1',
+        profileImgUrl: expect.any(String),
       },
     });
   });
@@ -426,6 +433,7 @@ describe('Testing /user/profile/setemail/v2 route', () => {
         nameFirst: 'firstName1',
         nameLast: 'lastName1',
         handleStr: 'firstname1lastname1',
+        profileImgUrl: expect.any(String),
       },
     });
   });
@@ -567,6 +575,7 @@ describe('Testing /user/profile/sethandle/v2 route', () => {
         nameFirst: 'firstName1',
         nameLast: 'lastName1',
         handleStr: '12345',
+        profileImgUrl: expect.any(String),
       },
     });
   });

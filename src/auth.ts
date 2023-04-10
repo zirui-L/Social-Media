@@ -11,13 +11,12 @@ import {
   findUser,
 } from './helperFunctions/helperFunctions';
 
-import { BAD_REQUEST } from './helperFunctions/helperServer';
+import { BAD_REQUEST, SERVER_URL } from './helperFunctions/helperServer';
 
 import HTTPError from 'http-errors';
 import { sendPasswordResetEmail } from './helperFunctions/emailHelper';
 
-const DEFAULT_PROFILE_PIC =
-  'https://www.personality-insights.com/wp-content/uploads/2017/12/default-profile-pic-e1513291410505.jpg';
+const DEFAULT_PROFILE_PIC = SERVER_URL + '/profileImgs/default.jpg';
 
 type UIdAndToken = { token: string; authUserId: number }; // Reture object type
 

@@ -7,11 +7,20 @@ import {
   isAvaliableHandleString,
   findUser,
   findUserFromToken,
+  configureImgSize,
 } from './helperFunctions/helperFunctions';
 import validator from 'validator';
 
-import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
+import fs from 'fs';
+
+import {
+  BAD_REQUEST,
+  FORBIDDEN,
+  OK,
+  SERVER_URL,
+} from './helperFunctions/helperServer';
 import HTTPError from 'http-errors';
+import request from 'sync-request';
 
 type UserObject = {
   user: User;
@@ -248,4 +257,56 @@ export const userProfileUploadPhotoV1 = (
   yStart: number,
   xEnd: number,
   yEnd: number
-) => {};
+) => {
+  const data = getData();
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(FORBIDDEN, 'Invalid token');
+  } else if (xEnd <= xStart || yEnd <= yStart) {
+    throw HTTPError(BAD_REQUEST, 'Incorrect input dimension');
+  } else if (!imgUrl.endsWith('.jpg') || !imgUrl.startsWith('http://')) {
+    throw HTTPError(BAD_REQUEST, 'image uploaded is not a JPG');
+  }
+
+  // Check if the image is valid
+  const res = request('GET', imgUrl);
+  if (res.statusCode !== OK) {
+    throw HTTPError(BAD_REQUEST, 'Error when retrieving the image');
+  }
+
+  const authUserId = findUserFromToken(tokenId);
+  const user = findUser(authUserId);
+  const body = res.getBody();
+
+  // Check if xStart, yStart, xEnd, yEnd are within the dimension of the image
+  let imgPath = 'profileImgs/check_size.jpg';
+  fs.writeFileSync(imgPath, body, { flag: 'w' });
+
+  const imageSize = require('image-size');
+  const dimension = imageSize(imgPath);
+  if (
+    xStart < 0 ||
+    yStart < 0 ||
+    xEnd > dimension.width ||
+    yEnd > dimension.height
+  ) {
+    throw HTTPError(BAD_REQUEST, 'Incorrect input dimension');
+  }
+
+  // Update the image uploaded
+  imgPath = 'profileImgs/' + `${authUserId}` + '.jpg';
+  fs.writeFileSync(imgPath, body, { flag: 'w' });
+  user.profileImgUrl = SERVER_URL + '/' + imgPath;
+
+  configureImgSize(
+    imgUrl,
+    imgPath,
+    xStart,
+    yStart,
+    xEnd - xStart,
+    yEnd - yStart
+  );
+  setData(data);
+  return {};
+};
