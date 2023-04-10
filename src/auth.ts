@@ -41,7 +41,8 @@ export const authPasswordresetRequestV1 = (email: string) => {
     return {};
   }
 
-  const resetCode = getHashOf(email);
+  const resetCode = getHashOf(`${createUniqueId()}`);
+
   data.resetCodes.push({
     authUserId: user.authUserId,
     resetCode: resetCode,
@@ -52,15 +53,10 @@ export const authPasswordresetRequestV1 = (email: string) => {
   sendPasswordResetEmail(email, resetCode);
 
   // log user out of all sessions
-  for (const existingToken of data.tokens) {
-    if (existingToken.uId === user.authUserId) {
-      const indexToDelete = data.tokens.findIndex(
-        (userToken) => userToken.token === existingToken.token
-      );
+  data.tokens = data.tokens.filter(
+    (existingToken) => existingToken.uId !== user.authUserId
+  );
 
-      data.tokens.splice(indexToDelete, 1);
-    }
-  }
   setData(data);
   return {};
 };

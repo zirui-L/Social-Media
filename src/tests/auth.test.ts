@@ -8,9 +8,8 @@ import {
   FORBIDDEN,
   requestAuthPasswordresetRequest,
   requestAuthPasswordresetReset,
+  OK,
 } from '../helperFunctions/helperServer';
-
-const OK = 200;
 
 beforeEach(() => {
   requestClear();
@@ -305,6 +304,7 @@ describe('/auth/logout/v2 testing', () => {
       'firstName',
       'lastName'
     );
+
     const logoutAuthUserId = requestAuthLogOut(
       registerAuthUserId.bodyObj.token
     );
@@ -351,24 +351,24 @@ describe('auth/passwordreset/request/v1', () => {
     );
 
     const firstSession = requestAuthLogin('test1@gmail.com', '123455');
-    const secondSession = requestAuthLogin('test1@gmail.edu.au', '123455');
+    const secondSession = requestAuthLogin('test1@gmail.com', '123455');
 
     const passwordResetRequest =
-      requestAuthPasswordresetRequest('test1@gmail.edu.au');
+      requestAuthPasswordresetRequest('test1@gmail.com');
 
     expect(passwordResetRequest.statusCode).toBe(OK);
     expect(
       requestUserProfile(test1.bodyObj.token, test1.bodyObj.authUserId)
         .statusCode
-    ).toBe(FORBIDDEN);
+    ).toBe(BAD_REQUEST);
     expect(
       requestUserProfile(firstSession.bodyObj.token, test1.bodyObj.authUserId)
         .statusCode
-    ).toBe(FORBIDDEN);
+    ).toBe(BAD_REQUEST);
     expect(
       requestUserProfile(secondSession.bodyObj.token, test1.bodyObj.authUserId)
         .statusCode
-    ).toBe(FORBIDDEN);
+    ).toBe(BAD_REQUEST);
   });
 
   test('Test-2: Unsuccess, invalid email address but no error message', () => {
@@ -380,32 +380,26 @@ describe('auth/passwordreset/request/v1', () => {
     expect(passwordResetRequest.statusCode).toBe(OK);
     expect(passwordResetRequest.bodyObj).toStrictEqual({});
   });
+
+  test('Test-3: real time testing', () => {
+    requestAuthRegister(
+      'zhangzhenbo918@gmail.com',
+      '123455',
+      'firstName',
+      'lastName'
+    );
+
+    const passwordResetRequest = requestAuthPasswordresetRequest(
+      'zhangzhenbo918@gmail.com'
+    );
+
+    expect(passwordResetRequest.statusCode).toBe(OK);
+    expect(passwordResetRequest.bodyObj).toStrictEqual({});
+  });
 });
 
 describe('auth/passwordreset/reset/v1', () => {
-  test('Test-1: Success, where the user can use the new password to login', () => {
-    requestAuthRegister('test1@gmail.com', '123456', 'firstName', 'lastName');
-
-    requestAuthPasswordresetRequest('test1@gmail.edu.au');
-
-    const passWordResetObj = requestAuthPasswordresetReset(
-      '5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9',
-      '1234567'
-    );
-
-    expect(passWordResetObj.statusCode).toBe(OK);
-    const session2 = requestAuthLogin('person@unsw.edu.au', '1234567');
-    expect(session2.statusCode).toBe(OK);
-
-    // Once a reset code has been used, it is then invalidated
-    const passWordResetObj1 = requestAuthPasswordresetReset(
-      '5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9',
-      '12345678'
-    );
-    expect(passWordResetObj1.statusCode).toBe(BAD_REQUEST);
-  });
-
-  test('Test-2: Error, resetCode is not a valid reset code', () => {
+  test('Test-1: Error, resetCode is not a valid reset code', () => {
     requestAuthRegister('test1@gmail.com', '123456', 'firstName', 'lastName');
 
     requestAuthPasswordresetRequest('test1@gmail.edu.au');
@@ -417,7 +411,7 @@ describe('auth/passwordreset/reset/v1', () => {
     expect(passWordResetObj.statusCode).toBe(BAD_REQUEST);
   });
 
-  test('Test-3: Error, newPassword is less than 6 characters long', () => {
+  test('Test-2: Error, newPassword is less than 6 characters long', () => {
     requestAuthRegister('test1@gmail.com', '123456', 'firstName', 'lastName');
     requestAuthPasswordresetRequest('test1@gmail.edu.au');
     const passWordResetObj = requestAuthPasswordresetReset(

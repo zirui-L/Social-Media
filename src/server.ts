@@ -1,4 +1,10 @@
-import { authRegisterV3, authLoginV3, authLogOutV2 } from './auth';
+import {
+  authRegisterV3,
+  authLoginV3,
+  authLogOutV2,
+  authPasswordresetRequestV1,
+  authPasswordresetResetV1,
+} from './auth';
 import {
   channelsCreateV3,
   channelsListV3,
@@ -266,15 +272,15 @@ app.get('/dm/messages/v2', (req: Request, res: Response) => {
   storeData();
 });
 
-app.post('auth/passwordreset/request/v1', (req: Request, res: Response) => {
+app.post('/auth/passwordreset/request/v1', (req: Request, res: Response) => {
   const { email } = req.body;
-  res.json(requestAuthPasswordresetRequest(email));
+  res.json(authPasswordresetRequestV1(email));
   storeData();
 });
 
-app.post('auth/passwordreset/reset/v1', (req: Request, res: Response) => {
-  const { email, resetCode } = req.body;
-  res.json(requestAuthPasswordresetReset(email, resetCode));
+app.post('/auth/passwordreset/reset/v1', (req: Request, res: Response) => {
+  const { resetCode, newPassword } = req.body;
+  res.json(authPasswordresetResetV1(resetCode, newPassword));
   storeData();
 });
 

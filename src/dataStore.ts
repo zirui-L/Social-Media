@@ -71,7 +71,7 @@ export type Token = {
   uId: number;
 };
 
-type ResetCode = {
+export type ResetCode = {
   resetCode: string;
   authUserId: number;
   valid: boolean;
@@ -100,8 +100,8 @@ let data: Data = {
   messages: [],
   dms: [],
   tokens: [],
-  reactIds: [1],
   resetCodes: [],
+  reactIds: [1],
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

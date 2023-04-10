@@ -362,29 +362,23 @@ export const requestUserProfileSetHandle = (
     token
   );
 };
-
 export const requestAuthPasswordresetRequest = (email: string) => {
   return httpRequestHandle(
     'POST',
-    'auth/passwordreset/request/v1',
-    {
-      email,
-    },
+    '/auth/passwordreset/request/v1',
+    { email },
     ''
   );
 };
 
 export const requestAuthPasswordresetReset = (
-  email: string,
-  resetCode: string
+  resetCode: string,
+  newPassword: string
 ) => {
   return httpRequestHandle(
     'POST',
-    'auth/passwordreset/reset/v1',
-    {
-      email,
-      resetCode,
-    },
+    '/auth/passwordreset/reset/v1',
+    { resetCode, newPassword },
     ''
   );
 };
