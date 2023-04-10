@@ -91,7 +91,7 @@ export const authPasswordresetResetV1 = (
 
   // invalidate the resetCode and change password for the user
   const user = findUser(storedResetCodes.authUserId);
-  user.password = getHashOf(newPassword + SECRET);
+  user.password = newPassword + SECRET;
   storedResetCodes.valid = false;
   setData(data);
   return {};

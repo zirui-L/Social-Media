@@ -1,3 +1,4 @@
+import { getHashOf } from '../helperFunctions/helperFunctions';
 import {
   requestAuthLogin,
   requestAuthRegister,
