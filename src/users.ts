@@ -236,17 +236,20 @@ export const userProfileSetHandleV2 = (
  * the URL). We will only test with non-https URLs.>
  *
  * @param {string} token - token for the requested user
- * @param {string} imgUrl - updated user handlerStr
- * @param {number} xStart - updated user handlerStr
- * @param {number} yStart - updated user handlerStr
- * @param {number} xEnd - updated user handlerStr
- * @param {number} yEnd - updated user handlerStr
+ * @param {string} imgUrl - image url address
+ * @param {number} xStart - the start dimension of image, x-axis
+ * @param {number} yStart - the start dimension of image, y-axis
+ * @param {number} xEnd - the end dimension of image, x-axis
+ * @param {number} yEnd - the end dimension of image, y-axis
  *
- * @returns {Error} - return when any of:
- * 1. length of handleStr is not between 3 and 20 characters inclusive
- * 2. handleStr contains characters that are not alphanumeric
- * 3. the handle is already used by another user
- * 4. token is invalid
+ * @throws {Error} - return when any of:
+ * 1. imgUrl returns an HTTP status other than 200, or any other errors occur
+ *    when attempting to retrieve the image
+ * 2. any of xStart, yStart, xEnd, yEnd are not within the dimensions of the
+ *    image at the URL
+ * 3. xEnd is less than or equal to xStart or yEnd is less than or equal to
+ *    yStart
+ * 4. image uploaded is not a JPG
  * @returns {} - return when error condition are avoided
  *
  */

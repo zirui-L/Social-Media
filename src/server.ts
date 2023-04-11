@@ -52,6 +52,7 @@ import config from './config.json';
 import cors from 'cors';
 import fs from 'fs';
 import errorHandler from 'middleware-http-errors';
+import { standupActiveV1, standupSendV1, standupStartV1 } from './standup';
 
 // Set up web app
 const app = express();
@@ -285,6 +286,27 @@ app.post('/user/profile/uploadphoto/v1', (req: Request, res: Response) => {
   const { imgUrl, xStart, yStart, xEnd, yEnd } = req.body;
   const token = req.header('token');
   res.json(userProfileUploadPhotoV1(token, imgUrl, xStart, yStart, xEnd, yEnd));
+  storeData();
+});
+
+app.post('/standup/start/v1', (req: Request, res: Response) => {
+  const { channelId, length } = req.body;
+  const token = req.header('token');
+  res.json(standupStartV1(token, channelId, length));
+  storeData();
+});
+
+app.get('/standup/active/v1', (req: Request, res: Response) => {
+  const { channelId } = req.body;
+  const token = req.header('token');
+  res.json(standupActiveV1(token, channelId));
+  storeData();
+});
+
+app.post('/standup/send/v1', (req: Request, res: Response) => {
+  const { channelId, message } = req.body;
+  const token = req.header('token');
+  res.json(standupSendV1(token, channelId, message));
   storeData();
 });
 
