@@ -22,6 +22,8 @@ import {
 import HTTPError from 'http-errors';
 import request from 'sync-request';
 
+import { imageSize } from 'image-size';
+
 type UserObject = {
   user: User;
 };
@@ -286,7 +288,6 @@ export const userProfileUploadPhotoV1 = (
   let imgPath = 'profileImgs/check_size.jpg';
   fs.writeFileSync(imgPath, body, { flag: 'w' });
 
-  const imageSize = require('image-size');
   const dimension = imageSize(imgPath);
   if (
     xStart < 0 ||
