@@ -14,7 +14,6 @@ import {
   isStandupActive,
   recordStandupEnd,
 } from './helperFunctions/standupHelper';
-import { chdir } from 'process';
 
 /**
  * <For a given channel, starts a standup period lasting length seconds.>
