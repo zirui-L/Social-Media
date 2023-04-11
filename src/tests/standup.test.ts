@@ -1,3 +1,4 @@
+import { getTimeNow } from '../helperFunctions/helperFunctions';
 import {
   requestStandupActive,
   requestStandupSend,
@@ -15,7 +16,7 @@ import {
 
 import { createString } from './testHelper';
 
-const sleep = require('sleep');
+import { sleep } from './testHelper';
 
 // clear data before each test
 beforeEach(() => {
@@ -65,7 +66,7 @@ describe('standup/start/V1', () => {
 
     const res = requestStandupStart(
       test1.bodyObj.token,
-      channelId1.bodyObj.channelId,
+      channelId1.bodyObj.channelId + 1,
       1
     );
     expect(res.statusCode).toBe(BAD_REQUEST);
@@ -114,7 +115,7 @@ describe('standup/start/V1', () => {
       0
     );
     expect(res.statusCode).toBe(BAD_REQUEST);
-    sleep.msleep(2000);
+    sleep(2);
   });
 
   test('Test-5: Error, channelId is valid and the authorised user is not a member of the channel', () => {
@@ -142,6 +143,7 @@ describe('standup/start/V1', () => {
       channelId1.bodyObj.channelId,
       0
     );
+
     expect(res.statusCode).toBe(FORBIDDEN);
   });
 
@@ -151,13 +153,6 @@ describe('standup/start/V1', () => {
       'password1',
       'firstName1',
       'lastName1'
-    );
-
-    requestAuthRegister(
-      'test2@gmail.com',
-      'password2',
-      'firstName2',
-      'lastName2'
     );
 
     const channelId1 = requestChannelsCreate(
@@ -176,8 +171,6 @@ describe('standup/start/V1', () => {
 
     expect(res.bodyObj.timeFinish).toBeGreaterThanOrEqual(timeFinish);
 
-    sleep.msleep(2000);
-
     expect(
       requestChannelMessages(
         test1.bodyObj.token,
@@ -189,6 +182,8 @@ describe('standup/start/V1', () => {
       start: 0,
       end: -1,
     });
+
+    sleep(2);
   });
 });
 
@@ -201,20 +196,11 @@ describe('standup/active/V1', () => {
       'lastName1'
     );
 
-    const test2 = requestAuthRegister(
-      'test2@gmail.com',
-      'password2',
-      'firstName2',
-      'lastName2'
-    );
-
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
-
-    requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId1);
 
     const res = requestStandupActive(
       test1.bodyObj.token + '1',
@@ -231,20 +217,11 @@ describe('standup/active/V1', () => {
       'lastName1'
     );
 
-    const test2 = requestAuthRegister(
-      'test2@gmail.com',
-      'password2',
-      'firstName2',
-      'lastName2'
-    );
-
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
-
-    requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId1);
 
     const res = requestStandupActive(
       test1.bodyObj.token,
@@ -289,19 +266,11 @@ describe('standup/active/V1', () => {
       'lastName1'
     );
 
-    const test2 = requestAuthRegister(
-      'test2@gmail.com',
-      'password2',
-      'firstName2',
-      'lastName2'
-    );
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
-
-    requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId1);
 
     const res = requestStandupActive(
       test1.bodyObj.token,
@@ -334,11 +303,18 @@ describe('standup/active/V1', () => {
       'firstChannel',
       true
     );
+
     requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
-    const timeFinish = Math.floor(Date.now() / 1000) + 1;
 
-    requestStandupStart(test1.bodyObj.token, channelId1.bodyObj.channelId1, 1);
+    const timeFinish = getTimeNow() + 1;
 
+    const res1 = requestStandupStart(
+      test1.bodyObj.token,
+      channelId1.bodyObj.channelId,
+      1
+    );
+
+    expect(res1.statusCode).toBe(OK);
     const res = requestStandupActive(
       test2.bodyObj.token,
       channelId1.bodyObj.channelId
@@ -351,12 +327,11 @@ describe('standup/active/V1', () => {
 
     expect(res.bodyObj.timeFinish).toBeGreaterThanOrEqual(timeFinish);
 
-    sleep.msleep(2000);
+    sleep(2);
   });
 });
 
 describe('standup/send/V1', () => {
-  // Tests are combined to save time in the autotest
   test('Test-1: Error invalid token invalid channelId, length of message over 1000 characters, valid channelId but authUser is not in the channel', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
@@ -381,13 +356,13 @@ describe('standup/send/V1', () => {
 
     requestStandupStart(test1.bodyObj.token, channelId1.bodyObj.channelId, 1);
     const res = requestStandupSend(
-      test1.bodyObj.token + 1,
+      test1.bodyObj.token + '1',
       channelId1.bodyObj.channelId,
       'comp1531'
     );
 
     expect(res.statusCode).toBe(FORBIDDEN);
-    sleep.msleep(2000);
+    sleep(2);
   });
 
   test('Test-2: Error invalid  channelId', () => {
@@ -420,7 +395,7 @@ describe('standup/send/V1', () => {
     );
 
     expect(res.statusCode).toBe(BAD_REQUEST);
-    sleep.msleep(2000);
+    sleep(2);
   });
 
   test('Test-3: Error, length of message over 1000 characters', () => {
@@ -454,7 +429,7 @@ describe('standup/send/V1', () => {
     );
 
     expect(res.statusCode).toBe(BAD_REQUEST);
-    sleep.msleep(2000);
+    sleep(2);
   });
 
   test('Test-4: Error, valid channelId but authUser is not in the channel', () => {
@@ -486,7 +461,7 @@ describe('standup/send/V1', () => {
     );
 
     expect(res.statusCode).toBe(FORBIDDEN);
-    sleep.msleep(2000);
+    sleep(2);
   });
 
   test('Test-5: Error, an active standup is not currently running in the channel', () => {
@@ -515,6 +490,8 @@ describe('standup/send/V1', () => {
       'comp1531'
     );
     expect(res.statusCode).toBe(BAD_REQUEST);
+
+    sleep(2);
   });
 
   test('Test-6: Success, standup send', () => {
@@ -539,8 +516,6 @@ describe('standup/send/V1', () => {
 
     requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
 
-    requestStandupStart(test1.bodyObj.token, channelId1.bodyObj.channelId, 1);
-
     const timeFinish = requestStandupStart(
       test2.bodyObj.token,
       channelId1.bodyObj.channelId,
@@ -562,7 +537,8 @@ describe('standup/send/V1', () => {
       channelId1.bodyObj.channelId,
       'Thrid'
     );
-    sleep.msleep(2000);
+
+    sleep(2);
 
     const channelMessages = requestChannelMessages(
       test2.bodyObj.token,
@@ -576,7 +552,7 @@ describe('standup/send/V1', () => {
           messageId: expect.any(Number),
           uId: test2.bodyObj.authUserId,
           message:
-            'firstname2lastname2: First\nfirstname2lastname2: Second\nfirstname2lastname2: Thrid',
+            'firstname1lastname1: First\nfirstname2lastname2: Second\nfirstname1lastname1: Thrid',
           timeSent: timeFinish,
           reacts: [],
           isPinned: false,
@@ -610,5 +586,7 @@ describe('standup/send/V1', () => {
       start: 0,
       end: -1,
     });
+
+    sleep(2);
   });
 });

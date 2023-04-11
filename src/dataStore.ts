@@ -19,6 +19,7 @@ export type storedMessage = {
   dmOrChannelId: number;
   reacts: Array<React>;
   isPinned: boolean;
+  taggedUsers: Array<number>;
 };
 export type Message = {
   messageId: number;
@@ -29,6 +30,18 @@ export type Message = {
   isPinned: boolean;
 };
 
+type StandupMessages = {
+  sender: string;
+  message: string;
+};
+
+type Standup = {
+  starter: number | null;
+  isActive: boolean;
+  finishingTime: number | null;
+  messages: StandupMessages[];
+};
+
 export type Channel = {
   channelId: number;
   channelName: string;
@@ -36,6 +49,7 @@ export type Channel = {
   ownerMembers: Array<number>;
   allMembers: Array<number>;
   messages: Array<number>;
+  standUp: Standup;
 };
 
 export type storedUser = {
@@ -49,6 +63,7 @@ export type storedUser = {
   channels: Array<number>;
   dms: Array<number>;
   profileImgUrl: string;
+  messages: Array<number>;
 };
 
 export type User = {

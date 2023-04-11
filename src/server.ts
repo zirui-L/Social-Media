@@ -297,8 +297,8 @@ app.post('/standup/start/v1', (req: Request, res: Response) => {
 });
 
 app.get('/standup/active/v1', (req: Request, res: Response) => {
-  const { channelId } = req.body;
   const token = req.header('token');
+  const channelId = parseInt(String(req.query.channelId));
   res.json(standupActiveV1(token, channelId));
   storeData();
 });

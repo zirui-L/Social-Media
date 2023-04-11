@@ -1,3 +1,4 @@
+import { getTimeNow } from '../helperFunctions/helperFunctions';
 import { requestMessageSend } from '../helperFunctions/helperServer';
 
 export const createMessages = (
@@ -21,3 +22,8 @@ export function createString(length: number) {
 
   return result;
 }
+
+export const sleep = (sleepDuration: number) => {
+  const now = getTimeNow();
+  while (getTimeNow() < now + sleepDuration) {}
+};

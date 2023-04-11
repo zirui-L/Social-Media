@@ -9,6 +9,7 @@
     "test:userPhoto": "jest src/tests/userPhoto.test.ts",
     "test:message": "jest src/tests/message.test.ts",
     "test:dm": "jest src/tests/dm.test.ts",
+    "test:standup": "jest src/tests/standup.test.ts",
     "tsc": "tsc --project tsconfig.json",
     "lint": "eslint src/**.ts",
     "lint-fix": "eslint --fix src/**.ts",

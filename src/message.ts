@@ -69,6 +69,7 @@ export const messageSendV2 = (
     dmOrChannelId: channelId,
     reacts: [],
     isPinned: false,
+    taggedUsers: [],
   });
   channel.messages.unshift(messageId); // unshift the most recent message to the front
   setData(data);
@@ -284,6 +285,7 @@ export const messageSendDmV2 = (
     dmOrChannelId: dmId,
     reacts: [],
     isPinned: false,
+    taggedUsers: [],
   });
   Dm.messages.unshift(messageId); // unshift the most recent message to the front
   setData(data);

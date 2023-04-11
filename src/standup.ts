@@ -1,5 +1,20 @@
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
+import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
+import {
+  findChannel,
+  findUser,
+  findUserFromToken,
+  getTimeNow,
+  isChannelValid,
+  isMember,
+  isTokenValid,
+} from './helperFunctions/helperFunctions';
+import {
+  isStandupActive,
+  recordStandupEnd,
+} from './helperFunctions/standupHelper';
+import { chdir } from 'process';
 
 /**
  * <For a given channel, starts a standup period lasting length seconds.>
@@ -21,7 +36,42 @@ export const standupStartV1 = (
   channelId: number,
   length: number
 ) => {
-  return {};
+  const data = getData();
+
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(FORBIDDEN, 'Invalid token');
+  } else if (!isChannelValid(channelId)) {
+    throw HTTPError(BAD_REQUEST, 'Invalid channel');
+  } else if (length < 0) {
+    throw HTTPError(BAD_REQUEST, 'length is a negative integer');
+  } else if (isStandupActive(channelId)) {
+    throw HTTPError(
+      BAD_REQUEST,
+      'an active standup is currently running in the channel'
+    );
+  }
+
+  const authUserId = findUserFromToken(tokenId);
+
+  if (!isMember(authUserId, channelId)) {
+    throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
+  }
+
+  const channel = findChannel(channelId);
+
+  const finishingTime = getTimeNow() + length;
+
+  channel.standUp.starter = authUserId;
+
+  channel.standUp.finishingTime = finishingTime;
+
+  channel.standUp.isActive = true;
+
+  recordStandupEnd(authUserId, channelId, length);
+  setData(data);
+  return { timeFinish: finishingTime };
 };
 
 /**
@@ -40,7 +90,26 @@ export const standupStartV1 = (
  *
  */
 export const standupActiveV1 = (token: string, channelId: number) => {
-  return {};
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(FORBIDDEN, 'Invalid token');
+  } else if (!isChannelValid(channelId)) {
+    throw HTTPError(BAD_REQUEST, 'Invalid channel');
+  }
+
+  const authUserId = findUserFromToken(tokenId);
+
+  if (!isMember(authUserId, channelId)) {
+    throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
+  }
+
+  const channel = findChannel(channelId);
+
+  return {
+    isActive: channel.standUp.isActive,
+    timeFinish: channel.standUp.finishingTime,
+  };
 };
 
 /**
@@ -53,7 +122,7 @@ export const standupActiveV1 = (token: string, channelId: number) => {
  *
  * @returns {Error} - return when any of:
  * 1. channelId does not refer to a valid channel
- * 2. ength of message is over 1000 characters
+ * 2. length of message is over 1000 characters
  * 3. an active standup is not currently running in the channel
  * 4. channelId is valid and the authorised user is not a member of the channel
  * @returns {} - return when error condition are avoided
@@ -64,5 +133,36 @@ export const standupSendV1 = (
   channelId: number,
   message: string
 ) => {
+  const data = getData();
+
+  const tokenId = isTokenValid(token);
+
+  if (!tokenId) {
+    throw HTTPError(FORBIDDEN, 'Invalid token');
+  } else if (!isChannelValid(channelId)) {
+    throw HTTPError(BAD_REQUEST, 'Invalid channel');
+  } else if (message.length > 1000) {
+    throw HTTPError(BAD_REQUEST, 'length of message is over 1000 characters');
+  } else if (!isStandupActive(channelId)) {
+    throw HTTPError(
+      BAD_REQUEST,
+      'an active standup is not currently running in the channel'
+    );
+  }
+
+  const authUserId = findUserFromToken(tokenId);
+
+  if (!isMember(authUserId, channelId)) {
+    throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
+  }
+
+  const channel = findChannel(channelId);
+  const handleStr = findUser(authUserId).handleStr;
+
+  channel.standUp.messages.push({
+    sender: handleStr,
+    message: message,
+  });
+  setData(data);
   return {};
 };
