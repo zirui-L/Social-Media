@@ -22,13 +22,22 @@ tests with coverage:
       - coverage/
     expose_as: Coverage Report
     expire_in: 1 week
+  only:
+    - master
+    - merge_requests
 
 typecheck:
   stage: checks
   script:
     - npm run tsc
+  only:
+    - master
+    - merge_requests
 
 linting:
   stage: checks
   script:
     - npm run lint
+  only:
+    - master
+    - merge_requests
