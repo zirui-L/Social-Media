@@ -420,3 +420,5 @@ export async function configureImgSize(
   const image = await Jimp.read(imgUrl);
   await image.crop(xStart, yStart, width, height).write(imgPath);
 }
+
+export const getTimeNow = () => Math.floor(Date.now() / 1000);

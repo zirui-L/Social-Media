@@ -188,6 +188,7 @@ export const authRegisterV3 = (
     permissionId: permissionId,
     dms: [],
     profileImgUrl: DEFAULT_PROFILE_PIC,
+    messages: [],
   });
 
   // create a unique token in numbers and convert it to string

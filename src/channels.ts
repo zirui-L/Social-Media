@@ -62,6 +62,12 @@ export const channelsCreateV3 = (
     ownerMembers: [authUserId],
     allMembers: [authUserId],
     messages: [],
+    standUp: {
+      starter: null,
+      isActive: false,
+      finishingTime: null,
+      messages: [],
+    },
   });
 
   setData(data);

@@ -398,3 +398,31 @@ export const requestUserProfileUploadPhoto = (
     token
   );
 };
+
+export const requestStandupStart = (
+  token: string,
+  channelId: number,
+  length: number
+) => {
+  return httpRequestHandle(
+    'POST',
+    '/standup/start/v1',
+    { channelId, length },
+    token
+  );
+};
+export const requestStandupActive = (token: string, channelId: number) => {
+  return httpRequestHandle('GET', '/standup/active/v1', { channelId }, token);
+};
+export const requestStandupSend = (
+  token: string,
+  channelId: number,
+  message: string
+) => {
+  return httpRequestHandle(
+    'POST',
+    '/standup/send/v1',
+    { channelId, message },
+    token
+  );
+};

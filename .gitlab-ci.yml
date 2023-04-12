@@ -11,7 +11,7 @@ tests with coverage:
   script:
     - SERVER_LOG=$(mktemp)
     - npm run ts-node-coverage >& $SERVER_LOG &
-    - timeout 10s grep -q "⚡️ Server started on port" <(tail -f $SERVER_LOG) || exit 1
+    - timeout 10s grep -q "⚡️ Server started on port" <(tail -f $SERVER_LOG) || (cat $SERVER_LOG && exit 1)
     - timeout -s SIGINT 180s npm run test || (cat $SERVER_LOG && exit 1)
     - kill -SIGINT %1
     - sleep 2
@@ -22,13 +22,22 @@ tests with coverage:
       - coverage/
     expose_as: Coverage Report
     expire_in: 1 week
+  only:
+    - master
+    - merge_requests
 
 typecheck:
   stage: checks
   script:
     - npm run tsc
+  only:
+    - master
+    - merge_requests
 
 linting:
   stage: checks
   script:
     - npm run lint
+  only:
+    - master
+    - merge_requests

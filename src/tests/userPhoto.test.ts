@@ -9,13 +9,13 @@ import {
 } from '../helperFunctions/helperServer';
 
 const JPG =
-  'http://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Rufous_Hummingbird%2C_male_01.jpg/1280px-Rufous_Hummingbird%2C_male_01.jpg';
+  'http://upload.wikimedia.org/wikipedia/commons/0/07/Modovian_army_Polski_Kronika_from_1564.jpg';
 const GIF =
   'https://chttps://cdn.vox-cdn.com/thumbor/iaVMlcV5rj0OuPejZ7HyqYslLZk=/0x0:800x333/1400x788/filters:focal(334x72:462x200):format(gif)/cdn.vox-cdn.com/uploads/chorus_image/image/55278741/gatsby.0.gifdn.vox-cdn.com/thumbor/SiIyeqmKIJGcOJccz94pHgwmgvQ=/0x0:1400x1400/1200x800/filters:focal(588x588:812x812):no_upscale()/cdn.vox-cdn.com/uploads/chorus_image/image/68837730/poptart1redrainbowfix_1.0.gif';
 
 // info collected from inspecting image on internet
-const JPGWidth = 1280;
-const JPGHeight = 973;
+const JPGWidth = 1027;
+const JPGHeight = 1254;
 
 beforeEach(() => {
   requestClear();
@@ -58,7 +58,7 @@ describe('user/profile/uploadphoto/v1', () => {
     expect(newPhoto).not.toBe(defaultPhoto);
   });
 
-  test('Test-2: Unsuccess, any of xStart, yStart, xEnd, yEnd are not within the dimensions of the image at the URL', () => {
+  test('Test-2: Error, any of xStart, yStart, xEnd, yEnd are not within the dimensions of the image at the URL', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123455',
@@ -99,7 +99,7 @@ describe('user/profile/uploadphoto/v1', () => {
     ).toBe(BAD_REQUEST);
   });
 
-  test('Test-3: Unsuccess, xEnd is less than or equal to xStart or yEnd is less than or equal to yStart', () => {
+  test('Test-3: Error, xEnd is less than or equal to xStart or yEnd is less than or equal to yStart', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123455',
@@ -125,7 +125,7 @@ describe('user/profile/uploadphoto/v1', () => {
     ).toBe(BAD_REQUEST);
   });
 
-  test('Test-4: Unsuccess, image uploaded is not a JPG', () => {
+  test('Test-4: Error, image uploaded is not a JPG', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123455',
@@ -154,7 +154,7 @@ describe('user/profile/uploadphoto/v1', () => {
     expect(defaultPhoto).not.toBe('');
   });
 
-  test('Test 6: invalid token', () => {
+  test('Test-6: Error, invalid token', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123455',

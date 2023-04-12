@@ -16,6 +16,8 @@ import {
   OK,
 } from '../helperFunctions/helperServer';
 
+import { createMessages } from './testHelper';
+
 beforeEach(() => {
   requestClear();
 });
@@ -2132,13 +2134,3 @@ describe('Testing /channel/removeowner/v2', () => {
     });
   });
 });
-
-const createMessages = (
-  token: string,
-  channelId: number,
-  repetition: number
-): void => {
-  for (let count = 0; count < repetition; count++) {
-    requestMessageSend(token, channelId, `${count}`);
-  }
-};
