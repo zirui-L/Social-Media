@@ -45,7 +45,7 @@ import {
   dmMessagesV2,
   dmRemoveV2,
 } from './dm';
-import { clearV1 } from './other';
+import { clearV1, notificationsGetV1, searchV1 } from './other';
 import { storeData } from './helperFunctions/helperFunctions';
 import { setData } from './dataStore';
 import express, { json, Request, Response } from 'express';
@@ -56,6 +56,7 @@ import cors from 'cors';
 import fs from 'fs';
 import errorHandler from 'middleware-http-errors';
 import { standupActiveV1, standupSendV1, standupStartV1 } from './standup';
+import { adminUserRemoveV1, adminUserpermissionChangeV1 } from './admin';
 
 // Set up web app
 const app = express();
@@ -331,6 +332,33 @@ app.post('/standup/send/v1', (req: Request, res: Response) => {
   const { channelId, message } = req.body;
   const token = req.header('token');
   res.json(standupSendV1(token, channelId, message));
+  storeData();
+});
+
+app.delete('/admin/user/remove/v1', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const uId = parseInt(String(req.query.uId));
+  res.json(adminUserRemoveV1(token, uId));
+  storeData();
+});
+
+app.post('/admin/userpermission/change/v1', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const { uId, permissionId } = req.body;
+  res.json(adminUserpermissionChangeV1(token, uId, permissionId));
+  storeData();
+});
+
+app.get('/notifications/get/v1', (req: Request, res: Response) => {
+  const token = req.header('token');
+  res.json(notificationsGetV1(token));
+  storeData();
+});
+
+app.get('/search/v1', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const queryStr = String(req.query.queryStr);
+  res.json(searchV1(token, queryStr));
   storeData();
 });
 

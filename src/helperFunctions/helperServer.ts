@@ -426,3 +426,28 @@ export const requestStandupSend = (
     token
   );
 };
+
+export const requestAdminUserRemove = (token: string, uId: number) => {
+  return httpRequestHandle('DELETE', '/admin/user/remove/v1', { uId }, token);
+};
+
+export const requestAdminUserpermissionChange = (
+  token: string,
+  uId: number,
+  permissionId: number
+) => {
+  return httpRequestHandle(
+    'POST',
+    '/admin/userpermission/change/v1',
+    { uId, permissionId },
+    token
+  );
+};
+
+export const requestNotificationsGet = (token: string) => {
+  return httpRequestHandle('GET', '/notifications/get/v1', {}, token);
+};
+
+export const requestSearch = (token: string, queryStr: string) => {
+  return httpRequestHandle('GET', '/search/v1', { queryStr }, token);
+};
