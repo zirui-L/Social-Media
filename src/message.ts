@@ -15,6 +15,11 @@ import {
 } from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
 import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
+import {
+  addNotification,
+  findTaggedUsers,
+  notifyTaggedUsers,
+} from './helperFunctions/notificationHelper';
 
 type messageIdObj = {
   messageId: number;
@@ -69,10 +74,17 @@ export const messageSendV2 = (
     dmOrChannelId: channelId,
     reacts: [],
     isPinned: false,
-    taggedUsers: [],
+    taggedUsers: findTaggedUsers(channelId, true, message).uIds,
+    isSent: true,
   });
+
   channel.messages.unshift(messageId); // unshift the most recent message to the front
+
+  const user = findUser(uId);
+  user.messages.unshift(messageId);
   setData(data);
+  notifyTaggedUsers(uId, channelId, true, messageId, []);
+
   return { messageId };
 };
 
@@ -114,26 +126,26 @@ export const messageEditV2 = (
     throw HTTPError(BAD_REQUEST, 'Invalid message length');
   }
 
-  const MessageToEdit = findStoredMessageFromId(messageId);
+  const messageToEdit = findStoredMessageFromId(messageId);
   const uId = findUserFromToken(tokenId);
-  const User = findUser(uId);
+  const user = findUser(uId);
 
   // messageId does not refer to a valid message within a channel/DM
   // that the authorised user has joined
   if (
-    !User.channels.includes(MessageToEdit.dmOrChannelId) &&
-    !User.dms.includes(MessageToEdit.dmOrChannelId)
+    !user.channels.includes(messageToEdit.dmOrChannelId) &&
+    !user.dms.includes(messageToEdit.dmOrChannelId)
   ) {
     throw HTTPError(BAD_REQUEST, "Message is not in user's chat");
   }
 
   // the message was not sent by the authorised user making this request and
   // the user does not have owner permissions in the channel/DM
-  if (MessageToEdit.isChannelMessage) {
+  if (messageToEdit.isChannelMessage) {
     // Channel messages
     if (
-      uId !== MessageToEdit.uId &&
-      !isOwner(uId, MessageToEdit.dmOrChannelId) &&
+      uId !== messageToEdit.uId &&
+      !isOwner(uId, messageToEdit.dmOrChannelId) &&
       findUser(uId).permissionId !== 1 // user is not global owner
     ) {
       throw HTTPError(BAD_REQUEST, "User doesn't have permission");
@@ -141,8 +153,8 @@ export const messageEditV2 = (
   } else {
     // Dm messages
     if (
-      uId !== MessageToEdit.uId &&
-      !isDmOwner(uId, MessageToEdit.dmOrChannelId)
+      uId !== messageToEdit.uId &&
+      !isDmOwner(uId, messageToEdit.dmOrChannelId)
     ) {
       throw HTTPError(BAD_REQUEST, "User doesn't have permission");
     }
@@ -153,7 +165,21 @@ export const messageEditV2 = (
     messageRemoveV2(token, messageId);
   } else {
     // Edit the message
-    MessageToEdit.message = message;
+    messageToEdit.message = message;
+
+    notifyTaggedUsers(
+      messageToEdit.uId,
+      messageToEdit.dmOrChannelId,
+      messageToEdit.isChannelMessage,
+      messageId,
+      messageToEdit.taggedUsers
+    );
+
+    messageToEdit.taggedUsers = findTaggedUsers(
+      messageToEdit.dmOrChannelId,
+      messageToEdit.isChannelMessage,
+      message
+    ).uIds;
   }
   setData(data);
   return {};
@@ -285,10 +311,16 @@ export const messageSendDmV2 = (
     dmOrChannelId: dmId,
     reacts: [],
     isPinned: false,
-    taggedUsers: [],
+    taggedUsers: findTaggedUsers(dmId, false, message).uIds,
+    isSent: true,
   });
   Dm.messages.unshift(messageId); // unshift the most recent message to the front
+
+  const user = findUser(uId);
+  user.messages.unshift(messageId);
   setData(data);
+  notifyTaggedUsers(uId, dmId, false, messageId, []);
+
   return { messageId };
 };
 
@@ -339,6 +371,17 @@ export const messageReactV1 = (
   }
 
   setData(data);
+
+  if (uId !== message.uId) {
+    addNotification(
+      uId,
+      message.uId,
+      message.dmOrChannelId,
+      message.isChannelMessage,
+      'react',
+      ''
+    );
+  }
   return {};
 };
 
@@ -381,7 +424,10 @@ export const messageUnReactV1 = (
 
   react.uIds.splice(react.uIds.indexOf(uId), 1);
   if (react.uIds.length === 0) {
-    message.reacts.splice(message.reacts.findIndex((reactObj) => reactObj.reactId === reactId), 1);
+    message.reacts.splice(
+      message.reacts.findIndex((reactObj) => reactObj.reactId === reactId),
+      1
+    );
   }
 
   setData(data);

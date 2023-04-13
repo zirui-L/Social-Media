@@ -45,6 +45,7 @@ export const recordStandupEnd = (
         reacts: [],
         isPinned: false,
         taggedUsers: [],
+        isSent: true,
       });
       const user = findUser(authUserId);
 

@@ -315,7 +315,7 @@ describe('/auth/logout/v2 testing', () => {
       registerAuthUserId.bodyObj.token,
       registerAuthUserId.bodyObj.authUserId
     );
-    expect(userProfile.statusCode).toStrictEqual(BAD_REQUEST);
+    expect(userProfile.statusCode).toStrictEqual(FORBIDDEN);
   });
 
   test('Test-4: Success, Logout with 3 people existing', () => {
@@ -337,7 +337,7 @@ describe('/auth/logout/v2 testing', () => {
       registerAuthUserId1.bodyObj.token,
       registerAuthUserId1.bodyObj.authUserId
     );
-    expect(userProfile.statusCode).toStrictEqual(BAD_REQUEST);
+    expect(userProfile.statusCode).toStrictEqual(FORBIDDEN);
   });
 });
 
@@ -360,15 +360,15 @@ describe('auth/passwordreset/request/v1', () => {
     expect(
       requestUserProfile(test1.bodyObj.token, test1.bodyObj.authUserId)
         .statusCode
-    ).toBe(BAD_REQUEST);
+    ).toBe(FORBIDDEN);
     expect(
       requestUserProfile(firstSession.bodyObj.token, test1.bodyObj.authUserId)
         .statusCode
-    ).toBe(BAD_REQUEST);
+    ).toBe(FORBIDDEN);
     expect(
       requestUserProfile(secondSession.bodyObj.token, test1.bodyObj.authUserId)
         .statusCode
-    ).toBe(BAD_REQUEST);
+    ).toBe(FORBIDDEN);
   });
 
   test('Test-2: Unsuccess, invalid email address but no error message', () => {

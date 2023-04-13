@@ -20,6 +20,7 @@ export type storedMessage = {
   reacts: Array<React>;
   isPinned: boolean;
   taggedUsers: Array<number>;
+  isSent: boolean;
 };
 export type Message = {
   messageId: number;
@@ -52,6 +53,12 @@ export type Channel = {
   standUp: Standup;
 };
 
+type Notification = {
+  channelId: number;
+  dmId: number;
+  notificationMessage: string;
+};
+
 export type storedUser = {
   authUserId: number;
   email: string;
@@ -64,6 +71,8 @@ export type storedUser = {
   dms: Array<number>;
   profileImgUrl: string;
   messages: Array<number>;
+  isRemoved: boolean;
+  notifications: Notification[];
 };
 
 export type User = {
@@ -94,6 +103,12 @@ export type ResetCode = {
   valid: boolean;
 };
 
+export type paginatedMessage = {
+  messages: Array<Message>;
+  start: number;
+  end: number;
+};
+
 export type Data = {
   users: Array<storedUser>;
   channels: Array<Channel>;
@@ -102,12 +117,7 @@ export type Data = {
   tokens: Array<Token>;
   reactIds: Array<number>;
   resetCodes: Array<ResetCode>;
-};
-
-export type paginatedMessage = {
-  messages: Array<Message>;
-  start: number;
-  end: number;
+  globalOwners: Array<number>;
 };
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
@@ -119,6 +129,7 @@ let data: Data = {
   tokens: [],
   resetCodes: [],
   reactIds: [1],
+  globalOwners: [],
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

@@ -15,6 +15,7 @@ import {
 
 import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
 import HTTPError from 'http-errors';
+import { addNotification } from './helperFunctions/notificationHelper';
 
 type DmId = {
   dmId: number;
@@ -81,6 +82,13 @@ export const dmCreateV2 = (token: string, uIds: Array<number>): DmId => {
     messages: [],
   });
   setData(data);
+
+  for (const uId of uIds) {
+    if (uId !== authUserId) {
+      addNotification(authUserId, uId, dmId, false, 'added', '');
+    }
+  }
+
   return { dmId: dmId };
 };
 

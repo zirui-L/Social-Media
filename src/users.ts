@@ -48,7 +48,7 @@ export const userProfileV3 = (token: string, uId: number): UserObject => {
   // check validity of inputs
   const tokenId = isTokenValid(token);
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isAuthUserIdValid(uId)) {
     throw HTTPError(BAD_REQUEST, 'uId does not refer to a valid user');
   }
@@ -86,20 +86,22 @@ export const usersAllV2 = (token: string): UsersObject => {
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
   // push all users' detail into a new array
   const usersArray = [];
 
   for (const user of data.users) {
-    usersArray.push({
-      uId: user.authUserId,
-      email: user.email,
-      nameFirst: user.nameFirst,
-      nameLast: user.nameLast,
-      handleStr: user.handleStr,
-      profileImgUrl: user.profileImgUrl,
-    });
+    if (!user.isRemoved) {
+      usersArray.push({
+        uId: user.authUserId,
+        email: user.email,
+        nameFirst: user.nameFirst,
+        nameLast: user.nameLast,
+        handleStr: user.handleStr,
+        profileImgUrl: user.profileImgUrl,
+      });
+    }
   }
 
   return { users: usersArray };

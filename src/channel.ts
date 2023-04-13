@@ -13,6 +13,7 @@ import {
 
 import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
 import HTTPError from 'http-errors';
+import { addNotification } from './helperFunctions/notificationHelper';
 
 type ChannelDetails = {
   name: string;
@@ -198,6 +199,7 @@ export const channelInviteV3 = (
   newChannel.allMembers.push(uId);
 
   setData(data);
+  addNotification(authUserId, uId, channelId, true, 'added', '');
 
   return {};
 };
