@@ -8,6 +8,7 @@ import {
   requestClear,
   BAD_REQUEST,
   OK,
+  FORBIDDEN,
 } from '../helperFunctions/helperServer';
 
 // clear data before each test
@@ -34,7 +35,7 @@ describe('Testing /user/profile/v3 route', () => {
       test1.bodyObj.authUserId
     );
     // expect funtion to run and return an error
-    expect(userProfileObj.statusCode).toBe(BAD_REQUEST);
+    expect(userProfileObj.statusCode).toBe(FORBIDDEN);
     expect(userProfileObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -60,7 +61,7 @@ describe('Testing /user/profile/v3 route', () => {
     // test function with invalid token and invalid authUserId
     const userProfileObj = requestUserProfile('0', 0);
     // expect funtion to run and return an error
-    expect(userProfileObj.statusCode).toBe(BAD_REQUEST);
+    expect(userProfileObj.statusCode).toBe(FORBIDDEN);
     expect(userProfileObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -139,7 +140,7 @@ describe('Testing /users/all/v2 route', () => {
     // test function with invalid token
     const usersAllObj = requestUsersAll(test1.bodyObj.token + 1);
     // expect function to run and return an error
-    expect(usersAllObj.statusCode).toBe(BAD_REQUEST);
+    expect(usersAllObj.statusCode).toBe(FORBIDDEN);
     expect(usersAllObj.bodyObj).toStrictEqual(undefined);
   });
 

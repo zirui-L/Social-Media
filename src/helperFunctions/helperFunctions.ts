@@ -56,7 +56,7 @@ export const nameInRange = (name: string): boolean => {
 // Determine whether a email is registed in the system or not
 export const isAvaliableEmail = (email: string, users: any): boolean => {
   for (const user of users) {
-    if (user.email === email) {
+    if (user.email === email && !user.isRemoved) {
       return false;
     }
   }
@@ -101,7 +101,7 @@ export const isAvaliableHandleString = (newHandleStr: string): boolean => {
   const data = getData();
 
   for (const user of data.users) {
-    if (user.handleStr === newHandleStr) {
+    if (user.handleStr === newHandleStr && !user.isRemoved) {
       return false;
     }
   }

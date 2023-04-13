@@ -177,6 +177,10 @@ export const authRegisterV3 = (
   // permissionId for global owner is 1, for member is 2
   const permissionId = data.users.length === 0 ? 1 : 2;
 
+  if (permissionId === 1) {
+    data.globalOwners.push(newUserId);
+  }
+
   data.users.push({
     authUserId: newUserId,
     nameFirst: nameFirst,
@@ -189,6 +193,8 @@ export const authRegisterV3 = (
     dms: [],
     profileImgUrl: DEFAULT_PROFILE_PIC,
     messages: [],
+    isRemoved: false,
+    notifications: [],
   });
 
   // create a unique token in numbers and convert it to string
