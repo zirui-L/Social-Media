@@ -1837,7 +1837,7 @@ describe('Testing /channel/removeowner/v2', () => {
     requestChannelAddOwner(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
-      test2.bodyObj.autherUserId
+      test2.bodyObj.authUserId
     );
 
     // test 3 does not have owner permission in the channel
@@ -1846,7 +1846,7 @@ describe('Testing /channel/removeowner/v2', () => {
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
     );
-    expect(channelRemoveOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelRemoveOwnerObj.statusCode).toBe(FORBIDDEN);
     expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
