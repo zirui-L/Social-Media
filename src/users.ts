@@ -13,7 +13,7 @@ import validator from 'validator';
 
 import fs from 'fs';
 
-import { BAD_REQUEST, FORBIDDEN, OK } from './helperFunctions/helperFunctions';
+import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
 import request from 'sync-request';
 
