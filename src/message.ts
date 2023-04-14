@@ -560,9 +560,12 @@ export const messageShareV1 = (
       throw HTTPError(BAD_REQUEST, 'invalid ogMessageId');
     } 
     const uId = findUserFromToken(tokenId);
-    if (!isMember(uId, channelId) && !isDmMember(uId, dmId)) {
+    if (dmId === -1 && !isMember(uId, channelId)) {
       // ChannelId is valid and the authorised user is not a member of the channel
-      throw HTTPError(FORBIDDEN, 'The user is not a member of the channel/dm');
+      throw HTTPError(FORBIDDEN, 'The user is not a member of the channel');
+    } else if (channelId === -1 && !isDmMember(uId, dmId) ) {
+      // ChannelId is valid and the authorised user is not a member of the channel
+      throw HTTPError(FORBIDDEN, 'The user is not a member of the dm');
     }
     const storedUser = findUser(uId);
     const ogMessage = findStoredMessageFromId(ogMessageId);
