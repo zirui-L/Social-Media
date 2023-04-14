@@ -273,7 +273,7 @@ describe('/auth/logout/v2 testing', () => {
     const logoutAuthUserId = requestAuthLogOut(
       registerAuthUserId.bodyObj.token + '1'
     );
-    expect(logoutAuthUserId.statusCode).toBe(BAD_REQUEST);
+    expect(logoutAuthUserId.statusCode).toBe(FORBIDDEN);
   });
 
   test('Test-2: Error, Log out twice with the same token', () => {
@@ -292,7 +292,7 @@ describe('/auth/logout/v2 testing', () => {
     const logoutAuthUserId2 = requestAuthLogOut(
       registerAuthUserId.bodyObj.token
     );
-    expect(logoutAuthUserId2.statusCode).toBe(BAD_REQUEST);
+    expect(logoutAuthUserId2.statusCode).toBe(FORBIDDEN);
   });
 
   test('Test-3: Success, Logout 1 person', () => {

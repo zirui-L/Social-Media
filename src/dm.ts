@@ -50,7 +50,7 @@ export const dmCreateV2 = (token: string, uIds: Array<number>): DmId => {
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isUIdsValid(uIds)) {
     throw HTTPError(BAD_REQUEST, 'Invalid uId(s)');
   }
@@ -105,7 +105,7 @@ export const dmListV2 = (token: string): { dms: Array<DmObject> } => {
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
   const authUserId = findUserFromToken(tokenId);
   const authUser = findUser(authUserId);
@@ -142,7 +142,7 @@ export const dmRemoveV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
 
   if (!isDmValid(dmId)) {
@@ -192,7 +192,7 @@ export const dmDetailsV2 = (token: string, dmId: number): DmDetails => {
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
 
   if (!isDmValid(dmId)) {
@@ -246,7 +246,7 @@ export const dmLeaveV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
 
   if (!isDmValid(dmId)) {
@@ -294,7 +294,7 @@ export const dmMessagesV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
 
   if (!isDmValid(dmId)) {

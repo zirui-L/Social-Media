@@ -51,7 +51,7 @@ export const messageSendV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (channel === undefined) {
     throw HTTPError(BAD_REQUEST, 'Invalid channelId'); // ChannelId does not refer to a valid channel
   } else if (message.length < 1 || message.length > 1000) {
@@ -117,7 +117,7 @@ export const messageEditV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isMessageValid(messageId)) {
     // messageId does not refer to a valid message
     throw HTTPError(BAD_REQUEST, 'Invalid message Id');
@@ -211,7 +211,7 @@ export const messageRemoveV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isMessageValid(messageId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid message Id');
   }
@@ -290,7 +290,7 @@ export const messageSendDmV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (Dm === undefined) {
     throw HTTPError(BAD_REQUEST, 'Invalid DmId');
   } else if (message.length < 1 || message.length > 1000) {
@@ -543,7 +543,7 @@ export const messageShareV1 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
   if (channelId !== -1 && dmId !== -1) {
     throw HTTPError(BAD_REQUEST, "Can't share to both channel and dm");
@@ -594,7 +594,7 @@ export const messageSendLaterV1 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
 
   if (!isChannelValid(channelId)) {
@@ -649,7 +649,7 @@ export const messageSendLaterDmV1 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
 
   if (!isDmValid(dmId)) {

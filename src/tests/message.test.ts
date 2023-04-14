@@ -137,7 +137,7 @@ describe('Testing /message/send/v2', () => {
       'firstMessage'
     );
 
-    expect(messageSendObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageSendObj.statusCode).toBe(FORBIDDEN);
     expect(messageSendObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -499,7 +499,7 @@ describe('Testing /message/edit/v2', () => {
       'HelloWorld'
     );
 
-    expect(messageEditObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageEditObj.statusCode).toBe(FORBIDDEN);
     expect(messageEditObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -959,7 +959,7 @@ describe('Testing /message/remove/v2', () => {
       messageSendObj1.bodyObj.messageId
     );
 
-    expect(messageRemoveObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageRemoveObj.statusCode).toBe(FORBIDDEN);
     expect(messageRemoveObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -1314,7 +1314,7 @@ describe('Testing /message/senddm/v2', () => {
     );
 
     expect(messageSendDmObj1.bodyObj).toStrictEqual(undefined);
-    expect(messageSendDmObj1.statusCode).toBe(BAD_REQUEST);
+    expect(messageSendDmObj1.statusCode).toBe(FORBIDDEN);
   });
 
   test('Test-5: Success, send 1 message', () => {
@@ -2618,7 +2618,7 @@ describe('Testing /message/share/v1', () => {
       -1
     );
 
-    expect(res.statusCode).toBe(BAD_REQUEST);
+    expect(res.statusCode).toBe(FORBIDDEN);
     expect(res.bodyObj).toStrictEqual(undefined);
   });
 
@@ -3222,7 +3222,7 @@ describe('Testing message/sendlater/v1', () => {
       Date.now() + 500
     );
 
-    expect(messageSendLaterObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageSendLaterObj.statusCode).toBe(FORBIDDEN);
     expect(messageSendLaterObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -3422,7 +3422,7 @@ describe('Testing message/sendlaterdm/v1', () => {
       Date.now() + 500
     );
 
-    expect(messageSendLaterDmObj.statusCode).toBe(BAD_REQUEST);
+    expect(messageSendLaterDmObj.statusCode).toBe(FORBIDDEN);
     expect(messageSendLaterDmObj.bodyObj).toStrictEqual(undefined);
   });
 

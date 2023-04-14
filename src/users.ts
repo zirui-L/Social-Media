@@ -127,7 +127,7 @@ export const userProfileSetNameV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!nameInRange(nameFirst) || !nameInRange(nameLast)) {
     throw HTTPError(BAD_REQUEST, 'Invalid name length');
   }
@@ -165,7 +165,7 @@ export const userProfileSetEmailV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!validator.isEmail(email)) {
     throw HTTPError(BAD_REQUEST, 'Invalid email');
   } else if (!isAvaliableEmail(email, data.users)) {
@@ -206,7 +206,7 @@ export const userProfileSetHandleV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (handleStr.length < 3 || handleStr.length > 20) {
     throw HTTPError(BAD_REQUEST, 'Invalid handle string length');
   } else if (!/^[0-9a-zA-Z]+$/.test(handleStr)) {

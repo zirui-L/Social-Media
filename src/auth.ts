@@ -10,6 +10,7 @@ import {
   SECRET,
   findUser,
   BAD_REQUEST,
+  FORBIDDEN,
 } from './helperFunctions/helperFunctions';
 
 import HTTPError from 'http-errors';
@@ -231,7 +232,7 @@ export const authLogOutV2 = (token: string): Record<string, never> => {
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
 
   // find the index of the token that need to be removed, and using splice method
