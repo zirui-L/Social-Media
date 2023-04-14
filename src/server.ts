@@ -36,6 +36,9 @@ import {
   messageUnReactV1,
   messagePinV1,
   messageUnPinV1,
+  messageShareV1,
+  messageSendLaterV1,
+  messageSendLaterDmV1
 } from './message';
 import {
   dmCreateV2,
@@ -250,6 +253,27 @@ app.post('/message/unpin/v1', (req: Request, res: Response) => {
   const { messageId } = req.body;
   const token = req.header('token');
   res.json(messageUnPinV1(token, messageId));
+  storeData();
+});
+
+app.post('/message/share/v1', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const { ogMessageId, message, channelId, dmId } = req.body;
+  res.json(messageShareV1(token, ogMessageId, message, channelId, dmId));
+  storeData();
+});
+
+app.post('/message/sendlater/v1', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const { channelId, message, timeSent } = req.body;
+  res.json(messageSendLaterV1(token, channelId, message, timeSent));
+  storeData();
+});
+
+app.post('/message/sendlaterdm/v1', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const { dmId, message, timeSent } = req.body;
+  res.json(messageSendLaterDmV1(token, dmId, message, timeSent));
   storeData();
 });
 

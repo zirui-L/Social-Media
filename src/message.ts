@@ -12,6 +12,11 @@ import {
   findStoredMessageFromId,
   findUser,
   findDm,
+  isChannelValid,
+  isDmValid,
+  isDmMember,
+  findMessageFromId,
+  getTimeNow,
 } from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
 import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
@@ -20,6 +25,7 @@ import {
   findTaggedUsers,
   notifyTaggedUsers,
 } from './helperFunctions/notificationHelper';
+import { channel } from 'diagnostics_channel';
 
 type messageIdObj = {
   messageId: number;
@@ -44,7 +50,7 @@ export const messageSendV2 = (
   token: string,
   channelId: number,
   message: string
-): messageIdObj => {
+) => {
   const data = getData();
   const channel = findChannel(channelId);
 
@@ -282,7 +288,7 @@ export const messageSendDmV2 = (
   token: string,
   dmId: number,
   message: string
-): messageIdObj | Error => {
+) => {
   const data = getData();
   const Dm = findDm(dmId);
 
@@ -531,3 +537,159 @@ export const messageUnPinV1 = (
   setData(data);
   return {};
 };
+
+export const messageShareV1 = (
+  token: string,
+  ogMessageId: number,
+  message: string,
+  channelId: number,
+  dmId: number
+  ) => {
+    const tokenId = isTokenValid(token);
+
+    if (!tokenId) {
+      throw HTTPError(BAD_REQUEST, 'Invalid token');
+    }
+    if (channelId !== -1 && dmId !== -1) {
+      throw HTTPError(BAD_REQUEST, 'Can\'t share to both channel and dm');
+    } else if (!isChannelValid(channelId) && !isDmValid(dmId)) {
+      throw HTTPError(BAD_REQUEST, 'Invalid channelId and dmId');
+    } else if (message.length > 1000) {
+      throw HTTPError(BAD_REQUEST, 'message length over 1000');
+    } else if (!isMessageValid(ogMessageId)) {
+      throw HTTPError(BAD_REQUEST, 'invalid ogMessageId');
+    } 
+    const uId = findUserFromToken(tokenId);
+    if (!isMember(uId, channelId) && !isDmMember(uId, dmId)) {
+      // ChannelId is valid and the authorised user is not a member of the channel
+      throw HTTPError(FORBIDDEN, 'The user is not a member of the channel/dm');
+    }
+    const storedUser = findUser(uId);
+    const ogMessage = findStoredMessageFromId(ogMessageId);
+    if (
+      !storedUser.channels.includes(ogMessage.dmOrChannelId) &&
+      !storedUser.dms.includes(ogMessage.dmOrChannelId)
+    ) {
+      throw HTTPError(BAD_REQUEST, "Message is not in user's chat");
+    }
+    const newMessage = ogMessage.message + '\n' + '  ' + message;
+    if (channelId === -1) {
+      const sharedMessageId = messageSendDmV2(token, dmId, newMessage).messageId;
+      return { sharedMessageId };
+    } else {
+      const sharedMessageId = messageSendV2(token, channelId, newMessage).messageId;
+      return { sharedMessageId };
+    }
+  };
+
+  export const messageSendLaterV1 = (
+    token: string,
+    channelId: number,
+    message: string,
+    timeSent: number 
+  ) => {
+    const data = getData();
+    const tokenId = isTokenValid(token);
+
+    if (!tokenId) {
+      throw HTTPError(BAD_REQUEST, 'Invalid token');
+    }
+
+    if (!isChannelValid(channelId)) {
+      throw HTTPError(BAD_REQUEST, 'Invalid channelId');
+    } else if (message.length > 1000 || message.length < 1) {
+      throw HTTPError(BAD_REQUEST, 'Invalid message length');
+    } else if (timeSent < getTimeNow()) {
+      throw HTTPError(BAD_REQUEST, 'invalid ogMessageId');
+    } 
+    const authUserId = findUserFromToken(tokenId);
+    if (!isMember(authUserId, channelId)) {
+      // ChannelId is valid and the authorised user is not a member of the channel
+      throw HTTPError(FORBIDDEN, 'The user is not a member of the channel');
+    }
+  const messageId = createUniqueId();
+  const channel = findChannel(channelId);
+
+  channel.messages.push(messageId);
+  data.messages.push({
+    messageId: messageId,
+    uId: authUserId,
+    dmOrChannelId: channelId,
+    isChannelMessage: true,
+    message: message,
+    timeSent: timeSent,
+    reacts: [],
+    taggedUsers: findTaggedUsers(channelId, true, message).uIds,
+    isPinned: false,
+    isSent: false,
+  });
+
+
+  const user = findUser(authUserId);
+  user.messages.push(messageId);
+
+  setTimeout(() => {
+    const messageObj = findStoredMessageFromId(messageId);
+    messageObj.isSent = true;
+    notifyTaggedUsers(authUserId, channelId, true, messageId, []);
+  }, (timeSent - getTimeNow()) * 1000);
+
+  setData(data);
+  return { messageId };
+  }
+
+  export const messageSendLaterDmV1 = (
+    token: string,
+    dmId: number,
+    message: string,
+    timeSent: number 
+  ) => {
+    const data = getData();
+    const tokenId = isTokenValid(token);
+
+    if (!tokenId) {
+      throw HTTPError(BAD_REQUEST, 'Invalid token');
+    }
+
+    if (!isDmValid(dmId)) {
+      throw HTTPError(BAD_REQUEST, 'Invalid channelId');
+    } else if (message.length > 1000 || message.length < 1) {
+      throw HTTPError(BAD_REQUEST, 'Invalid message length');
+    } else if (timeSent < getTimeNow()) {
+      throw HTTPError(BAD_REQUEST, 'invalid ogMessageId');
+    } 
+    const authUserId = findUserFromToken(tokenId);
+    if (!isDmMember(authUserId, dmId)) {
+      // ChannelId is valid and the authorised user is not a member of the channel
+      throw HTTPError(FORBIDDEN, 'The user is not a member of the channel');
+    }
+  const messageId = createUniqueId();
+  const dm = findDm(dmId);
+
+  dm.messages.push(messageId);
+  data.messages.push({
+    messageId: messageId,
+    uId: authUserId,
+    dmOrChannelId: dmId,
+    isChannelMessage: false,
+    message: message,
+    timeSent: timeSent,
+    reacts: [],
+    taggedUsers: findTaggedUsers(dmId, false, message).uIds,
+    isPinned: false,
+    isSent: false,
+  });
+
+
+  const user = findUser(authUserId);
+  user.messages.push(messageId);
+
+  setTimeout(() => {
+    const messageObj = findStoredMessageFromId(messageId);
+    messageObj.isSent = true;
+    notifyTaggedUsers(authUserId, dmId, false, messageId, []);
+  }, (timeSent - getTimeNow()) * 1000);
+
+  setData(data);
+  return { messageId };
+  }
