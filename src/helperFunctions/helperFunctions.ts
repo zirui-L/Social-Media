@@ -214,7 +214,7 @@ export const isMember = (authUserId: number, channelId: number): boolean => {
 export const isMessageValid = (messageId: number): boolean => {
   const data = getData();
   for (const message of data.messages) {
-    if (message.messageId === messageId) {
+    if (message.messageId === messageId && message.isSent) {
       return true;
     }
   }

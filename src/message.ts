@@ -133,6 +133,7 @@ export const messageEditV2 = (
   }
 
   const messageToEdit = findStoredMessageFromId(messageId);
+
   const uId = findUserFromToken(tokenId);
   const user = findUser(uId);
 
