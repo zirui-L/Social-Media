@@ -274,6 +274,62 @@ export const requestMessageUnPin = (token: string, messageId: number) => {
   );
 };
 
+export const requestMessageShare = (
+  token: string,
+  ogMessageId: number,
+  message: string,
+  channelId: number,
+  dmId: number,
+) => {
+  return httpRequestHandle(
+    'POST',
+    '/message/share/v1',
+    {
+      ogMessageId,
+      message,
+      channelId,
+      dmId
+    },
+    token
+  );
+};
+
+export const requestMessageSendLater = (
+  token: string,
+  channelId: number,
+  message: string,
+  timeSent: number,
+) => {
+  return httpRequestHandle(
+    'POST',
+    '/message/sendlater/v1',
+    {
+      channelId,
+      message,
+      timeSent
+    },
+    token
+  );
+};
+
+export const requestMessageSendLaterDm = (
+  token: string,
+  dmId: number,
+  message: string,
+  timeSent: number,
+) => {
+  return httpRequestHandle(
+    'POST',
+    '/message/sendlaterdm/v1',
+    {
+      dmId,
+      message,
+      timeSent
+    },
+    token
+  );
+};
+
 export const requestDmCreate = (token: string, uIds: Array<number>) => {
   return httpRequestHandle('POST', '/dm/create/v2', { uIds }, token);
 };
