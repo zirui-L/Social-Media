@@ -2,8 +2,8 @@ import {
   requestAuthRegister,
   requestClear,
   requestUserProfile,
-  OK,
-} from '../helperFunctions/helperServer';
+} from './testHelper';
+import { OK } from '../helperFunctions/helperFunctions';
 
 beforeEach(() => {
   requestClear();

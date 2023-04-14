@@ -11,10 +11,8 @@ import {
   requestChannelsListAll,
   requestClear,
   requestMessageSend,
-  BAD_REQUEST,
-  FORBIDDEN,
-  OK,
-} from '../helperFunctions/helperServer';
+} from './testHelper';
+import { FORBIDDEN, OK, BAD_REQUEST } from '../helperFunctions/helperFunctions';
 
 import { createMessages } from './testHelper';
 

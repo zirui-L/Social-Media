@@ -3,10 +3,8 @@ import {
   requestAuthRegister,
   requestUserProfile,
   requestUserProfileUploadPhoto,
-  OK,
-  BAD_REQUEST,
-  FORBIDDEN,
-} from '../helperFunctions/helperServer';
+} from './testHelper';
+import { FORBIDDEN, OK, BAD_REQUEST } from '../helperFunctions/helperFunctions';
 
 const JPG =
   'http://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Rufous_Hummingbird%2C_male_01.jpg/1280px-Rufous_Hummingbird%2C_male_01.jpg';
@@ -170,5 +168,23 @@ describe('user/profile/uploadphoto/v1', () => {
       200
     );
     expect(userProfileUploadPhotoObj.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Test-7: Error, invalid address of the image', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      '123455',
+      'firstName',
+      'lastName'
+    );
+    const userProfileUploadPhotoObj = requestUserProfileUploadPhoto(
+      test1.bodyObj.token,
+      'http://invalid!@#$%.jpg',
+      0,
+      0,
+      200,
+      200
+    );
+    expect(userProfileUploadPhotoObj.statusCode).not.toBe(OK);
   });
 });

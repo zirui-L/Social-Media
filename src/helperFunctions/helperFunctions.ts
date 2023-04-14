@@ -11,6 +11,13 @@ import fs from 'fs';
 import crypto from 'crypto';
 const Jimp = require('jimp');
 
+export const OK = 200;
+export const BAD_REQUEST = 400;
+export const FORBIDDEN = 403;
+
+import { port, url } from '../config.json';
+export const SERVER_URL = `${url}:${port}`;
+
 export const SECRET = 'SECRETSTRING';
 
 /**
@@ -135,7 +142,7 @@ export const isAuthUserIdValid = (authUserId: number): boolean => {
  * @returns {true} - if user with such token is logged in
  * @returns {false} - if user with such token is not logged in
  */
-export const isTokenValid = (token: string): string => {
+export const isTokenValid = (token: string) => {
   const data = getData();
   for (const existingtoken of data.tokens) {
     if (getHashOf(existingtoken.token + SECRET) === token) {
@@ -260,7 +267,7 @@ export const isDmOwner = (authUserId: number, dmId: number): boolean => {
  * @returns {storedUser} - if there exist a user with given authUserId
  * @returns { undefined } - if there doesn't exist a user with given authUserId
  */
-export const findUser = (authUserId: number): storedUser => {
+export const findUser = (authUserId: number) => {
   const data = getData();
   return data.users.find((user) => user.authUserId === authUserId);
 };
@@ -274,7 +281,7 @@ export const findUser = (authUserId: number): storedUser => {
  * @returns { undefined } - if there doesn't exist a channel with given
  * channelId
  */
-export const findChannel = (channelId: number): Channel => {
+export const findChannel = (channelId: number) => {
   const data = getData();
   return data.channels.find((channel) => channel.channelId === channelId);
 };
@@ -288,7 +295,7 @@ export const findChannel = (channelId: number): Channel => {
  * @returns { undefined } - if there doesn't exist a channel with given
  * channelId
  */
-export const findDm = (dmId: number): Dm => {
+export const findDm = (dmId: number) => {
   const data = getData();
   return data.dms.find((dm) => dm.dmId === dmId);
 };
@@ -302,7 +309,7 @@ export const findDm = (dmId: number): Dm => {
  * @returns { undefined } - if there doesn't exist a user with given
  * token
  */
-export const findUserFromToken = (token: string): number => {
+export const findUserFromToken = (token: string) => {
   const data = getData();
   return data.tokens.find((existingtoken) => existingtoken.token === token).uId;
 };
@@ -314,7 +321,7 @@ export const findUserFromToken = (token: string): number => {
  *
  * @returns {Message} - if there exist a message with given id
  */
-export const findMessageFromId = (uId: number, messageId: number): Message => {
+export const findMessageFromId = (uId: number, messageId: number) => {
   const data = getData();
   const message = data.messages.find(
     (existingMessage) => existingMessage.messageId === messageId

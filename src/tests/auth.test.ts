@@ -4,12 +4,10 @@ import {
   requestUserProfile,
   requestClear,
   requestAuthLogOut,
-  BAD_REQUEST,
-  FORBIDDEN,
   requestAuthPasswordresetRequest,
   requestAuthPasswordresetReset,
-  OK,
-} from '../helperFunctions/helperServer';
+} from './testHelper';
+import { FORBIDDEN, OK, BAD_REQUEST } from '../helperFunctions/helperFunctions';
 
 beforeEach(() => {
   requestClear();

@@ -4,9 +4,8 @@ import {
   requestChannelsCreate,
   requestChannelsListAll,
   requestChannelsList,
-  BAD_REQUEST,
-  OK,
-} from '../helperFunctions/helperServer';
+} from './testHelper';
+import { FORBIDDEN, OK, BAD_REQUEST } from '../helperFunctions/helperFunctions';
 
 beforeEach(() => {
   requestClear();

@@ -6,7 +6,7 @@ import {
   findUser,
 } from './helperFunctions/helperFunctions';
 
-import { BAD_REQUEST } from './helperFunctions/helperServer';
+import { BAD_REQUEST } from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
 
 type ChannelId = {

@@ -18,7 +18,7 @@ import {
   getTimeNow,
 } from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
-import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
+import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperFunctions';
 import {
   addNotification,
   findTaggedUsers,
@@ -546,7 +546,7 @@ export const messageShareV1 = (
     throw HTTPError(BAD_REQUEST, 'Invalid token');
   }
   if (channelId !== -1 && dmId !== -1) {
-    throw HTTPError(BAD_REQUEST, 'Can\'t share to both channel and dm');
+    throw HTTPError(BAD_REQUEST, "Can't share to both channel and dm");
   } else if (!isChannelValid(channelId) && !isDmValid(dmId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid channelId and dmId');
   } else if (message.length > 1000) {
@@ -566,7 +566,7 @@ export const messageShareV1 = (
   const ogMessage = findStoredMessageFromId(ogMessageId);
   if (
     !storedUser.channels.includes(ogMessage.dmOrChannelId) &&
-      !storedUser.dms.includes(ogMessage.dmOrChannelId)
+    !storedUser.dms.includes(ogMessage.dmOrChannelId)
   ) {
     throw HTTPError(BAD_REQUEST, "Message is not in user's chat");
   }
@@ -575,7 +575,11 @@ export const messageShareV1 = (
     const sharedMessageId = messageSendDmV2(token, dmId, newMessage).messageId;
     return { sharedMessageId };
   } else {
-    const sharedMessageId = messageSendV2(token, channelId, newMessage).messageId;
+    const sharedMessageId = messageSendV2(
+      token,
+      channelId,
+      newMessage
+    ).messageId;
     return { sharedMessageId };
   }
 };

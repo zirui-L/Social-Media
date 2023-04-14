@@ -13,7 +13,7 @@ import {
   isDmMember,
 } from './helperFunctions/helperFunctions';
 
-import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
+import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
 import { addNotification } from './helperFunctions/notificationHelper';
 

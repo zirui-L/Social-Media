@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
-import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
+import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperFunctions';
 import {
   findChannel,
   findUser,
