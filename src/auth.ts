@@ -93,7 +93,7 @@ export const authPasswordresetResetV1 = (
 
   // invalidate the resetCode and change password for the user
   const user = findUser(storedResetCodes.authUserId);
-  user.password = newPassword + SECRET;
+  user.password = getHashOf(newPassword+ SECRET);
   storedResetCodes.valid = false;
   setData(data);
   return {};
@@ -117,7 +117,7 @@ export const authLoginV3 = (email: string, password: string): UIdAndToken => {
   const data = getData();
 
   for (const user of data.users) {
-    if (user.email === email && user.password === password) {
+    if (user.email === email && user.password === getHashOf(password+ SECRET)) {
       // Create a unique token in numbers and convert it to string
       const token = `${createUniqueId()}`;
       data.tokens.push({
@@ -187,7 +187,7 @@ export const authRegisterV3 = (
     nameLast: nameLast,
     email: email,
     handleStr: generateHandleStr(nameFirst, nameLast), // generate handler string based on input name
-    password: password,
+    password: getHashOf(password + SECRET),
     channels: [],
     permissionId: permissionId,
     dms: [],

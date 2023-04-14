@@ -289,7 +289,7 @@ export const userProfileUploadPhotoV1 = (
   // Check if xStart, yStart, xEnd, yEnd are within the dimension of the image
   let imgPath = 'profileImgs/check_size.jpg';
   fs.writeFileSync(imgPath, body, { flag: 'w' });
-
+``
   const dimension = imageSize(imgPath);
   if (
     xStart < 0 ||
