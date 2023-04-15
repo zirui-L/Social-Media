@@ -311,13 +311,17 @@ export const channelLeaveV2 = (
   }
 
   const authUserId = findUserFromToken(tokenId);
-
+  
   if (!isMember(authUserId, channelId)) {
     throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
-  // remove meember from channel
+  
   const channel = findChannel(channelId);
-
+  if (authUserId === channel.standUp.starter) {
+    throw HTTPError(BAD_REQUEST, 'User is the starter of an active standup in the channel')
+  }
+  
+  // remove member from channel
   channel.allMembers = channel.allMembers.filter(
     (user: number) => user !== authUserId
   );
@@ -396,12 +400,11 @@ export const channelAddOwnerV2 = (
 };
 
 /**
- * <Given a channel with ID channelId that the authorised user is a member of,
- * remove them as a member of the channel. Their messages should remain in the
- * channel. If the only channel owner leaves, the channel will remain.>
+ * <Removes user with user ID uId as an owner of the channel.>
  *
  * @param {string} token - token for a requesting user
  * @param {integer} channelId - channelId
+ * @param {integer} uId - uId
  *
  * @throws  {Error} -  Return eror object when any of:
  * 1. channelId does not refer to a valid channel
