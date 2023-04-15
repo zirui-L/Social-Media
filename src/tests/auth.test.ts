@@ -400,7 +400,7 @@ describe('auth/passwordreset/reset/v1', () => {
   test('Test-1: Error, resetCode is not a valid reset code', () => {
     requestAuthRegister('test1@gmail.com', '123456', 'firstName', 'lastName');
 
-    requestAuthPasswordresetRequest('test1@gmail.edu.au');
+    requestAuthPasswordresetRequest('test1@gmail.com');
 
     const passWordResetObj = requestAuthPasswordresetReset(
       'resetCodeIsNotAValidResetCode',
@@ -411,11 +411,31 @@ describe('auth/passwordreset/reset/v1', () => {
 
   test('Test-2: Error, newPassword is less than 6 characters long', () => {
     requestAuthRegister('test1@gmail.com', '123456', 'firstName', 'lastName');
-    requestAuthPasswordresetRequest('test1@gmail.edu.au');
+    requestAuthPasswordresetRequest('test1@gmail.com');
     const passWordResetObj = requestAuthPasswordresetReset(
       '5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9',
       '1234'
     );
     expect(passWordResetObj.statusCode).toBe(BAD_REQUEST);
+  });
+
+  test('Test-3: Success, but if the code is used again it is invalidated', () => {
+    requestAuthRegister('test1@gmail.com', '123456', 'firstName', 'lastName');
+    requestAuthPasswordresetRequest('test1@gmail.com');
+
+    const reset = requestAuthPasswordresetReset(
+      '1666f442169b6230e102f3e469b331347e23a61d092122e86bef97b98dc5db72',
+      'newpassword'
+    );
+
+    expect(reset.statusCode).toBe(OK);
+
+    const session = requestAuthLogin('test1@gmail.com', 'newpassword');
+    expect(session.statusCode).toBe(OK);
+    const resetAgain = requestAuthPasswordresetReset(
+      '1666f442169b6230e102f3e469b331347e23a61d092122e86bef97b98dc5db72',
+      'newpassword'
+    );
+    expect(resetAgain.statusCode).toBe(BAD_REQUEST);
   });
 });
