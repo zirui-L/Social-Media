@@ -158,16 +158,16 @@ export const dmRemoveV2 = (
       'The authorised user is not the owner of the DM'
     );
   }
-  const Dm = findDm(dmId);
-  for (const uId of Dm.allMembers) {
+  const dm = findDm(dmId);
+  for (const uId of dm.allMembers) {
     const user = findUser(uId); // Remove dm from user's profile
     user.dms = user.dms.filter((DmId: number) => DmId !== dmId);
   }
   // Remove dm from dm list
-  data.dms = data.dms.filter((Dm) => Dm.dmId !== dmId);
+  data.dms = data.dms.filter((dm) => dm.dmId !== dmId);
   // Remove all messages in the dm
   data.messages = data.messages.filter(
-    (message) => !Dm.messages.includes(message.messageId)
+    (message) => !dm.messages.includes(message.messageId)
   );
   setData(data);
   return {};
@@ -202,10 +202,10 @@ export const dmDetailsV2 = (token: string, dmId: number): DmDetails => {
   if (!isDmMember(authUserId, dmId)) {
     throw HTTPError(FORBIDDEN, 'The authorised user is not in the DM');
   }
-  const Dm = findDm(dmId);
+  const dm = findDm(dmId);
   const members = [];
   // Find the user information that match with the uId in allMember array
-  for (const uId of Dm.allMembers) {
+  for (const uId of dm.allMembers) {
     const member = findUser(uId);
     members.push({
       uId: member.authUserId,
@@ -217,7 +217,7 @@ export const dmDetailsV2 = (token: string, dmId: number): DmDetails => {
     });
   }
   return {
-    name: Dm.name,
+    name: dm.name,
     members: members,
   };
 };
@@ -261,10 +261,10 @@ export const dmLeaveV2 = (
   const user = findUser(authUserId);
   user.dms = user.dms.filter((DmId: number) => DmId !== dmId);
 
-  const Dm = findDm(dmId);
+  const dm = findDm(dmId);
   // remove member from dm
-  Dm.allMembers = Dm.allMembers.filter((uId: number) => uId !== authUserId);
-  Dm.ownerMembers = Dm.ownerMembers.filter((uId: number) => uId !== authUserId);
+  dm.allMembers = dm.allMembers.filter((uId: number) => uId !== authUserId);
+  dm.ownerMembers = dm.ownerMembers.filter((uId: number) => uId !== authUserId);
   setData(data);
   return {};
 };
@@ -301,10 +301,10 @@ export const dmMessagesV2 = (
     throw HTTPError(BAD_REQUEST, 'Invalid dmId');
   }
   const authUserId = findUserFromToken(tokenId);
-  const Dm = findDm(dmId);
+  const dm = findDm(dmId);
   if (!isDmMember(authUserId, dmId)) {
     throw HTTPError(FORBIDDEN, 'The authorised user is not in the DM');
-  } else if (start > Dm.messages.length) {
+  } else if (start > dm.messages.length) {
     throw HTTPError(
       BAD_REQUEST,
       'Start is greater than the total number of messages'
@@ -315,8 +315,8 @@ export const dmMessagesV2 = (
 
   // return the first 50 message from the start, if there is less than 50
   // messages, return all remainig message and set end to -1.
-  if (Dm.messages.length - start <= 50) {
-    lengthOfMessage = Dm.messages.length - start;
+  if (dm.messages.length - start <= 50) {
+    lengthOfMessage = dm.messages.length - start;
     end = -1;
   } else {
     lengthOfMessage = 50;
@@ -325,7 +325,7 @@ export const dmMessagesV2 = (
   // Push the message information according to given message Id
   const paginatedMessages = [];
   for (let i = start; i < start + lengthOfMessage; i++) {
-    paginatedMessages.push(findMessageFromId(authUserId, Dm.messages[i]));
+    paginatedMessages.push(findMessageFromId(authUserId, dm.messages[i]));
   }
   return {
     messages: paginatedMessages,

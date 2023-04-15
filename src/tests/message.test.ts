@@ -3532,7 +3532,7 @@ describe('Testing message/sendlaterdm/v1', () => {
     );
     const messageSendLaterDmObj = requestMessageSendLaterDm(
       test1.bodyObj.token + '1',
-      dmId.bodyObj.channelId,
+      dmId.bodyObj.dmId,
       'HelloWorld',
       getTimeNow() + 2
     );
@@ -3554,7 +3554,7 @@ describe('Testing message/sendlaterdm/v1', () => {
     );
     const messageSendLaterDmObj = requestMessageSendLaterDm(
       test1.bodyObj.token,
-      dmId.bodyObj.channelId + 1,
+      dmId.bodyObj.dmId + 1,
       'HelloWorld',
       getTimeNow() + 2
     );
@@ -3578,7 +3578,7 @@ describe('Testing message/sendlaterdm/v1', () => {
     // length of the message is less than 1
     const messageSendLaterDmObj = requestMessageSendLaterDm(
       test1.bodyObj.token,
-      dmId.bodyObj.channelId,
+      dmId.bodyObj.dmId,
       '',
       getTimeNow() + 2
     );
@@ -3692,7 +3692,7 @@ describe('Testing message/sendlaterdm/v1', () => {
 
     expect(messageEditObj.statusCode).toBe(BAD_REQUEST);
     expect(messageEditObj.bodyObj).toStrictEqual(undefined);
-    sleep(3); // wait for 2 seconds
+    sleep(3); // wait for 3 seconds
     expect(
       requestDmMessages(
         test1.bodyObj.token,
