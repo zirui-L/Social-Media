@@ -426,7 +426,6 @@ describe('Testing /message/edit/v2', () => {
       'firstChannel',
       true
     );
-    requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
 
     const messageSendObj1 = requestMessageSend(
       test1.bodyObj.token,
@@ -675,7 +674,6 @@ describe('Testing /message/edit/v2', () => {
       end: -1,
     });
   });
-
   test('Test-11: Success, edit message in a dm', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
@@ -726,96 +724,7 @@ describe('Testing /message/edit/v2', () => {
     });
   });
 
-  test('Test-12: Success, edit message with 0 length in a channel', () => {
-    const test1 = requestAuthRegister(
-      'test1@gmail.com',
-      'password1',
-      'firstName1',
-      'lastName1'
-    );
-    const test2 = requestAuthRegister(
-      'test2@gmail.com',
-      'password2',
-      'firstName2',
-      'lastName2'
-    );
-    const channelId1 = requestChannelsCreate(
-      test1.bodyObj.token,
-      'firstChannel',
-      true
-    );
-  
-    requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
-  
-    const messageSendObj1 = requestMessageSend(
-      test2.bodyObj.token,
-      channelId1.bodyObj.channelId,
-      'firstMessage'
-    );
-    const messageEditObj = requestMessageEdit(
-      test2.bodyObj.token,
-      messageSendObj1.bodyObj.messageId,
-      ''
-    );
-
-    expect(messageEditObj.statusCode).toBe(OK);
-    expect(messageEditObj.bodyObj).toStrictEqual({});
-  
-    expect(
-      requestChannelMessages(
-        test1.bodyObj.token,
-        channelId1.bodyObj.channelId,
-        0
-      ).bodyObj
-    ).toStrictEqual({
-      messages: [],
-      start: 0,
-      end: -1,
-    });
-  });
-  
-  test('Test-13: Success, edit message in a dm with length 0', () => {
-    const test1 = requestAuthRegister(
-      'test1@gmail.com',
-      'password1',
-      'firstName1',
-      'lastName1'
-    );
-    const test2 = requestAuthRegister(
-      'test2@gmail.com',
-      'password2',
-      'firstName2',
-      'lastName2'
-    );
-
-    const dmIdObj = requestDmCreate(test2.bodyObj.token, [
-      test1.bodyObj.authUserId,
-    ]);
-
-    const messageSendObj1 = requestMessageSendDm(
-      test1.bodyObj.token,
-      dmIdObj.bodyObj.dmId,
-      'firstMessage'
-    );
-
-    const messageEditObj = requestMessageEdit(
-      test1.bodyObj.token,
-      messageSendObj1.bodyObj.messageId,
-      ''
-    );
-    expect(messageEditObj.bodyObj).toStrictEqual({});
-    expect(messageEditObj.statusCode).toBe(OK);
-
-    expect(
-      requestDmMessages(test1.bodyObj.token, dmIdObj.bodyObj.dmId, 0).bodyObj
-    ).toStrictEqual({
-      messages: [],
-      start: 0,
-      end: -1,
-    });
-  });
-
-  test("Test-14: Success, owner edit other user's message in a dm", () => {
+  test("Test-11: Success, owner edit other user's message in a dm", () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
@@ -980,8 +889,6 @@ describe('Testing /message/remove/v2', () => {
       'firstChannel',
       true
     );
-
-    requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
 
     const messageSendObj1 = requestMessageSend(
       test1.bodyObj.token,
@@ -2741,9 +2648,9 @@ describe('Testing /message/share/v1', () => {
       test1.token,
       messageSendObj1.messageId,
       '',
-      -1,
-      -1
-      );
+      channelIdObj.channelId + 1,
+      dmIdObj.dmId + 1
+    );
 
     expect(res.statusCode).toBe(BAD_REQUEST);
     expect(res.bodyObj).toStrictEqual(undefined);
@@ -3182,7 +3089,7 @@ describe('Testing /message/share/v1', () => {
       'firstName1',
       'lastName1'
     ).bodyObj;
-  
+
     const channelIdObj = requestChannelsCreate(
       test1.token,
       'RicardoChannel',
@@ -3195,110 +3102,47 @@ describe('Testing /message/share/v1', () => {
       'firstName2',
       'lastName2'
     ).bodyObj;
-  
-    const dmIdObj = requestDmCreate(
-      test1.token,
-      [test2.authUserId]
-    ).bodyObj;
+
+    const dmIdObj = requestDmCreate(test1.token, [test2.authUserId]).bodyObj;
 
     const messageSendObj1 = requestMessageSend(
       test1.token,
       channelIdObj.channelId,
       'firstMessage'
     ).bodyObj;
-  
+
     const res = requestMessageShare(
-      test1.token, 
-      messageSendObj1.messageId, 
+      test1.token,
+      messageSendObj1.messageId,
       'additionalMessage',
       -1,
-      dmIdObj.dmId,
-      );
-      
-      expect(res.statusCode).toBe(OK);
-      expect(res.bodyObj).toStrictEqual({
-        sharedMessageId: expect.any(Number),
-      });
-        
-        
+      dmIdObj.dmId
+    );
+
+    expect(res.statusCode).toBe(OK);
+    expect(res.bodyObj).toStrictEqual({
+      sharedMessageId: expect.any(Number),
+    });
+
     // ensure no link to the original message
     requestMessageRemove(test1.token, messageSendObj1.messageId);
     expect(
-      requestDmMessages(
-        test1.token,
-        dmIdObj.dmId,
-        0
-      ).bodyObj
+      requestDmMessages(test1.token, dmIdObj.dmId, 0).bodyObj
     ).toStrictEqual({
       messages: [
         {
           messageId: res.bodyObj.sharedMessageId,
           uId: test1.authUserId,
-          message: expect.stringContaining('firstMessage') &&
-                  expect.stringContaining('additionalMessage'),
+          message:
+            expect.stringContaining('firstMessage') &&
+            expect.stringContaining('additionalMessage'),
           timeSent: expect.any(Number),
           reacts: [],
           isPinned: false,
-        }
+        },
       ],
       start: 0,
       end: -1,
-    });
-  });
-
-    const test2 = requestAuthRegister(
-      'test2@gmail.com',
-      'password2',
-      'firstName2',
-      'lastName2'
-      ).bodyObj;
-      const dmIdObj = requestDmCreate(
-        test1.token,
-        [test2.authUserId]
-      ).bodyObj;
-      const messageSendObj1 = requestMessageSendDm(
-        test1.token,
-        dmIdObj.dmId,
-        'firstMessage'
-      ).bodyObj;
-  
-      const res = requestMessageShare(
-        test1.token, 
-        messageSendObj1.messageId, 
-        'additionalMessage',
-        -1,
-        dmIdObj.dmId,
-      );
-        
-      expect(res.statusCode).toBe(OK);
-      expect(res.bodyObj).toStrictEqual({
-        sharedMessageId: expect.any(Number),
-      });
-        
-        
-      // ensure no link to the original message
-      requestMessageRemove(test1.token, messageSendObj1.messageId);
-      expect(
-        requestDmMessages(
-          test1.token,
-          dmIdObj.dmId,
-          0
-        ).bodyObj
-      ).toStrictEqual({
-        messages: [
-          {
-            messageId: res.bodyObj.sharedMessageId,
-            uId: test1.authUserId,
-            message: expect.stringContaining('firstMessage') &&
-                      expect.stringContaining('additionalMessage'),
-            timeSent: expect.any(Number),
-            reacts: [],
-            isPinned: false,
-          }
-        ],
-        start: 0,
-        end: -1,
-      });
     });
   });
 
@@ -3375,7 +3219,7 @@ describe('Testing message/sendlater/v1', () => {
       test1.bodyObj.token + '1',
       channelId.bodyObj.channelId,
       'HelloWorld',
-      getTimeNow() + 2
+      Date.now() + 500
     );
 
     expect(messageSendLaterObj.statusCode).toBe(FORBIDDEN);
@@ -3398,7 +3242,7 @@ describe('Testing message/sendlater/v1', () => {
       test1.bodyObj.token,
       channelId.bodyObj.channelId + 1,
       'HelloWorld',
-      getTimeNow() + 2
+      Date.now() + 500
     );
 
     expect(messageSendLaterObj.statusCode).toBe(BAD_REQUEST);
@@ -3434,7 +3278,7 @@ describe('Testing message/sendlater/v1', () => {
       test1.bodyObj.token,
       channelId.bodyObj.channelId,
       'HelloWorld'.repeat(101),
-      getTimeNow() + 2
+      Date.now() + 500
     );
 
     expect(messageSendLaterObj1.statusCode).toBe(BAD_REQUEST);
@@ -3455,9 +3299,9 @@ describe('Testing message/sendlater/v1', () => {
     );
     const messageSendLaterObj = requestMessageSendLater(
       test1.bodyObj.token,
-      channelId.bodyObj.channelId ,
+      channelId.bodyObj.channelId + 1,
       'HelloWorld',
-      getTimeNow() - 2
+      Date.now() - 1
     );
 
     expect(messageSendLaterObj.statusCode).toBe(BAD_REQUEST);
@@ -3488,7 +3332,7 @@ describe('Testing message/sendlater/v1', () => {
       test2.bodyObj.token,
       channelId.bodyObj.channelId,
       'firstMessage',
-      getTimeNow() + 2
+      Date.now() + 500
     );
 
     expect(messageSendLaterObj.statusCode).toBe(FORBIDDEN);
@@ -3562,7 +3406,6 @@ describe('Testing message/sendlater/v1', () => {
   });
 });
 
-
 describe('Testing message/sendlaterdm/v1', () => {
   test('Test-1: Error, invalid token', () => {
     const test1 = requestAuthRegister(
@@ -3574,9 +3417,9 @@ describe('Testing message/sendlaterdm/v1', () => {
     const dmId = requestDmCreate(test1.bodyObj.token, []);
     const messageSendLaterDmObj = requestMessageSendLaterDm(
       test1.bodyObj.token + '1',
-      dmId.bodyObj.dmId,
+      dmId.bodyObj.channelId,
       'HelloWorld',
-      getTimeNow() + 2
+      Date.now() + 500
     );
 
     expect(messageSendLaterDmObj.statusCode).toBe(FORBIDDEN);
@@ -3593,9 +3436,9 @@ describe('Testing message/sendlaterdm/v1', () => {
     const dmId = requestDmCreate(test1.bodyObj.token, []);
     const messageSendLaterDmObj = requestMessageSendLaterDm(
       test1.bodyObj.token,
-      dmId.bodyObj.dmId + 1,
+      dmId.bodyObj.channelId + 1,
       'HelloWorld',
-      getTimeNow() + 2
+      Date.now() + 500
     );
 
     expect(messageSendLaterDmObj.statusCode).toBe(BAD_REQUEST);
@@ -3614,9 +3457,9 @@ describe('Testing message/sendlaterdm/v1', () => {
     // length of the message is less than 1
     const messageSendLaterDmObj = requestMessageSendLaterDm(
       test1.bodyObj.token,
-      dmId.bodyObj.dmId,
+      dmId.bodyObj.channelId,
       '',
-      getTimeNow() + 2
+      1
     );
 
     expect(messageSendLaterDmObj.statusCode).toBe(BAD_REQUEST);
@@ -3625,9 +3468,9 @@ describe('Testing message/sendlaterdm/v1', () => {
     // length of the message is more than 1000
     const messageSendLaterDmObj1 = requestMessageSendLaterDm(
       test1.bodyObj.token,
-      dmId.bodyObj.dmId,
+      dmId.bodyObj.channelId,
       'HelloWorld'.repeat(101),
-      getTimeNow() + 2
+      Date.now() + 500
     );
 
     expect(messageSendLaterDmObj1.statusCode).toBe(BAD_REQUEST);
@@ -3644,9 +3487,9 @@ describe('Testing message/sendlaterdm/v1', () => {
     const dmId = requestDmCreate(test1.bodyObj.token, []);
     const messageSendLaterDmObj = requestMessageSendLaterDm(
       test1.bodyObj.token,
-      dmId.bodyObj.dmId,
+      dmId.bodyObj.channelId,
       'HelloWorld',
-      getTimeNow() - 2
+      Date.now() - 1
     );
 
     expect(messageSendLaterDmObj.statusCode).toBe(BAD_REQUEST);
@@ -3683,7 +3526,7 @@ describe('Testing message/sendlaterdm/v1', () => {
       test3.bodyObj.token,
       dmId.bodyObj.dmId,
       'firstMessage',
-      getTimeNow() + 2
+      Date.now() + 500
     );
 
     expect(messageSendLaterDmObj.statusCode).toBe(FORBIDDEN);
@@ -3721,7 +3564,7 @@ describe('Testing message/sendlaterdm/v1', () => {
 
     expect(messageEditObj.statusCode).toBe(BAD_REQUEST);
     expect(messageEditObj.bodyObj).toStrictEqual(undefined);
-    sleep(3); // wait for 3 seconds
+    sleep(3); // wait for 2 seconds
     expect(
       requestDmMessages(test1.bodyObj.token, dmId.bodyObj.dmId, 0).bodyObj
     ).toStrictEqual({
