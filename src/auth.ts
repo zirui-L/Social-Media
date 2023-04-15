@@ -44,7 +44,9 @@ export const authPasswordresetRequestV1 = (email: string) => {
     return {};
   }
 
-  const resetCode = getHashOf(`${createUniqueId()}`);
+  const resetCode = getHashOf(data.reactIds.length.toString + SECRET);
+
+  console.log(resetCode);
 
   data.resetCodes.push({
     authUserId: user.authUserId,
