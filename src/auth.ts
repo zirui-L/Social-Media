@@ -9,12 +9,13 @@ import {
   getHashOf,
   SECRET,
   findUser,
+  BAD_REQUEST,
+  FORBIDDEN,
 } from './helperFunctions/helperFunctions';
-
-import { BAD_REQUEST, SERVER_URL } from './helperFunctions/helperServer';
 
 import HTTPError from 'http-errors';
 import { sendPasswordResetEmail } from './helperFunctions/emailHelper';
+import { SERVER_URL } from './helperFunctions/helperFunctions';
 
 const DEFAULT_PROFILE_PIC = SERVER_URL + '/profileImgs/default.jpg';
 
@@ -117,7 +118,10 @@ export const authLoginV3 = (email: string, password: string): UIdAndToken => {
   const data = getData();
 
   for (const user of data.users) {
-    if (user.email === email && user.password === getHashOf(password + SECRET)) {
+    if (
+      user.email === email &&
+      user.password === getHashOf(password + SECRET)
+    ) {
       // Create a unique token in numbers and convert it to string
       const token = `${createUniqueId()}`;
       data.tokens.push({
@@ -228,7 +232,7 @@ export const authLogOutV2 = (token: string): Record<string, never> => {
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
 
   // find the index of the token that need to be removed, and using splice method

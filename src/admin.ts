@@ -9,7 +9,7 @@ import {
   isAuthUserIdValid,
   isTokenValid,
 } from './helperFunctions/helperFunctions';
-import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
+import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperFunctions';
 
 /**
  * <Given a user by their uId, removes them from Memes.>

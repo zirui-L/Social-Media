@@ -4,9 +4,10 @@ import {
   createUniqueId,
   findUserFromToken,
   findUser,
+  FORBIDDEN,
 } from './helperFunctions/helperFunctions';
 
-import { BAD_REQUEST } from './helperFunctions/helperServer';
+import { BAD_REQUEST } from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
 
 type ChannelId = {
@@ -46,7 +47,7 @@ export const channelsCreateV3 = (
 
   const tokenId = isTokenValid(token);
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
 
   const channelId = createUniqueId();
@@ -94,7 +95,7 @@ export const channelsListV3 = (token: string): Channels | Error => {
 
   const tokenId = isTokenValid(token);
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
 
   const authUserId = findUserFromToken(tokenId);
@@ -130,7 +131,7 @@ export const channelsListAllV3 = (token: string): Channels => {
 
   const tokenId = isTokenValid(token);
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
 
   const getChannels = [];

@@ -3,16 +3,14 @@ import {
   requestStandupActive,
   requestStandupSend,
   requestStandupStart,
-  BAD_REQUEST,
-  OK,
   requestClear,
   requestAuthRegister,
   requestChannelsCreate,
-  FORBIDDEN,
   requestChannelMessages,
   requestChannelJoin,
   requestMessageEdit,
-} from '../helperFunctions/helperServer';
+} from './testHelper';
+import { FORBIDDEN, OK, BAD_REQUEST } from '../helperFunctions/helperFunctions';
 
 import { createString } from './testHelper';
 

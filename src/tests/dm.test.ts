@@ -8,10 +8,8 @@ import {
   requestDmLeave,
   requestDmMessages,
   requestMessageSendDm,
-  BAD_REQUEST,
-  FORBIDDEN,
-  OK,
-} from '../helperFunctions/helperServer';
+} from './testHelper';
+import { FORBIDDEN, OK, BAD_REQUEST } from '../helperFunctions/helperFunctions';
 
 beforeEach(() => {
   requestClear();
@@ -96,7 +94,7 @@ describe('Testing /dm/create/v2', () => {
       'Chen'
     ).bodyObj;
     const DmCreate = requestDmCreate(user1.token + 1, [user2.authUserId]);
-    expect(DmCreate.statusCode).toBe(BAD_REQUEST);
+    expect(DmCreate.statusCode).toBe(FORBIDDEN);
     expect(DmCreate.bodyObj).toStrictEqual(undefined);
   });
 
@@ -128,7 +126,7 @@ describe('Testing /dm/list/v2', () => {
       'Li'
     ).bodyObj;
     const DmList = requestDmList(user1.token + 1);
-    expect(DmList.statusCode).toBe(BAD_REQUEST);
+    expect(DmList.statusCode).toBe(FORBIDDEN);
     expect(DmList.bodyObj).toStrictEqual(undefined);
   });
 
@@ -252,7 +250,7 @@ describe('Testing /dm/remove/v2', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmRemove = requestDmRemove(user1.token + 1, dmId);
-    expect(DmRemove.statusCode).toBe(BAD_REQUEST);
+    expect(DmRemove.statusCode).toBe(FORBIDDEN);
     expect(DmRemove.bodyObj).toStrictEqual(undefined);
   });
 
@@ -269,7 +267,9 @@ describe('Testing /dm/remove/v2', () => {
       'Shenba',
       'Chen'
     ).bodyObj;
+
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
+    requestMessageSendDm(user1.token, dmId, 'first message');
     const DmRemove = requestDmRemove(user1.token, dmId);
     expect(DmRemove.statusCode).toBe(OK);
     expect(DmRemove.bodyObj).toStrictEqual({});
@@ -336,7 +336,7 @@ describe('Testing /dm/details/v2', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmDetails = requestDmDetails(user1.token + 1, dmId);
-    expect(DmDetails.statusCode).toBe(BAD_REQUEST);
+    expect(DmDetails.statusCode).toBe(FORBIDDEN);
     expect(DmDetails.bodyObj).toStrictEqual(undefined);
   });
 
@@ -485,7 +485,7 @@ describe('Testing /dm/leave/v2', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmLeave = requestDmLeave(user1.token + 1, dmId);
-    expect(DmLeave.statusCode).toBe(BAD_REQUEST);
+    expect(DmLeave.statusCode).toBe(FORBIDDEN);
     expect(DmLeave.bodyObj).toStrictEqual(undefined);
   });
 
@@ -620,7 +620,7 @@ describe('Testing /dm/messages/v2', () => {
     ).bodyObj;
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const DmMessages = requestDmMessages(user1.token + 1, dmId, 0);
-    expect(DmMessages.statusCode).toBe(BAD_REQUEST);
+    expect(DmMessages.statusCode).toBe(FORBIDDEN);
     expect(DmMessages.bodyObj).toStrictEqual(undefined);
   });
 

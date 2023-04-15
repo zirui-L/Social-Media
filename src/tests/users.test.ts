@@ -6,10 +6,8 @@ import {
   requestUserProfileSetName,
   requestUsersAll,
   requestClear,
-  BAD_REQUEST,
-  OK,
-  FORBIDDEN,
-} from '../helperFunctions/helperServer';
+} from './testHelper';
+import { FORBIDDEN, OK, BAD_REQUEST } from '../helperFunctions/helperFunctions';
 
 // clear data before each test
 beforeEach(() => {
@@ -243,7 +241,7 @@ describe('Testing /user/profile/setname/v2 route', () => {
       'Lee'
     );
     // expect function to run and return an error
-    expect(usersProfileSetnameObj.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetnameObj.statusCode).toBe(FORBIDDEN);
     expect(usersProfileSetnameObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -358,7 +356,7 @@ describe('Testing /user/profile/setemail/v2 route', () => {
       'test1@ad.unsw.edu.au'
     );
     // expect funtion to run and return an error
-    expect(usersProfileSetEmailObj.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetEmailObj.statusCode).toBe(FORBIDDEN);
     expect(usersProfileSetEmailObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -456,7 +454,7 @@ describe('Testing /user/profile/sethandle/v2 route', () => {
     );
     // expect function to run and return an error
 
-    expect(usersProfileSetHandleObj.statusCode).toBe(BAD_REQUEST);
+    expect(usersProfileSetHandleObj.statusCode).toBe(FORBIDDEN);
     expect(usersProfileSetHandleObj.bodyObj).toStrictEqual(undefined);
   });
 

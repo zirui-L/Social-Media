@@ -13,16 +13,12 @@ import validator from 'validator';
 
 import fs from 'fs';
 
-import {
-  BAD_REQUEST,
-  FORBIDDEN,
-  OK,
-  SERVER_URL,
-} from './helperFunctions/helperServer';
+import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
 import request from 'sync-request';
 
 import { imageSize } from 'image-size';
+import { SERVER_URL } from './helperFunctions/helperFunctions';
 
 type UserObject = {
   user: User;
@@ -131,7 +127,7 @@ export const userProfileSetNameV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!nameInRange(nameFirst) || !nameInRange(nameLast)) {
     throw HTTPError(BAD_REQUEST, 'Invalid name length');
   }
@@ -169,7 +165,7 @@ export const userProfileSetEmailV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!validator.isEmail(email)) {
     throw HTTPError(BAD_REQUEST, 'Invalid email');
   } else if (!isAvaliableEmail(email, data.users)) {
@@ -210,7 +206,7 @@ export const userProfileSetHandleV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (handleStr.length < 3 || handleStr.length > 20) {
     throw HTTPError(BAD_REQUEST, 'Invalid handle string length');
   } else if (!/^[0-9a-zA-Z]+$/.test(handleStr)) {
@@ -277,8 +273,11 @@ export const userProfileUploadPhotoV1 = (
   }
 
   // Check if the image is valid
-  const res = request('GET', imgUrl);
-  if (res.statusCode !== OK) {
+  let res;
+  try {
+    // Code that might throw an error
+    res = request('GET', imgUrl);
+  } catch (error) {
     throw HTTPError(BAD_REQUEST, 'Error when retrieving the image');
   }
 

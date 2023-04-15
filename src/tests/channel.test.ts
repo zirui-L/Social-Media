@@ -11,10 +11,8 @@ import {
   requestChannelsListAll,
   requestClear,
   requestMessageSend,
-  BAD_REQUEST,
-  FORBIDDEN,
-  OK,
-} from '../helperFunctions/helperServer';
+} from './testHelper';
+import { FORBIDDEN, OK, BAD_REQUEST } from '../helperFunctions/helperFunctions';
 
 import { createMessages } from './testHelper';
 
@@ -59,7 +57,7 @@ describe('Testing /channel/details/v3', () => {
       test1.bodyObj.token + 1,
       channelId.bodyObj.channelId
     );
-    expect(channelDetails.statusCode).toBe(BAD_REQUEST);
+    expect(channelDetails.statusCode).toBe(FORBIDDEN);
     expect(channelDetails.bodyObj).toStrictEqual(undefined);
   });
 
@@ -258,7 +256,7 @@ describe('Testing /channel/join/v3', () => {
       user1.bodyObj.token + 1,
       channel1.bodyObj.channelId
     );
-    expect(channelJoinObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelJoinObj.statusCode).toBe(FORBIDDEN);
     expect(channelJoinObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -497,7 +495,7 @@ describe('/channel/invite/v3 testing', () => {
       channel.bodyObj.channelId,
       test1.bodyObj.authUserId
     );
-    expect(channelInviteObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelInviteObj.statusCode).toBe(FORBIDDEN);
     expect(channelInviteObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -699,7 +697,7 @@ describe('Testing /channel/messages/v3', () => {
       channel.bodyObj.channelId,
       0
     );
-    expect(channelMessageObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelMessageObj.statusCode).toBe(FORBIDDEN);
     expect(channelMessageObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -1094,7 +1092,7 @@ describe('Testing /channel/leave/v2', () => {
       user.bodyObj.token + '1',
       channel.bodyObj.channelId
     );
-    expect(channelLeaveObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelLeaveObj.statusCode).toBe(FORBIDDEN);
     expect(channelLeaveObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -1448,7 +1446,7 @@ describe('Testing /channel/addowner/v2', () => {
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
     );
-    expect(channelAddOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelAddOwnerObj.statusCode).toBe(FORBIDDEN);
     expect(channelAddOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -1837,7 +1835,7 @@ describe('Testing /channel/removeowner/v2', () => {
     requestChannelAddOwner(
       test1.bodyObj.token,
       channel.bodyObj.channelId,
-      test2.bodyObj.autherUserId
+      test2.bodyObj.authUserId
     );
 
     // test 3 does not have owner permission in the channel
@@ -1846,7 +1844,7 @@ describe('Testing /channel/removeowner/v2', () => {
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
     );
-    expect(channelRemoveOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelRemoveOwnerObj.statusCode).toBe(FORBIDDEN);
     expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -1878,7 +1876,7 @@ describe('Testing /channel/removeowner/v2', () => {
       channel.bodyObj.channelId,
       test2.bodyObj.authUserId
     );
-    expect(channelRemoveOwnerObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelRemoveOwnerObj.statusCode).toBe(FORBIDDEN);
     expect(channelRemoveOwnerObj.bodyObj).toStrictEqual(undefined);
   });
 
