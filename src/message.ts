@@ -152,7 +152,7 @@ export const messageEditV2 = (
       throw HTTPError(BAD_REQUEST, "User doesn't have permission");
     }
   } else {
-    // dm messages
+    // Dm messages
     if (
       uId !== messageToEdit.uId &&
       !isDmOwner(uId, messageToEdit.dmOrChannelId)
@@ -253,8 +253,8 @@ export const messageRemoveV2 = (
       (message: number) => message !== messageId
     );
   } else {
-    const dm = findDm(MessageToDelete.dmOrChannelId);
-    dm.messages = dm.messages.filter(
+    const Dm = findDm(MessageToDelete.dmOrChannelId);
+    Dm.messages = Dm.messages.filter(
       (message: number) => message !== messageId
     );
   }
@@ -285,20 +285,20 @@ export const messageSendDmV2 = (
   message: string
 ) => {
   const data = getData();
-  const dm = findDm(dmId);
+  const Dm = findDm(dmId);
 
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
-  } else if (dm === undefined) {
+    throw HTTPError(FORBIDDEN, 'Invalid token');
+  } else if (Dm === undefined) {
     throw HTTPError(BAD_REQUEST, 'Invalid DmId');
   } else if (message.length < 1 || message.length > 1000) {
     // length of message is less than 1 or over 1000 characters
     throw HTTPError(BAD_REQUEST, 'Invalid message length');
   }
   const uId = findUserFromToken(tokenId);
-  if (!dm.allMembers.includes(uId)) {
+  if (!Dm.allMembers.includes(uId)) {
     // dmId is valid and the authorised user is not a member of the DM
     throw HTTPError(FORBIDDEN, 'The user is not a member of the dm');
   }
@@ -315,7 +315,7 @@ export const messageSendDmV2 = (
     taggedUsers: findTaggedUsers(dmId, false, message).uIds,
     isSent: true,
   });
-  dm.messages.unshift(messageId); // unshift the most recent message to the front
+  Dm.messages.unshift(messageId); // unshift the most recent message to the front
 
   const user = findUser(uId);
   user.messages.unshift(messageId);
