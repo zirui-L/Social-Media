@@ -8,8 +8,10 @@ import {
   requestDmLeave,
   requestDmMessages,
   requestMessageSendDm,
+  requestMessageEdit,
 } from './testHelper';
 import { FORBIDDEN, OK, BAD_REQUEST } from '../helperFunctions/helperFunctions';
+import { dmMessagesV2 } from '../dm';
 
 beforeEach(() => {
   requestClear();
@@ -269,9 +271,13 @@ describe('Testing /dm/remove/v2', () => {
     ).bodyObj;
 
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
+    const message = requestMessageSendDm(user1.token, dmId, 'firstMessage').bodyObj;
     const dmRemove = requestDmRemove(user1.token, dmId);
     expect(dmRemove.statusCode).toBe(OK);
     expect(dmRemove.bodyObj).toStrictEqual({});
+    const edit = requestMessageEdit(user1.token, message.messageId, '');
+    // should return error since the message is deleted
+    expect(edit.statusCode).toBe(BAD_REQUEST);
   });
 });
 
