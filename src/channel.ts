@@ -11,7 +11,7 @@ import {
   isOwner,
 } from './helperFunctions/helperFunctions';
 
-import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
+import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
 import { addNotification } from './helperFunctions/notificationHelper';
 
@@ -43,7 +43,7 @@ export const channelDetailsV3 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isChannelValid(channelId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid channel');
   }
@@ -118,7 +118,7 @@ export const channelJoinV3 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isChannelValid(channelId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid channel');
   }
@@ -173,7 +173,7 @@ export const channelInviteV3 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isChannelValid(channelId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid channel');
   } else if (!isAuthUserIdValid(uId)) {
@@ -232,7 +232,7 @@ export const channelMessagesV3 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isChannelValid(channelId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid channel');
   }
@@ -305,7 +305,7 @@ export const channelLeaveV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isChannelValid(channelId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid channel');
   }
@@ -364,13 +364,13 @@ export const channelAddOwnerV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isChannelValid(channelId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid channel');
   } else if (!isAuthUserIdValid(uId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid uId');
   } else if (!isMember(uId, channelId)) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(BAD_REQUEST, 'User not a member');
   }
 
   if (isOwner(uId, channelId)) {
@@ -425,7 +425,7 @@ export const channelRemoveOwnerV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isChannelValid(channelId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid channel');
   } else if (!isAuthUserIdValid(uId)) {

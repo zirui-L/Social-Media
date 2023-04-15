@@ -6,11 +6,9 @@ import {
   requestSearch,
   requestDmCreate,
   requestMessageSendDm,
-  OK,
-  BAD_REQUEST,
-  FORBIDDEN,
   requestChannelJoin,
-} from '../helperFunctions/helperServer';
+} from './testHelper';
+import { FORBIDDEN, OK, BAD_REQUEST } from '../helperFunctions/helperFunctions';
 import { createString } from './testHelper';
 
 beforeEach(() => {

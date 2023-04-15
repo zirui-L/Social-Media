@@ -18,7 +18,7 @@ import {
   getTimeNow,
 } from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
-import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperServer';
+import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperFunctions';
 import {
   addNotification,
   findTaggedUsers,
@@ -51,7 +51,7 @@ export const messageSendV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (channel === undefined) {
     throw HTTPError(BAD_REQUEST, 'Invalid channelId'); // ChannelId does not refer to a valid channel
   } else if (message.length < 1 || message.length > 1000) {
@@ -117,7 +117,7 @@ export const messageEditV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isMessageValid(messageId)) {
     // messageId does not refer to a valid message
     throw HTTPError(BAD_REQUEST, 'Invalid message Id');
@@ -211,7 +211,7 @@ export const messageRemoveV2 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   } else if (!isMessageValid(messageId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid message Id');
   }
@@ -273,9 +273,9 @@ export const messageRemoveV2 = (
  *
  * @returns {Error} - returns when any of:
  * 1. token is invalid
- * 1. dmId does not refer to a valid DM
- * 2. length of message is less than 1 or over 1000 characters
- * 3. dmId is valid and the authorised user is not a member of the DM
+ * 2. dmId does not refer to a valid DM
+ * 3. length of message is less than 1 or over 1000 characters
+ * 4. dmId is valid and the authorised user is not a member of the DM
  * @returns {messageIdObj} - return if all error cases are avoided
  *
  */
@@ -325,6 +325,25 @@ export const messageSendDmV2 = (
   return { messageId };
 };
 
+/**
+ * <Given a message within a channel or DM the authorised user is part of,
+ * adds a "react" to that particular message.>
+ *
+ * @param {string} token - token representing a session for an user
+ * @param {number} messageId - Id of the message
+ * @param {number} reactId - reactId
+ *
+ * @returns {Error} - returns when any of:
+ * 1. token is invalid
+ * 2. messageId is not a valid message within a channel or DM that the
+ *    authorised user is part of
+ * 2. reactId is not a valid react ID - currently, the only valid react
+ *    ID the frontend has is 1
+ * 3. the message already contains a react with ID reactId from the
+ *    authorised user
+ * @returns {} - return if all error cases are avoided
+ *
+ */
 export const messageReactV1 = (
   token: string,
   messageId: number,
@@ -386,6 +405,24 @@ export const messageReactV1 = (
   return {};
 };
 
+/**
+ * <Given a message within a channel or DM the authorised user is part of,
+ * removes a "react" to that particular message.>
+ *
+ * @param {string} token - token representing a session for an user
+ * @param {number} messageId - Id of the message
+ * @param {number} reactId - reactId
+ *
+ * @returns {Error} - returns when any of:
+ * 1. token is invalid
+ * 2. messageId is not a valid message within a channel or DM that the
+ *    authorised user is part of
+ * 3. reactId is not a valid react ID
+ * 4. the message does not contain a react with ID reactId from the
+ *    authorised user
+ * @returns {} - return if all error cases are avoided
+ *
+ */
 export const messageUnReactV1 = (
   token: string,
   messageId: number,
@@ -435,6 +472,22 @@ export const messageUnReactV1 = (
   return {};
 };
 
+/**
+ * <Given a message within a channel or DM, marks it as "pinned".>
+ *
+ * @param {string} token - token representing a session for an user
+ * @param {number} messageId - Id of the message
+ *
+ * @returns {Error} - returns when any of:
+ * 1. token is invalid
+ * 2. messageId is not a valid message within a channel or DM that the
+ *    authorised user is part of
+ * 3. the message is already pinned
+ * 4. messageId refers to a valid message in a joined channel/DM and the
+ *    authorised user does not have owner permissions in the channel/DM
+ * @returns {} - return if all error cases are avoided
+ *
+ */
 export const messagePinV1 = (
   token: string,
   messageId: number
@@ -483,6 +536,23 @@ export const messagePinV1 = (
   setData(data);
   return {};
 };
+
+/**
+ * <Given a message within a channel or DM, removes its mark as "pinned".>
+ *
+ * @param {string} token - token representing a session for an user
+ * @param {number} messageId - Id of the message
+ *
+ * @returns {Error} - returns when any of:
+ * 1. token is invalid
+ * 2. messageId is not a valid message within a channel or DM that the
+ *    authorised user is part of
+ * 3. the message is already pinned
+ * 4. messageId refers to a valid message in a joined channel/DM and the
+ *    authorised user does not have owner permissions in the channel/DM
+ * @returns {} - return if all error cases are avoided
+ *
+ */
 
 export const messageUnPinV1 = (
   token: string,
@@ -533,6 +603,31 @@ export const messageUnPinV1 = (
   return {};
 };
 
+/**
+ * <A new message containing the contents of both the original message and the
+ * optional message should be sent to the channel/DM identified by the
+ * channelId/dmId. >
+ *
+ * @param {string} token - token representing a session for an user
+ * @param {number} ogMessageId - Id of the original message
+ * @param {string} message - Message sent
+ * @param {number} channelId - channel id
+ * @param {number} dmId - dm id
+ *
+ * @returns {Error} - returns when any of:
+ * 1. token is invalid
+ * 2. both channelId and dmId are invalid
+ * 3. neither channelId nor dmId are -1
+ * 4. ogMessageId does not refer to a valid message within a channel/DM that
+ *    the authorised user has joined
+ * 5. length of optional message is more than 1000 characters
+ * 6. the pair of channelId and dmId are valid (i.e. one is -1, the other is
+ *    valid) and the authorised user has not joined the channel or DM they are
+ *    trying to share the message to
+ * @returns {sharedMessageId} - return if all error cases are avoided
+ *
+ */
+
 export const messageShareV1 = (
   token: string,
   ogMessageId: number,
@@ -543,10 +638,10 @@ export const messageShareV1 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
   if (channelId !== -1 && dmId !== -1) {
-    throw HTTPError(BAD_REQUEST, 'Can\'t share to both channel and dm');
+    throw HTTPError(BAD_REQUEST, "Can't share to both channel and dm");
   } else if (!isChannelValid(channelId) && !isDmValid(dmId)) {
     throw HTTPError(BAD_REQUEST, 'Invalid channelId and dmId');
   } else if (message.length > 1000) {
@@ -566,7 +661,7 @@ export const messageShareV1 = (
   const ogMessage = findStoredMessageFromId(ogMessageId);
   if (
     !storedUser.channels.includes(ogMessage.dmOrChannelId) &&
-      !storedUser.dms.includes(ogMessage.dmOrChannelId)
+    !storedUser.dms.includes(ogMessage.dmOrChannelId)
   ) {
     throw HTTPError(BAD_REQUEST, "Message is not in user's chat");
   }
@@ -575,10 +670,35 @@ export const messageShareV1 = (
     const sharedMessageId = messageSendDmV2(token, dmId, newMessage).messageId;
     return { sharedMessageId };
   } else {
-    const sharedMessageId = messageSendV2(token, channelId, newMessage).messageId;
+    const sharedMessageId = messageSendV2(
+      token,
+      channelId,
+      newMessage
+    ).messageId;
     return { sharedMessageId };
   }
 };
+
+/**
+ * <Sends a message from the authorised user to the channel specified by
+ * channelId automatically at a specified time in the future. The returned
+ * messageId will only be considered valid for other actions>
+ *
+ * @param {string} token - token representing a session for an user
+ * @param {number} channelId - Id of the channel
+ * @param {string} message - Message sent
+ * @param {number} timeSent - time for the message to be send
+ *
+ * @returns {Error} - returns when any of:
+ * 1. token is invalid
+ * 2. channelId does not refer to a valid channel
+ * 3. length of message is less than 1 or over 1000 characters
+ * 4. timeSent is a time in the past
+ * 5. channelId is valid and the authorised user is not a member of the
+ *    channel they are trying to post to
+ * @returns {messageId} - return if all error cases are avoided
+ *
+ */
 
 export const messageSendLaterV1 = (
   token: string,
@@ -590,7 +710,7 @@ export const messageSendLaterV1 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
 
   if (!isChannelValid(channelId)) {
@@ -635,6 +755,26 @@ export const messageSendLaterV1 = (
   return { messageId };
 };
 
+/**
+ * <Sends a message from the authorised user to the DM specified by dmId
+ * automatically at a specified time in the future. >
+ *
+ * @param {string} token - token representing a session for an user
+ * @param {number} dmId - Id of the dm
+ * @param {string} message - Message sent
+ * @param {number} timeSent - time for the message to be send
+ *
+ * @returns {Error} - returns when any of:
+ * 1. token is invalid
+ * 2. dmId does not refer to a valid DM
+ * 3. length of message is less than 1 or over 1000 characters
+ * 4. timeSent is a time in the past
+ * 5. dmId is valid and the authorised user is not a member of the DM they
+ * are trying to post to
+ * @returns {messageId} - return if all error cases are avoided
+ *
+ */
+
 export const messageSendLaterDmV1 = (
   token: string,
   dmId: number,
@@ -645,7 +785,7 @@ export const messageSendLaterDmV1 = (
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
-    throw HTTPError(BAD_REQUEST, 'Invalid token');
+    throw HTTPError(FORBIDDEN, 'Invalid token');
   }
 
   if (!isDmValid(dmId)) {

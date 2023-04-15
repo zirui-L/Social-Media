@@ -4,9 +4,8 @@ import {
   requestChannelsCreate,
   requestChannelsListAll,
   requestChannelsList,
-  BAD_REQUEST,
-  OK,
-} from '../helperFunctions/helperServer';
+} from './testHelper';
+import { FORBIDDEN, OK, BAD_REQUEST } from '../helperFunctions/helperFunctions';
 
 beforeEach(() => {
   requestClear();
@@ -55,7 +54,7 @@ describe('requestChannelsCreate function testing', () => {
     );
     const name = 'validName';
     const channelId = requestChannelsCreate(user.bodyObj.token + 1, name, true);
-    expect(channelId.statusCode).toBe(BAD_REQUEST);
+    expect(channelId.statusCode).toBe(FORBIDDEN);
     expect(channelId.bodyObj).toStrictEqual(undefined);
   });
 
@@ -100,7 +99,7 @@ describe('requestChannelsList function testing', () => {
     );
 
     const channelsListObj = requestChannelsList(user1.bodyObj.token + 1);
-    expect(channelsListObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelsListObj.statusCode).toBe(FORBIDDEN);
     expect(channelsListObj.bodyObj).toStrictEqual(undefined);
   });
 
@@ -246,7 +245,7 @@ describe('requestChannelsListAll function testing', () => {
     );
 
     const channelsListAllObj = requestChannelsListAll(user1.bodyObj.token + 1);
-    expect(channelsListAllObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelsListAllObj.statusCode).toBe(FORBIDDEN);
 
     expect(channelsListAllObj.bodyObj).toStrictEqual(undefined);
   });

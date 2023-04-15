@@ -8,10 +8,8 @@ import {
   requestDmLeave,
   requestDmMessages,
   requestMessageSendDm,
-  BAD_REQUEST,
-  FORBIDDEN,
-  OK,
-} from '../helperFunctions/helperServer';
+} from './testHelper';
+import { FORBIDDEN, OK, BAD_REQUEST } from '../helperFunctions/helperFunctions';
 
 beforeEach(() => {
   requestClear();
@@ -269,6 +267,7 @@ describe('Testing /dm/remove/v2', () => {
       'Shenba',
       'Chen'
     ).bodyObj;
+
     const dmId = requestDmCreate(user1.token, [user2.authUserId]).bodyObj.dmId;
     const dmRemove = requestDmRemove(user1.token, dmId);
     expect(dmRemove.statusCode).toBe(OK);
