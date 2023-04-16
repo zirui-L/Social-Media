@@ -864,6 +864,72 @@ describe('Testing /message/edit/v2', () => {
       end: -1,
     });
   });
+
+  test('Test-15: Success, edit sharedmessage in a channel', () => {
+    const test1 = requestAuthRegister(
+      'test1@gmail.com',
+      'password1',
+      'firstName1',
+      'lastName1'
+    );
+    const channelId1 = requestChannelsCreate(
+      test1.bodyObj.token,
+      'firstChannel',
+      true
+    );
+
+    const messageSendObj = requestMessageSend(
+      test1.bodyObj.token,
+      channelId1.bodyObj.channelId,
+      'firstMessage'
+    );
+
+    const messageShareObj = requestMessageShare(
+      test1.bodyObj.token,
+      messageSendObj.bodyObj.messageId,
+      'additionalMessage',
+      channelId1.bodyObj.channelId,
+      -1
+    );
+  
+    const messageEditObj = requestMessageEdit(
+      test1.bodyObj.token,
+      messageShareObj.bodyObj.sharedMessageId,
+      'HelloWorld'
+    );
+    
+    expect(messageEditObj.statusCode).toBe(OK);
+    expect(messageEditObj.bodyObj).toStrictEqual({});
+
+    expect(
+      requestChannelMessages(
+        test1.bodyObj.token,
+        channelId1.bodyObj.channelId,
+        0
+      ).bodyObj
+    ).toStrictEqual({
+      messages: [
+        {
+          messageId: messageShareObj.bodyObj.sharedMessageId,
+          uId: test1.bodyObj.authUserId,
+          message: 'HelloWorld',
+          timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
+        },
+        {
+          messageId: messageSendObj.bodyObj.messageId,
+          uId: test1.bodyObj.authUserId,
+          message: 'firstMessage',
+          timeSent: expect.any(Number),
+          reacts: [],
+          isPinned: false,
+        },
+      ],
+      start: 0,
+      end: -1,
+    });
+  });
 });
 
 describe('Testing /message/remove/v2', () => {
