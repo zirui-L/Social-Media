@@ -241,7 +241,7 @@ describe('Testing /message/send/v2', () => {
       messageId: expect.any(Number),
     });
 
-    // check messages details
+    // check messages details in reverse chronological orsder
     expect(
       requestChannelMessages(
         test1.bodyObj.token,
@@ -574,21 +574,23 @@ describe('Testing /message/edit/v2', () => {
       'firstName2',
       'lastName2'
     );
+
+    // test2 is the channel owner
     const channelId1 = requestChannelsCreate(
-      test1.bodyObj.token,
+      test2.bodyObj.token,
       'firstChannel',
       true
     );
 
-    requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
+    requestChannelJoin(test1.bodyObj.token, channelId1.bodyObj.channelId);
 
     const messageSendObj1 = requestMessageSend(
-      test2.bodyObj.token,
+      test1.bodyObj.token,
       channelId1.bodyObj.channelId,
       'firstMessage'
     );
     const messageEditObj = requestMessageEdit(
-      test1.bodyObj.token,
+      test2.bodyObj.token,
       messageSendObj1.bodyObj.messageId,
       'HelloWorld'
     );
@@ -598,7 +600,7 @@ describe('Testing /message/edit/v2', () => {
 
     expect(
       requestChannelMessages(
-        test1.bodyObj.token,
+        test2.bodyObj.token,
         channelId1.bodyObj.channelId,
         0
       ).bodyObj
@@ -606,7 +608,7 @@ describe('Testing /message/edit/v2', () => {
       messages: [
         {
           messageId: messageSendObj1.bodyObj.messageId,
-          uId: test2.bodyObj.authUserId,
+          uId: test1.bodyObj.authUserId,
           message: 'HelloWorld',
           timeSent: expect.any(Number),
           reacts: [],
@@ -1182,21 +1184,23 @@ describe('Testing /message/remove/v2', () => {
       'firstName2',
       'lastName2'
     );
+
+    // test2 is the channel owner
     const channelId1 = requestChannelsCreate(
-      test1.bodyObj.token,
+      test2.bodyObj.token,
       'firstChannel',
       true
     );
 
-    requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
+    requestChannelJoin(test1.bodyObj.token, channelId1.bodyObj.channelId);
 
     const messageSendObj1 = requestMessageSend(
-      test2.bodyObj.token,
+      test1.bodyObj.token,
       channelId1.bodyObj.channelId,
       'firstMessage'
     );
     const messageRemoveObj = requestMessageRemove(
-      test1.bodyObj.token,
+      test2.bodyObj.token,
       messageSendObj1.bodyObj.messageId
     );
 
@@ -1788,7 +1792,8 @@ describe('Testing /message/react/v1', () => {
     const res = requestMessageReact(test1.token, messageSendObj1.messageId, 1);
     expect(res.statusCode).toStrictEqual(OK);
     expect(res.bodyObj).toStrictEqual({});
-
+    
+    // check message details
     const channelMessages = requestChannelMessages(
       test1.token,
       channelId.channelId,
@@ -1838,7 +1843,7 @@ describe('Testing /message/react/v1', () => {
     const res = requestMessageReact(test2.token, messageIdObj.messageId, 1);
     expect(res.statusCode).toStrictEqual(OK);
     expect(res.bodyObj).toStrictEqual({});
-
+    // check message details
     const dmMessages = requestDmMessages(test1.token, dmIdObj.dmId, 0);
     expect(dmMessages.bodyObj).toStrictEqual({
       messages: [
@@ -2054,6 +2059,8 @@ describe('Testing /message/unreact/v1', () => {
     );
     expect(res.statusCode).toStrictEqual(OK);
     expect(res.bodyObj).toStrictEqual({});
+
+    // check message details
     const channelMessages = requestChannelMessages(
       test1.token,
       channelId.channelId,
@@ -2099,6 +2106,8 @@ describe('Testing /message/unreact/v1', () => {
     const res = requestMessageUnReact(test1.token, messageIdObj.messageId, 1);
     expect(res.statusCode).toStrictEqual(OK);
     expect(res.bodyObj).toStrictEqual({});
+
+    // check message details
     const dmMessages = requestDmMessages(test1.token, dmIdObj.dmId, 0);
     expect(dmMessages.bodyObj).toStrictEqual({
       messages: [
@@ -2218,6 +2227,7 @@ describe('Testing /message/pin/v1', () => {
       dmIdObj.dmId,
       'firstMessage'
     ).bodyObj;
+    // test3 is not a member of the dm 
     const res = requestMessagePin(test3.token, messageIdObj.messageId);
     expect(res.statusCode).toBe(BAD_REQUEST);
   });
@@ -2240,6 +2250,7 @@ describe('Testing /message/pin/v1', () => {
       'firstMessage'
     ).bodyObj;
     requestMessagePin(test1.token, messageSendObj1.messageId);
+    // message already pinned
     const res = requestMessagePin(test1.token, messageSendObj1.messageId);
     expect(res.statusCode).toBe(BAD_REQUEST);
   });
@@ -2321,6 +2332,8 @@ describe('Testing /message/pin/v1', () => {
     const res = requestMessagePin(test2.token, messageSendObj1.messageId);
     expect(res.statusCode).toStrictEqual(OK);
     expect(res.bodyObj).toStrictEqual({});
+
+    // check message details
     const channelMessages = requestChannelMessages(
       test2.token,
       channelId.channelId,
@@ -2343,6 +2356,7 @@ describe('Testing /message/pin/v1', () => {
   });
 
   test('Test-9: Success pin in a channel by a global owner', () => {
+    // test1 is the global owner
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
@@ -2369,6 +2383,8 @@ describe('Testing /message/pin/v1', () => {
     const res = requestMessagePin(test1.token, messageSendObj1.messageId);
     expect(res.statusCode).toStrictEqual(OK);
     expect(res.bodyObj).toStrictEqual({});
+
+    // check message details
     const channelMessages = requestChannelMessages(
       test2.token,
       channelId.channelId,
@@ -2412,6 +2428,8 @@ describe('Testing /message/pin/v1', () => {
     const res = requestMessagePin(test2.token, messageIdObj.messageId);
     expect(res.statusCode).toStrictEqual(OK);
     expect(res.bodyObj).toStrictEqual({});
+
+    // check message details
     const dmMessages = requestDmMessages(test1.token, dmIdObj.dmId, 0);
     expect(dmMessages.bodyObj).toStrictEqual({
       messages: [
@@ -2532,6 +2550,7 @@ describe('Testing /message/unpin/v1', () => {
       'firstMessage'
     ).bodyObj;
     requestMessagePin(test2.token, messageIdObj.messageId);
+    // test3 is not a member of the dm
     const res = requestMessageUnPin(test3.token, messageIdObj.messageId);
     expect(res.statusCode).toBe(BAD_REQUEST);
   });
@@ -2637,6 +2656,8 @@ describe('Testing /message/unpin/v1', () => {
     const res = requestMessageUnPin(test2.token, messageSendObj1.messageId);
     expect(res.statusCode).toStrictEqual(OK);
     expect(res.bodyObj).toStrictEqual({});
+
+    // check message details
     const channelMessages = requestChannelMessages(
       test2.token,
       channelId.channelId,
@@ -2683,6 +2704,7 @@ describe('Testing /message/unpin/v1', () => {
       'firstMessage'
     ).bodyObj;
     requestMessagePin(test1.token, messageSendObj1.messageId);
+    // check message details
     const res = requestMessageUnPin(test1.token, messageSendObj1.messageId);
     expect(res.statusCode).toStrictEqual(OK);
     expect(res.bodyObj).toStrictEqual({});
@@ -2730,6 +2752,7 @@ describe('Testing /message/unpin/v1', () => {
     const res = requestMessageUnPin(test2.token, messageIdObj.messageId);
     expect(res.statusCode).toStrictEqual(OK);
     expect(res.bodyObj).toStrictEqual({});
+    // check message details
     const dmMessages = requestDmMessages(test1.token, dmIdObj.dmId, 0);
     expect(dmMessages.bodyObj).toStrictEqual({
       messages: [
@@ -2795,14 +2818,13 @@ describe('Testing /message/share/v1', () => {
       true
     ).bodyObj;
 
-    const dmIdObj = requestDmCreate(test1.token, []).bodyObj;
-
     const messageSendObj1 = requestMessageSend(
       test1.token,
       channelIdObj.channelId,
       'firstMessage'
     ).bodyObj;
-
+    
+    // both channelId and dmId are invalid
     const res = requestMessageShare(
       test1.token,
       messageSendObj1.messageId,
@@ -2836,7 +2858,8 @@ describe('Testing /message/share/v1', () => {
       channelIdObj.channelId,
       'firstMessage'
     ).bodyObj;
-
+    
+    // neither channelId nor dmId are -1
     const res = requestMessageShare(
       test1.token,
       messageSendObj1.messageId,
@@ -2868,7 +2891,8 @@ describe('Testing /message/share/v1', () => {
       channelIdObj.channelId,
       'firstMessage'
     ).bodyObj;
-
+    
+    // invalid ogMessageId
     const res = requestMessageShare(
       test1.token,
       messageSendObj1.messageId + 1,
@@ -3435,7 +3459,7 @@ describe('Testing message/sendlater/v1', () => {
       test1.bodyObj.token,
       channelId.bodyObj.channelId,
       '',
-      1
+      getTimeNow() + 2
     );
 
     expect(messageSendLaterObj.statusCode).toBe(BAD_REQUEST);
@@ -3469,7 +3493,7 @@ describe('Testing message/sendlater/v1', () => {
       test1.bodyObj.token,
       channelId.bodyObj.channelId ,
       'HelloWorld',
-      getTimeNow() - 2
+      getTimeNow() - 2 // time is at past
     );
 
     expect(messageSendLaterObj.statusCode).toBe(BAD_REQUEST);
@@ -3520,6 +3544,7 @@ describe('Testing message/sendlater/v1', () => {
       'firstChannel',
       true
     );
+    // send 2 seconds later
     const timesent = getTimeNow() + 2;
     const messageSendLaterObj = requestMessageSendLater(
       test1.bodyObj.token,
@@ -3542,7 +3567,8 @@ describe('Testing message/sendlater/v1', () => {
 
     expect(messageEditObj.statusCode).toBe(BAD_REQUEST);
     expect(messageEditObj.bodyObj).toStrictEqual(undefined);
-    sleep(3); // wait for 2 seconds
+    sleep(3); // wait until sent
+    // check message detail
     expect(
       requestChannelMessages(
         test1.bodyObj.token,
@@ -3564,6 +3590,7 @@ describe('Testing message/sendlater/v1', () => {
       end: -1,
     });
 
+    // the message id now is invalid and can perform other operations
     const messageRemoveObj = requestMessageRemove(
       test1.bodyObj.token,
       messageSendLaterObj.bodyObj.messageId
@@ -3658,7 +3685,7 @@ describe('Testing message/sendlaterdm/v1', () => {
       test1.bodyObj.token,
       dmId.bodyObj.dmId,
       'HelloWorld',
-      getTimeNow() - 2
+      getTimeNow() - 2 // timesent is at past
     );
 
     expect(messageSendLaterDmObj.statusCode).toBe(BAD_REQUEST);
@@ -3733,7 +3760,7 @@ describe('Testing message/sendlaterdm/v1', () => {
 
     expect(messageEditObj.statusCode).toBe(BAD_REQUEST);
     expect(messageEditObj.bodyObj).toStrictEqual(undefined);
-    sleep(3); // wait for 3 seconds
+    sleep(3); // wait until sent
     expect(
       requestDmMessages(test1.bodyObj.token, dmId.bodyObj.dmId, 0).bodyObj
     ).toStrictEqual({
@@ -3751,6 +3778,7 @@ describe('Testing message/sendlaterdm/v1', () => {
       end: -1,
     });
 
+    // the message id should be invalid now and is able to perform operation
     const messageRemoveObj = requestMessageRemove(
       test1.bodyObj.token,
       messageSendLaterDmObj.bodyObj.messageId

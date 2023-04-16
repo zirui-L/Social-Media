@@ -659,17 +659,23 @@ export const messageShareV1 = (
   }
   const storedUser = findUser(uId);
   const ogMessage = findStoredMessageFromId(ogMessageId);
+  
+  // messageId does not refer to a valid message within a channel/DM
+  // that the authorised user has joined
   if (
     !storedUser.channels.includes(ogMessage.dmOrChannelId) &&
     !storedUser.dms.includes(ogMessage.dmOrChannelId)
   ) {
     throw HTTPError(BAD_REQUEST, "Message is not in user's chat");
   }
+  // combine the original message and optional message
   const newMessage = ogMessage.message + '\n' + '  ' + message;
   if (channelId === -1) {
+    // share to dm
     const sharedMessageId = messageSendDmV2(token, dmId, newMessage).messageId;
     return { sharedMessageId };
   } else {
+    // share to channel
     const sharedMessageId = messageSendV2(
       token,
       channelId,
@@ -728,7 +734,7 @@ export const messageSendLaterV1 = (
   const messageId = createUniqueId();
   const channel = findChannel(channelId);
 
-  channel.messages.push(messageId);
+  // store the message in datastore, yet set 'isSent' to false
   data.messages.push({
     messageId: messageId,
     uId: authUserId,
@@ -745,9 +751,11 @@ export const messageSendLaterV1 = (
   const user = findUser(authUserId);
   user.messages.push(messageId);
 
+  // wait until timeSent, then update the message to channel, notify users and set 'isSent' to true
   setTimeout(() => {
     const messageObj = findStoredMessageFromId(messageId);
     messageObj.isSent = true;
+    channel.messages.push(messageId);
     notifyTaggedUsers(authUserId, channelId, true, messageId, []);
   }, (timeSent - getTimeNow()) * 1000);
 
@@ -803,7 +811,7 @@ export const messageSendLaterDmV1 = (
   const messageId = createUniqueId();
   const dm = findDm(dmId);
 
-  dm.messages.push(messageId);
+  // store the message in datastore, yet set 'isSent' to false
   data.messages.push({
     messageId: messageId,
     uId: authUserId,
@@ -820,9 +828,11 @@ export const messageSendLaterDmV1 = (
   const user = findUser(authUserId);
   user.messages.push(messageId);
 
+  // wait until timeSent, then update the message to dm, notify users and set 'isSent' to true
   setTimeout(() => {
     const messageObj = findStoredMessageFromId(messageId);
     messageObj.isSent = true;
+    dm.messages.push(messageId);
     notifyTaggedUsers(authUserId, dmId, false, messageId, []);
   }, (timeSent - getTimeNow()) * 1000);
 
