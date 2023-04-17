@@ -60,6 +60,7 @@ export const standupStartV1 = (
 
   const channel = findChannel(channelId);
 
+  // set the finishing time of the standup
   const finishingTime = getTimeNow() + length;
 
   channel.standUp.starter = authUserId;

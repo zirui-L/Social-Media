@@ -16,6 +16,7 @@ export const findTaggedUsers = (
   const data = getData();
   const lowerCaseMessage = msg.toLowerCase();
 
+  // case insentive
   const handleStrings = lowerCaseMessage.match(/@[0-9a-z]+/g);
 
   const uIds: Array<number> = [];
@@ -63,7 +64,7 @@ export function notifyTaggedUsers(
 
   const storedMessage = findStoredMessageFromId(messageId);
 
-  // Only notify users which were not previously notified by the message before edit
+  // Only notify user not tagged before the edit of the message
   for (const user of findTaggedUsers(
     storedMessage.dmOrChannelId,
     storedMessage.isChannelMessage,
@@ -98,6 +99,8 @@ export function addNotification(
   const sender = findUser(senderUserId);
 
   let dmOrChannelName = '';
+
+  // determine whether it is channel or a dm messages
   if (isChannelMessage) {
     const channel = findChannel(dmOrChannelId);
     if (!isMember(receiverUserId, dmOrChannelId)) {

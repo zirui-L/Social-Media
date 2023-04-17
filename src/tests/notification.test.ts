@@ -80,8 +80,7 @@ describe('Testing notifications/getV1', () => {
     });
   });
 
-  test('Test-3: Success, added to the dm ', () => {
-    // create users
+  test('Test-3: Success, added to the dm', () => {
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',

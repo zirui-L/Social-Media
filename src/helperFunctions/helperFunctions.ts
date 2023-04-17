@@ -411,11 +411,13 @@ export const findStoredMessageFromId = (messageId: number): storedMessage => {
   return message;
 };
 
+// return whether a react is valid or not
 export const isReactIdValid = (reactId: number): boolean => {
   const data = getData();
   return data.reactIds.includes(reactId);
 };
 
+// crop the image to desired dimension
 export async function configureImgSize(
   imgUrl: string,
   imgPath: string,
@@ -428,4 +430,5 @@ export async function configureImgSize(
   await image.crop(xStart, yStart, width, height).write(imgPath);
 }
 
+//  get the time now in seconds
 export const getTimeNow = () => Math.floor(Date.now() / 1000);

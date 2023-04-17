@@ -58,6 +58,7 @@ export const notificationsGetV1 = (token: string) => {
   const notifications = [];
   const notificationTemp = user.notifications.slice();
 
+  // return the most recent 20 notifications
   for (const notification of notificationTemp) {
     if (notifications.length === 20) {
       break;
@@ -68,8 +69,9 @@ export const notificationsGetV1 = (token: string) => {
 };
 
 /**
- * <Returns the user's most recent 20 notifications, ordered from most recent to
- *  least recent.>
+ * <Given a query substring, returns a collection of messages in all of the
+ * channels/DMs that the user has joined that contain the query
+ * (case-insensitive).>
  *
  * @param {string} queryStr - query string
  *
@@ -96,6 +98,7 @@ export const searchV1 = (token: string, queryStr: string) => {
 
   const messages = [];
 
+  // find all matching dm messages
   for (const dmId of user.dms) {
     const dm = findDm(dmId);
     for (const messageId of dm.messages) {
@@ -114,6 +117,7 @@ export const searchV1 = (token: string, queryStr: string) => {
     }
   }
 
+  // find all matching channel messages
   for (const channelId of user.channels) {
     const channel = findChannel(channelId);
     for (const messageId of channel.messages) {
