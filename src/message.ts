@@ -724,7 +724,7 @@ export const messageSendLaterV1 = (
   } else if (message.length > 1000 || message.length < 1) {
     throw HTTPError(BAD_REQUEST, 'Invalid message length');
   } else if (timeSent < getTimeNow()) {
-    throw HTTPError(BAD_REQUEST, 'invalid ogMessageId');
+    throw HTTPError(BAD_REQUEST, 'TimeSent is at past');
   }
   const authUserId = findUserFromToken(tokenId);
   if (!isMember(authUserId, channelId)) {
@@ -801,7 +801,7 @@ export const messageSendLaterDmV1 = (
   } else if (message.length > 1000 || message.length < 1) {
     throw HTTPError(BAD_REQUEST, 'Invalid message length');
   } else if (timeSent < getTimeNow()) {
-    throw HTTPError(BAD_REQUEST, 'invalid ogMessageId');
+    throw HTTPError(BAD_REQUEST, 'TimeSent is at past');
   }
   const authUserId = findUserFromToken(tokenId);
   if (!isDmMember(authUserId, dmId)) {
