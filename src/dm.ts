@@ -1,4 +1,4 @@
-import { getData, setData, User, paginatedMessage } from './dataStore';
+import { getData, setData } from './dataStore';
 import {
   isTokenValid,
   findUserFromToken,
@@ -17,34 +17,20 @@ import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
 import { addNotification } from './helperFunctions/notificationHelper';
 
-type DmId = {
-  dmId: number;
-};
-
-type DmObject = {
-  dmId: number;
-  name: string;
-};
-
-type DmDetails = {
-  members: Array<User>;
-  name: string;
-};
-
 /**
  * <Create a new dm and returns its dm Id.>
  *
  * @param {string} token - token for the requesting user
  * @param {array<integer>} uIds - uIds of the dm members
  *
- * @returns {DmId} - object return when
+ * @returns {{dmId: number}} - object return when
  * authUserIds are valid and
  * there are no duplicate 'uId's in uIds
  * @returns {Error} - when authUserId
  * is invalid or there are duplicate 'uId's in uIds
  */
 
-export const dmCreateV2 = (token: string, uIds: Array<number>): DmId => {
+export const dmCreateV2 = (token: string, uIds: Array<number>) => {
   const data = getData();
   // check input's validity
   const tokenId = isTokenValid(token);
@@ -97,11 +83,11 @@ export const dmCreateV2 = (token: string, uIds: Array<number>): DmId => {
  *
  * @param {string} token - token for the requesting user
  *
- * @returns {dms} - object return when authUserId is valid
+ * @returns {{ dms: Array<{dmId: number; name: string}> }} - object return when authUserId is valid
  * @returns {Error} - when authUserId is invalid
  */
 
-export const dmListV2 = (token: string): { dms: Array<DmObject> } => {
+export const dmListV2 = (token: string) => {
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
@@ -136,7 +122,7 @@ export const dmListV2 = (token: string): { dms: Array<DmObject> } => {
 export const dmRemoveV2 = (
   token: string,
   dmId: number
-): Record<string, never> => {
+) => {
   const data = getData();
 
   const tokenId = isTokenValid(token);
@@ -180,14 +166,14 @@ export const dmRemoveV2 = (
  * @param {string} token - token for the requesting user
  * @param {integer} dmId - dmId
  *
- * @returns {dmDetails} - object return when
+ * @returns {{members: Array<User>; name: string}} - object return when
  * dmId/authUserId is valid and
  * authorised user is a member of the dm
  * @returns {Error} - when dmId/authUserId
  * is invalid or authorised user is not a member of the dm
  */
 
-export const dmDetailsV2 = (token: string, dmId: number): DmDetails => {
+export const dmDetailsV2 = (token: string, dmId: number) => {
   // check validity of input
   const tokenId = isTokenValid(token);
 
@@ -240,7 +226,7 @@ export const dmDetailsV2 = (token: string, dmId: number): DmDetails => {
 export const dmLeaveV2 = (
   token: string,
   dmId: number
-): Record<string, never> => {
+) => {
   const data = getData();
   // check validity of input
   const tokenId = isTokenValid(token);
@@ -290,7 +276,7 @@ export const dmMessagesV2 = (
   token: string,
   dmId: number,
   start: number
-): paginatedMessage => {
+) => {
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {

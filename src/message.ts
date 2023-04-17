@@ -1,4 +1,4 @@
-import { Error, getData, setData, React } from './dataStore';
+import { getData, setData, React } from './dataStore';
 import {
   isMember,
   isOwner,
@@ -37,7 +37,7 @@ import {
  * 2. ChannelId does not refer to a valid channel
  * 3. Length of message is less than 1 or over 1000 characters
  * 4. ChannelId is valid and the authorised user is not a member of the channel
- * @returns {messageIdObj} - return if all error cases are avoided
+ * @returns {{messageId: number}} - return if all error cases are avoided
  *
  */
 export const messageSendV2 = (
@@ -111,7 +111,7 @@ export const messageEditV2 = (
   token: string,
   messageId: number,
   message: string
-): Record<string, never> => {
+) => {
   const data = getData();
 
   const tokenId = isTokenValid(token);
@@ -205,7 +205,7 @@ export const messageEditV2 = (
 export const messageRemoveV2 = (
   token: string,
   messageId: number
-): Record<string, never> | Error => {
+) => {
   const data = getData();
 
   const tokenId = isTokenValid(token);
@@ -348,7 +348,7 @@ export const messageReactV1 = (
   token: string,
   messageId: number,
   reactId: number
-): Record<string, never> => {
+) => {
   const data = getData();
 
   const tokenId = isTokenValid(token);
@@ -427,7 +427,7 @@ export const messageUnReactV1 = (
   token: string,
   messageId: number,
   reactId: number
-): Record<string, never> => {
+) => {
   const data = getData();
 
   const tokenId = isTokenValid(token);
@@ -491,7 +491,7 @@ export const messageUnReactV1 = (
 export const messagePinV1 = (
   token: string,
   messageId: number
-): Record<string, never> => {
+) => {
   const data = getData();
 
   const tokenId = isTokenValid(token);
@@ -557,7 +557,7 @@ export const messagePinV1 = (
 export const messageUnPinV1 = (
   token: string,
   messageId: number
-): Record<string, never> => {
+) => {
   const data = getData();
 
   const tokenId = isTokenValid(token);
@@ -659,7 +659,7 @@ export const messageShareV1 = (
   }
   const storedUser = findUser(uId);
   const ogMessage = findStoredMessageFromId(ogMessageId);
-  
+
   // messageId does not refer to a valid message within a channel/DM
   // that the authorised user has joined
   if (
@@ -749,7 +749,7 @@ export const messageSendLaterV1 = (
   });
 
   const user = findUser(authUserId);
-  
+
   // wait until timeSent, then update the message to channel, notify users and set 'isSent' to true
   setTimeout(() => {
     const messageObj = findStoredMessageFromId(messageId);
@@ -826,7 +826,7 @@ export const messageSendLaterDmV1 = (
   });
 
   const user = findUser(authUserId);
-  
+
   // wait until timeSent, then update the message to dm, notify users and set 'isSent' to true
   setTimeout(() => {
     const messageObj = findStoredMessageFromId(messageId);

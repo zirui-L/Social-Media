@@ -1,4 +1,4 @@
-import { getData, setData, User, Error, paginatedMessage } from './dataStore';
+import { getData, setData } from './dataStore';
 import {
   isTokenValid,
   findUserFromToken,
@@ -15,13 +15,6 @@ import { BAD_REQUEST, FORBIDDEN } from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
 import { addNotification } from './helperFunctions/notificationHelper';
 
-type ChannelDetails = {
-  name: string;
-  isPublic: boolean;
-  ownerMembers: Array<User>;
-  allMembers: Array<User>;
-};
-
 /**
  * <Given a channel with ID channelId that the authorised user
  * is a member of, provides basic details about the channel.>
@@ -29,8 +22,8 @@ type ChannelDetails = {
  * @param {string} token - token for the requesting user
  * @param {integer} channelId - channelId
  *
- * @returns {ChannelDetails} - object return when
- * hannelId/authUserId
+ * @returns {{name: string; isPublic: boolean; ownerMembers: Array<User>; allMembers: Array<User>;}}
+ * - object return when hannelId/authUserId
  * is valid and authorised user is a member of the channel
  * @throws {Error} - when channelId/authUserId
  * is invalid or authorised user is not a member of the channel
@@ -39,7 +32,7 @@ type ChannelDetails = {
 export const channelDetailsV3 = (
   token: string,
   channelId: number
-): ChannelDetails => {
+) => {
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
@@ -112,7 +105,7 @@ export const channelDetailsV3 = (
 export const channelJoinV3 = (
   token: string,
   channelId: number
-): Record<string, never> => {
+) => {
   const data = getData();
 
   const tokenId = isTokenValid(token);
@@ -167,7 +160,7 @@ export const channelInviteV3 = (
   token: string,
   channelId: number,
   uId: number
-): Record<string, never> => {
+) => {
   const data = getData();
 
   const tokenId = isTokenValid(token);
@@ -228,7 +221,7 @@ export const channelMessagesV3 = (
   token: string,
   channelId: number,
   start: number
-): paginatedMessage => {
+) => {
   const tokenId = isTokenValid(token);
 
   if (!tokenId) {
@@ -299,7 +292,7 @@ export const channelMessagesV3 = (
 export const channelLeaveV2 = (
   token: string,
   channelId: number
-): Record<string, never> | Error => {
+) => {
   const data = getData();
   // check validity of input
   const tokenId = isTokenValid(token);
@@ -311,16 +304,16 @@ export const channelLeaveV2 = (
   }
 
   const authUserId = findUserFromToken(tokenId);
-  
+
   if (!isMember(authUserId, channelId)) {
     throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
-  
+
   const channel = findChannel(channelId);
   if (authUserId === channel.standUp.starter) {
-    throw HTTPError(BAD_REQUEST, 'User is the starter of an active standup in the channel')
+    throw HTTPError(BAD_REQUEST, 'User is the starter of an active standup in the channel');
   }
-  
+
   // remove member from channel
   channel.allMembers = channel.allMembers.filter(
     (user: number) => user !== authUserId
@@ -360,7 +353,7 @@ export const channelAddOwnerV2 = (
   token: string,
   channelId: number,
   uId: number
-): Record<string, never> => {
+) => {
   const data = getData();
   // check validity of input
   const tokenId = isTokenValid(token);
@@ -383,7 +376,7 @@ export const channelAddOwnerV2 = (
   const authUser = findUser(authUserId);
 
   // authUser not channel owner or global owner
-  if (!isOwner(authUserId, channelId) || authUser.permissionId != 1) {
+  if (!isOwner(authUserId, channelId) || authUser.permissionId !== 1) {
     throw HTTPError(
       FORBIDDEN,
       'The authorised user is not an owner of the channel'
@@ -422,7 +415,7 @@ export const channelRemoveOwnerV2 = (
   token: string,
   channelId: number,
   uId: number
-): Record<string, never> => {
+) => {
   const data = getData();
   // check validity of input
   const tokenId = isTokenValid(token);
@@ -441,7 +434,7 @@ export const channelRemoveOwnerV2 = (
   const authUser = findUser(authUserId);
 
   // authUser not channel owner or global owner
-  if (!isOwner(authUserId, channelId) || authUser.permissionId != 1) {
+  if (!isOwner(authUserId, channelId) || authUser.permissionId !== 1) {
     throw HTTPError(
       FORBIDDEN,
       'The authorised user is not an owner of the channel'
