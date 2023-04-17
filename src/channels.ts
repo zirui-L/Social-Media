@@ -10,19 +10,6 @@ import {
 import { BAD_REQUEST } from './helperFunctions/helperFunctions';
 import HTTPError from 'http-errors';
 
-type ChannelId = {
-  channelId: number;
-};
-
-type Channel = {
-  channelId: number;
-  name: string;
-};
-
-type Channels = {
-  channels: Array<Channel>;
-};
-
 /**
  * channelsCreateV1 creates a new channel and returns its channel Id.
  *
@@ -32,14 +19,14 @@ type Channels = {
  *
  * @throws {Error} - Error case: Either the length of channel name
  * is non-compliant or the authUserId is invalid
- * @returns {{channelId}} - Returns the Id of the created channel
+ * @returns {{channelId: number}} - Returns the Id of the created channel
  */
 
 export const channelsCreateV3 = (
   token: string,
   name: string,
   isPublic: boolean
-): ChannelId | Error => {
+) => {
   const data = getData();
   if (name.length < 1 || name.length > 20) {
     throw HTTPError(BAD_REQUEST, 'Invalid channel name length');
@@ -86,11 +73,11 @@ export const channelsCreateV3 = (
  * returned channels
  *
  * @throws {Error} - Error case when the input user Id is invalid
- * @returns {{channels}} - A array of channels and their details that the user
- * is part of
+ * @returns {{ channels: Array<{ channelId: number; name: string }> }} 
+ * - A array of channels and their details that the user is part of
  */
 
-export const channelsListV3 = (token: string): Channels | Error => {
+export const channelsListV3 = (token: string) => {
   const data = getData();
 
   const tokenId = isTokenValid(token);
@@ -123,10 +110,11 @@ export const channelsListV3 = (token: string): Channels | Error => {
  * @param {integer} authUserId - The user Id
  *
  * @throws {Error} - Error case when the input user Id is invalid
- * @returns {{channels}} - A array of all channels and their details
+ * @returns {{ channels: Array<{ channelId: number; name: string }> }} 
+ * - A array of all channels and their details
  */
 
-export const channelsListAllV3 = (token: string): Channels => {
+export const channelsListAllV3 = (token: string) => {
   const data = getData();
 
   const tokenId = isTokenValid(token);

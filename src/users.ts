@@ -35,11 +35,11 @@ type UsersObject = {
  * @param {string} token - token for the requested user
  * @param {number} uId - id for the checked user
  *
- * @returns {UserObject} - return if the token and uId are both valid
+ * @returns {{user: User}} - return if the token and uId are both valid
  *  @returns {Error} - return if there is invalid autherUserId or invalid uId
  */
 
-export const userProfileV3 = (token: string, uId: number): UserObject => {
+export const userProfileV3 = (token: string, uId: number) => {
   const data = getData();
   // check validity of inputs
   const tokenId = isTokenValid(token);
@@ -71,12 +71,12 @@ export const userProfileV3 = (token: string, uId: number): UserObject => {
  *
  * @param {string} token - token for the requested user
  *
- * @returns {UsersObject} - return if the token is valid
+ * @returns {{user: User}} - return if the token is valid
  * @returns {Error} - return if the token is invalid
  *
  */
 
-export const usersAllV2 = (token: string): UsersObject => {
+export const usersAllV2 = (token: string) => {
   const data = getData();
   // check validity of input
   const tokenId = isTokenValid(token);
@@ -121,7 +121,7 @@ export const userProfileSetNameV2 = (
   token: string,
   nameFirst: string,
   nameLast: string
-): Record<string, never> => {
+) => {
   const data = getData();
   // check validity of inputs
   const tokenId = isTokenValid(token);
@@ -159,7 +159,7 @@ export const userProfileSetNameV2 = (
 export const userProfileSetEmailV2 = (
   token: string,
   email: string
-): Record<string, never> | Error => {
+) => {
   const data = getData();
   // check validaity of inputs
   const tokenId = isTokenValid(token);
@@ -200,7 +200,7 @@ export const userProfileSetEmailV2 = (
 export const userProfileSetHandleV2 = (
   token: string,
   handleStr: string
-): Record<string, never> => {
+) => {
   const data = getData();
   // check validaity of inputs
   const tokenId = isTokenValid(token);

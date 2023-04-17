@@ -149,7 +149,7 @@ Example usage
 */
 
 // Use get() to access the data
-function getData(): Data {
+function getData() {
   return data;
 }
 

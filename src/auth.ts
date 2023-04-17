@@ -19,8 +19,6 @@ import { SERVER_URL } from './helperFunctions/helperFunctions';
 
 const DEFAULT_PROFILE_PIC = SERVER_URL + '/profileImgs/default.jpg';
 
-type UIdAndToken = { token: string; authUserId: number }; // Reture object type
-
 /**
  * <Given an email address, if the email address belongs to a registered user,
  * sends them an email containing a secret password reset code. This code, when
@@ -111,13 +109,13 @@ export const authPasswordresetResetV1 = (
  * @param {string} email - email address of the registered users
  * @param {string} password - password of the registered users
  *
- * @returns {UIdAndToken} - there exist an user with matching email and
+ * @returns {{ token: string; authUserId: number }} - there exist an user with matching email and
  * passwords
  * @throws {400 ERROR} - email or password non-exise or mismatch from
  * the stored user informations
  */
 
-export const authLoginV3 = (email: string, password: string): UIdAndToken => {
+export const authLoginV3 = (email: string, password: string) => {
   const data = getData();
 
   for (const user of data.users) {
@@ -154,7 +152,7 @@ export const authLoginV3 = (email: string, password: string): UIdAndToken => {
  * @param {string} nameFirst - first name of the registered users
  * @param {string} nameLast - last name of the registered users
  *
- * @returns {UIdAndToken} - valid email, password with more than 6
+ * @returns { token: string; authUserId: number } - valid email, password with more than 6
  * characters, and the length of name is between 1 and 50 inclusive
  * @throws {400 ERROR} - invalid or alreade registered email,
  * length of passwor is lower than 6, length of names is outside of the range [1,50]
@@ -165,7 +163,7 @@ export const authRegisterV3 = (
   password: string,
   nameFirst: string,
   nameLast: string
-): UIdAndToken => {
+) => {
   const data = getData();
 
   if (!validator.isEmail(email)) {
@@ -229,7 +227,7 @@ export const authRegisterV3 = (
  * @throws {400 ERROR} - invalid token
  */
 
-export const authLogOutV2 = (token: string): Record<string, never> => {
+export const authLogOutV2 = (token: string)=> {
   const data = getData();
 
   const tokenId = isTokenValid(token);

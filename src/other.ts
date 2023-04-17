@@ -19,7 +19,7 @@ import {
  * @returns {{}} - if the function successifully clear the data stored
  */
 
-export const clearV1 = (): Record<string, never> => {
+export const clearV1 = () => {
   const data = getData();
   data.channels.length = 0;
   data.users.length = 0;
