@@ -735,7 +735,7 @@ export const messageSendLaterV1 = (
   const channel = findChannel(channelId);
 
   // store the message in datastore, yet set 'isSent' to false
-  data.messages.push({
+  data.messages.unshift({
     messageId: messageId,
     uId: authUserId,
     dmOrChannelId: channelId,
@@ -749,13 +749,13 @@ export const messageSendLaterV1 = (
   });
 
   const user = findUser(authUserId);
-  user.messages.push(messageId);
-
+  
   // wait until timeSent, then update the message to channel, notify users and set 'isSent' to true
   setTimeout(() => {
     const messageObj = findStoredMessageFromId(messageId);
     messageObj.isSent = true;
-    channel.messages.push(messageId);
+    user.messages.unshift(messageId);
+    channel.messages.unshift(messageId);
     notifyTaggedUsers(authUserId, channelId, true, messageId, []);
   }, (timeSent - getTimeNow()) * 1000);
 
@@ -812,7 +812,7 @@ export const messageSendLaterDmV1 = (
   const dm = findDm(dmId);
 
   // store the message in datastore, yet set 'isSent' to false
-  data.messages.push({
+  data.messages.unshift({
     messageId: messageId,
     uId: authUserId,
     dmOrChannelId: dmId,
@@ -826,13 +826,13 @@ export const messageSendLaterDmV1 = (
   });
 
   const user = findUser(authUserId);
-  user.messages.push(messageId);
-
+  
   // wait until timeSent, then update the message to dm, notify users and set 'isSent' to true
   setTimeout(() => {
     const messageObj = findStoredMessageFromId(messageId);
     messageObj.isSent = true;
-    dm.messages.push(messageId);
+    dm.messages.unshift(messageId);
+    user.messages.unshift(messageId);
     notifyTaggedUsers(authUserId, dmId, false, messageId, []);
   }, (timeSent - getTimeNow()) * 1000);
 

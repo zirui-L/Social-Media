@@ -34,8 +34,8 @@ export const recordStandupEnd = (
     if (isMember(authUserId, channelId) && message !== '') {
       // Cannot use messageSend since the packed message may be greater than 1000 characters
       const messageId = createUniqueId();
-      channel.messages.push(messageId);
-      data.messages.push({
+      channel.messages.unshift(messageId);
+      data.messages.unshift({
         messageId: messageId,
         uId: authUserId,
         message: message,
@@ -49,7 +49,7 @@ export const recordStandupEnd = (
       });
       const user = findUser(authUserId);
 
-      user.messages.push(messageId);
+      user.messages.unshift(messageId);
     }
 
     channel.standUp.starter = null;
