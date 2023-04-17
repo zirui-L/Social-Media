@@ -27,19 +27,20 @@ afterEach(() => {
 
 describe('standup/start/V1', () => {
   test('Test-1: Error, invalid token', () => {
+    // create a new user
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName'
     );
-
+    // create channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
-
+    // verify output with invalid token
     const res = requestStandupStart(
       test1.bodyObj.token + '1',
       channelId1.bodyObj.channelId,
@@ -49,19 +50,20 @@ describe('standup/start/V1', () => {
   });
 
   test('Test-2: Error, channelId does not refer to a valid channel', () => {
+    // create a new user
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-
+    // create a channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
-
+    // verify output with invalid channelId
     const res = requestStandupStart(
       test1.bodyObj.token,
       channelId1.bodyObj.channelId + 1,
@@ -71,19 +73,20 @@ describe('standup/start/V1', () => {
   });
 
   test('Test-3: Error, Length is a negative integer', () => {
+    // create a new user
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-
+    // create a new channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
-
+    // verify output with invalid length
     const res = requestStandupStart(
       test1.bodyObj.token,
       channelId1.bodyObj.channelId,
@@ -94,18 +97,20 @@ describe('standup/start/V1', () => {
   });
 
   test('Test-4: Error, An active standup is currently running in the channel', () => {
+    // create a new user
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-
+    // create a new channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
+    // verify output with an active standup is currently running in the channel
     requestStandupStart(test1.bodyObj.token, channelId1.bodyObj.channelId, 1);
     const res = requestStandupStart(
       test1.bodyObj.token,
@@ -117,6 +122,7 @@ describe('standup/start/V1', () => {
   });
 
   test('Test-5: Error, channelId is valid and the authorised user is not a member of the channel', () => {
+    // create new users
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
@@ -130,12 +136,13 @@ describe('standup/start/V1', () => {
       'firstName2',
       'lastName2'
     );
-
+    // create channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
+    // verify output with invalid a user's token who is not a member of the channel
     const res = requestStandupStart(
       test2.bodyObj.token,
       channelId1.bodyObj.channelId,
@@ -146,18 +153,20 @@ describe('standup/start/V1', () => {
   });
 
   test('Test-6: Success, standup start (with no standup sent)', () => {
+    // create a new user
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-
+    // create channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
+    // verify output with an empty standup
     const timeFinish = Math.floor(Date.now() / 1000) + 1;
     const res = requestStandupStart(
       test1.bodyObj.token,
@@ -187,19 +196,20 @@ describe('standup/start/V1', () => {
 
 describe('standup/active/V1', () => {
   test('Test-1: Error, invalid token', () => {
+    // create a new user
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-
+    // create a new channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
-
+    // verify output with invalid token
     const res = requestStandupActive(
       test1.bodyObj.token + '1',
       channelId1.bodyObj.channelId
@@ -208,19 +218,20 @@ describe('standup/active/V1', () => {
   });
 
   test('Test-2: Error, channelId does not refer to a valid channel', () => {
+    // creare a new user
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-
+    // create a new channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
-
+    // verify output with invalid channelId
     const res = requestStandupActive(
       test1.bodyObj.token,
       channelId1.bodyObj.channelId + 1
@@ -229,6 +240,7 @@ describe('standup/active/V1', () => {
   });
 
   test('Test-3: Error, channelId is valid and the authorised user is not a member of the channel', () => {
+    // create new users
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
@@ -242,13 +254,13 @@ describe('standup/active/V1', () => {
       'firstName2',
       'lastName2'
     );
-
+    // create a channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
       true
     );
-
+    // verify output with not permitted token
     const res = requestStandupActive(
       test2.bodyObj.token,
       channelId1.bodyObj.channelId
@@ -257,13 +269,14 @@ describe('standup/active/V1', () => {
   });
 
   test('Test-4: Success, with no standup active', () => {
+    // create a new user
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
       'firstName1',
       'lastName1'
     );
-
+    // create a new channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
@@ -274,7 +287,7 @@ describe('standup/active/V1', () => {
       test1.bodyObj.token,
       channelId1.bodyObj.channelId
     );
-
+    // verify output with an empty standup
     expect(res.statusCode).toBe(OK);
     expect(res.bodyObj).toStrictEqual({
       isActive: false,
@@ -283,6 +296,7 @@ describe('standup/active/V1', () => {
   });
 
   test('Test-5: Success, with existing standup active', () => {
+    // create new users
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
@@ -296,6 +310,7 @@ describe('standup/active/V1', () => {
       'firstName2',
       'lastName2'
     );
+    // create a new channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
@@ -311,7 +326,7 @@ describe('standup/active/V1', () => {
       channelId1.bodyObj.channelId,
       1
     );
-
+    // verify output with valid input
     expect(res1.statusCode).toBe(OK);
     const res = requestStandupActive(
       test2.bodyObj.token,
@@ -331,6 +346,7 @@ describe('standup/active/V1', () => {
 
 describe('standup/send/V1', () => {
   test('Test-1: Error invalid token invalid channelId, length of message over 1000 characters, valid channelId but authUser is not in the channel', () => {
+    // create new users
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
@@ -344,6 +360,7 @@ describe('standup/send/V1', () => {
       'firstName2',
       'lastName2'
     );
+    // create a new channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
@@ -353,6 +370,7 @@ describe('standup/send/V1', () => {
     requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
 
     requestStandupStart(test1.bodyObj.token, channelId1.bodyObj.channelId, 1);
+    // verify output with invalid token
     const res = requestStandupSend(
       test1.bodyObj.token + '1',
       channelId1.bodyObj.channelId,
@@ -364,6 +382,7 @@ describe('standup/send/V1', () => {
   });
 
   test('Test-2: Error invalid  channelId', () => {
+    // create new users
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
@@ -377,6 +396,7 @@ describe('standup/send/V1', () => {
       'firstName2',
       'lastName2'
     );
+    // create a new channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
@@ -384,7 +404,7 @@ describe('standup/send/V1', () => {
     );
 
     requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
-
+    // verify output with invalid channelId
     requestStandupStart(test1.bodyObj.token, channelId1.bodyObj.channelId, 1);
     const res = requestStandupSend(
       test1.bodyObj.token,
@@ -397,6 +417,7 @@ describe('standup/send/V1', () => {
   });
 
   test('Test-3: Error, length of message over 1000 characters', () => {
+    // create new users
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
@@ -410,6 +431,7 @@ describe('standup/send/V1', () => {
       'firstName2',
       'lastName2'
     );
+    // create a new channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
@@ -419,18 +441,18 @@ describe('standup/send/V1', () => {
     requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
 
     requestStandupStart(test1.bodyObj.token, channelId1.bodyObj.channelId, 1);
-
     const res = requestStandupSend(
       test1.bodyObj.token,
       channelId1.bodyObj.channelId,
       createString(1001)
     );
-
+    // verify output with invalid message length
     expect(res.statusCode).toBe(BAD_REQUEST);
     sleep(2);
   });
 
   test('Test-4: Error, valid channelId but authUser is not in the channel', () => {
+    // create new users
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
@@ -444,6 +466,7 @@ describe('standup/send/V1', () => {
       'firstName2',
       'lastName2'
     );
+    // create a new channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
@@ -457,12 +480,13 @@ describe('standup/send/V1', () => {
       channelId1.bodyObj.channelId,
       'comp1531'
     );
-
+    // verify output with not permitted token
     expect(res.statusCode).toBe(FORBIDDEN);
     sleep(2);
   });
 
   test('Test-5: Error, an active standup is not currently running in the channel', () => {
+    // create users
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
@@ -476,6 +500,7 @@ describe('standup/send/V1', () => {
       'firstName2',
       'lastName2'
     );
+    // create a channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
@@ -487,12 +512,14 @@ describe('standup/send/V1', () => {
       channelId1.bodyObj.channelId,
       'comp1531'
     );
+    // verify output with an active standup is not currently running in the channel
     expect(res.statusCode).toBe(BAD_REQUEST);
 
     sleep(2);
   });
 
   test('Test-6: Success, standup send', () => {
+    // create new users
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       'password1',
@@ -506,6 +533,7 @@ describe('standup/send/V1', () => {
       'firstName2',
       'lastName2'
     );
+    // create a channel
     const channelId1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
@@ -513,7 +541,7 @@ describe('standup/send/V1', () => {
     );
 
     requestChannelJoin(test2.bodyObj.token, channelId1.bodyObj.channelId);
-
+    // run requestStandupStart function
     const timeFinish = requestStandupStart(
       test2.bodyObj.token,
       channelId1.bodyObj.channelId,
@@ -537,7 +565,7 @@ describe('standup/send/V1', () => {
     );
 
     sleep(2);
-
+    // verify output by using requestChannelMessages funtion
     const channelMessages = requestChannelMessages(
       test2.bodyObj.token,
       channelId1.bodyObj.channelId,

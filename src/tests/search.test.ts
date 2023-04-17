@@ -21,6 +21,7 @@ afterEach(() => {
 
 describe('Testing search/v1', () => {
   test('Test-1: success case', () => {
+    // create users
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
@@ -33,6 +34,7 @@ describe('Testing search/v1', () => {
       'firstName2',
       'lastName2'
     );
+    // create channel and dm, send messages
     const channel1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
@@ -52,7 +54,7 @@ describe('Testing search/v1', () => {
       'secondMessage'
     );
     requestMessageSendDm(test2.bodyObj.token, dm1.dmId, 'comp1531');
-
+    // verify output
     const search = requestSearch(test1.bodyObj.token, 'Message');
     expect(search.statusCode).toBe(OK);
     expect(search.bodyObj).toStrictEqual({
@@ -78,6 +80,7 @@ describe('Testing search/v1', () => {
   });
 
   test('Test-2: success, no messages returned', () => {
+    // create new users
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
@@ -90,6 +93,7 @@ describe('Testing search/v1', () => {
       'firstName2',
       'lastName2'
     );
+    // create channel
     const channel1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
@@ -98,17 +102,20 @@ describe('Testing search/v1', () => {
     requestChannelJoin(test2.bodyObj.token, channel1.bodyObj.channelId);
 
     const search = requestSearch(test1.bodyObj.token, 'hello');
+    // verify output with no corresponding message being sent
     expect(search.statusCode).toBe(OK);
     expect(search.bodyObj).toStrictEqual({ messages: [] });
   });
 
   test('Test-3: Error, length of queryStr is less than 1 or over 1000 characters', () => {
+    // create a new user
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'firstName1',
       'lastName1'
     );
+    // create channel and send message
     const channel1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
@@ -119,6 +126,7 @@ describe('Testing search/v1', () => {
       channel1.bodyObj.channelId,
       'firstMessage'
     );
+    // verify output with invalid queryStr length
     expect(requestSearch(test1.bodyObj.token, '').statusCode).toBe(BAD_REQUEST);
     expect(
       requestSearch(test1.bodyObj.token, createString(1001)).statusCode
@@ -126,12 +134,14 @@ describe('Testing search/v1', () => {
   });
 
   test('Test-4: Error, invalid token', () => {
+    // create a new user
     const test1 = requestAuthRegister(
       'test1@gmail.com',
       '123456',
       'firstName1',
       'lastName1'
     );
+    // create channel and send message
     const channel1 = requestChannelsCreate(
       test1.bodyObj.token,
       'firstChannel',
@@ -142,6 +152,7 @@ describe('Testing search/v1', () => {
       channel1.bodyObj.channelId,
       'hello'
     );
+    // verify output with invalid token
     expect(requestSearch(test1.bodyObj.token + '1', 'Message').statusCode).toBe(
       FORBIDDEN
     );
