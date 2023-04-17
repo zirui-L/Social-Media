@@ -274,8 +274,9 @@ export const userProfileUploadPhotoV1 = (
 
   // Check if the image is valid
   let res;
+
   try {
-    // Code that might throw an error
+    // catch error associated when acquiring the image
     res = request('GET', imgUrl);
   } catch (error) {
     throw HTTPError(BAD_REQUEST, 'Error when retrieving the image');

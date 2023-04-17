@@ -139,6 +139,8 @@ describe('Testing messageSend', () => {
     );
     expect(res.statusCode).toBe(OK);
     expect(res.bodyObj).toStrictEqual({});
+
+    // check that user has been removed in both the dm and channel
     expect(
       requestChannelDetails(test2.bodyObj.token, channelId.bodyObj.channelId)
         .bodyObj
@@ -206,6 +208,7 @@ describe('Testing messageSend', () => {
       'secondMessage'
     );
 
+    // After removal, the message sent becomes 'Removed user'
     requestAdminUserRemove(test1.bodyObj.token, test2.bodyObj.authUserId);
     expect(
       requestChannelMessages(
@@ -264,6 +267,8 @@ describe('Testing messageSend', () => {
       dmId,
       'secondMessage'
     );
+
+    // After removal, the message sent becomes 'Removed user'
     requestAdminUserRemove(test1.bodyObj.token, test2.bodyObj.authUserId);
     expect(
       requestDmMessages(test1.bodyObj.token, dmId, 0).bodyObj
@@ -316,6 +321,8 @@ describe('Testing messageSend', () => {
       test2.bodyObj.authUserId,
       1
     );
+
+    // after removal, the user all function does not return the user anymore
     requestAdminUserRemove(test2.bodyObj.token, test1.bodyObj.authUserId);
     expect(requestUsersAll(test2.bodyObj.token).bodyObj).toStrictEqual({
       users: [
@@ -364,6 +371,8 @@ describe('Testing messageSend', () => {
       'firstName3',
       'lastName3'
     );
+
+    //check whether email is reusable or not
     expect(
       requestUserProfile(test1.bodyObj.token, test3.bodyObj.authUserId).bodyObj
     ).toStrictEqual({
@@ -379,6 +388,7 @@ describe('Testing messageSend', () => {
 
     requestAdminUserRemove(test1.bodyObj.token, test3.bodyObj.authUserId);
 
+    //check whether handle string is reusable or not
     requestUserProfileSetHandle(test1.bodyObj.token, 'firstname3lastname3');
     expect(
       requestUserProfile(test1.bodyObj.token, test1.bodyObj.authUserId).bodyObj
