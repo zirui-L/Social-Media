@@ -11,6 +11,8 @@ import {
   requestChannelsListAll,
   requestClear,
   requestMessageSend,
+  requestStandupStart,
+  sleep
 } from './testHelper';
 import { FORBIDDEN, OK, BAD_REQUEST } from '../helperFunctions/helperFunctions';
 
@@ -1094,6 +1096,36 @@ describe('Testing /channel/leave/v2', () => {
     );
     expect(channelLeaveObj.statusCode).toBe(FORBIDDEN);
     expect(channelLeaveObj.bodyObj).toStrictEqual(undefined);
+  });
+
+  test('Test-4: Error, User is the starter of an active standup in the channel', () => {
+    const user = requestAuthRegister(
+      'test1@gmail.com',
+      '123456',
+      'Richardo',
+      'Lee'
+    );
+
+    const channel = requestChannelsCreate(
+      user.bodyObj.token,
+      'RicardoChannel',
+      true
+    );
+
+    const timeFinish = Math.floor(Date.now() / 1000) + 1;
+    requestStandupStart(
+      user.bodyObj.token,
+      channel.bodyObj.channelId,
+      1
+    );
+
+    const channelLeaveObj = requestChannelLeave(
+      user.bodyObj.token,
+      channel.bodyObj.channelId
+    );
+    expect(channelLeaveObj.statusCode).toBe(BAD_REQUEST);
+    expect(channelLeaveObj.bodyObj).toStrictEqual(undefined);
+    sleep(2);
   });
 
   test('Test-4: Success case of leave channel', () => {
