@@ -339,9 +339,7 @@ export const channelLeaveV2 = (
 };
 
 /**
- * <Given a channel with ID channelId that the authorised user is a member of,
- * remove them as a member of the channel. Their messages should remain in the
- * channel. If the only channel owner leaves, the channel will remain.>
+ * <Makes user with user ID uId an owner of the channel.>
  *
  * @param {string} token - token for a requesting user
  * @param {integer} channelId - channelId
@@ -382,8 +380,10 @@ export const channelAddOwnerV2 = (
   }
 
   const authUserId = findUserFromToken(tokenId);
+  const authUser = findUser(authUserId);
 
-  if (!isOwner(authUserId, channelId)) {
+  // authUser not channel owner or global owner
+  if (!isOwner(authUserId, channelId) || authUser.permissionId != 1) {
     throw HTTPError(
       FORBIDDEN,
       'The authorised user is not an owner of the channel'
@@ -438,8 +438,10 @@ export const channelRemoveOwnerV2 = (
   }
 
   const authUserId = findUserFromToken(tokenId);
+  const authUser = findUser(authUserId);
 
-  if (!isOwner(authUserId, channelId)) {
+  // authUser not channel owner or global owner
+  if (!isOwner(authUserId, channelId) || authUser.permissionId != 1) {
     throw HTTPError(
       FORBIDDEN,
       'The authorised user is not an owner of the channel'
