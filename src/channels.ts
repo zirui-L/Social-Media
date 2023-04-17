@@ -1,4 +1,4 @@
-import { getData, setData, Error } from './dataStore';
+import { getData, setData } from './dataStore';
 import {
   isTokenValid,
   createUniqueId,
@@ -73,7 +73,7 @@ export const channelsCreateV3 = (
  * returned channels
  *
  * @throws {Error} - Error case when the input user Id is invalid
- * @returns {{ channels: Array<{ channelId: number; name: string }> }} 
+ * @returns {{ channels: Array<{ channelId: number; name: string }> }}
  * - A array of channels and their details that the user is part of
  */
 
@@ -110,7 +110,7 @@ export const channelsListV3 = (token: string) => {
  * @param {integer} authUserId - The user Id
  *
  * @throws {Error} - Error case when the input user Id is invalid
- * @returns {{ channels: Array<{ channelId: number; name: string }> }} 
+ * @returns {{ channels: Array<{ channelId: number; name: string }> }}
  * - A array of all channels and their details
  */
 

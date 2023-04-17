@@ -227,7 +227,7 @@ export const authRegisterV3 = (
  * @throws {400 ERROR} - invalid token
  */
 
-export const authLogOutV2 = (token: string)=> {
+export const authLogOutV2 = (token: string) => {
   const data = getData();
 
   const tokenId = isTokenValid(token);

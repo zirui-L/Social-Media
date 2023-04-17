@@ -1,4 +1,4 @@
-import { getData, Error, User, setData } from './dataStore';
+import { getData, setData } from './dataStore';
 import {
   isAuthUserIdValid,
   isTokenValid,
@@ -19,14 +19,6 @@ import request from 'sync-request';
 
 import { imageSize } from 'image-size';
 import { SERVER_URL } from './helperFunctions/helperFunctions';
-
-type UserObject = {
-  user: User;
-};
-
-type UsersObject = {
-  users: Array<User>;
-};
 
 /**
  * <Create a new user with input email, password, first and last names. Create

@@ -1,4 +1,4 @@
-import { getData, setData, User, Error, paginatedMessage } from './dataStore';
+import { getData, setData } from './dataStore';
 import {
   isTokenValid,
   findUserFromToken,
@@ -22,7 +22,7 @@ import { addNotification } from './helperFunctions/notificationHelper';
  * @param {string} token - token for the requesting user
  * @param {integer} channelId - channelId
  *
- * @returns {{name: string; isPublic: boolean; ownerMembers: Array<User>; allMembers: Array<User>;}} 
+ * @returns {{name: string; isPublic: boolean; ownerMembers: Array<User>; allMembers: Array<User>;}}
  * - object return when hannelId/authUserId
  * is valid and authorised user is a member of the channel
  * @throws {Error} - when channelId/authUserId
@@ -304,16 +304,16 @@ export const channelLeaveV2 = (
   }
 
   const authUserId = findUserFromToken(tokenId);
-  
+
   if (!isMember(authUserId, channelId)) {
     throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
-  
+
   const channel = findChannel(channelId);
   if (authUserId === channel.standUp.starter) {
-    throw HTTPError(BAD_REQUEST, 'User is the starter of an active standup in the channel')
+    throw HTTPError(BAD_REQUEST, 'User is the starter of an active standup in the channel');
   }
-  
+
   // remove member from channel
   channel.allMembers = channel.allMembers.filter(
     (user: number) => user !== authUserId
@@ -376,7 +376,7 @@ export const channelAddOwnerV2 = (
   const authUser = findUser(authUserId);
 
   // authUser not channel owner or global owner
-  if (!isOwner(authUserId, channelId) || authUser.permissionId != 1) {
+  if (!isOwner(authUserId, channelId) || authUser.permissionId !== 1) {
     throw HTTPError(
       FORBIDDEN,
       'The authorised user is not an owner of the channel'
@@ -434,7 +434,7 @@ export const channelRemoveOwnerV2 = (
   const authUser = findUser(authUserId);
 
   // authUser not channel owner or global owner
-  if (!isOwner(authUserId, channelId) || authUser.permissionId != 1) {
+  if (!isOwner(authUserId, channelId) || authUser.permissionId !== 1) {
     throw HTTPError(
       FORBIDDEN,
       'The authorised user is not an owner of the channel'

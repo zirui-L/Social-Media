@@ -1,4 +1,4 @@
-import { Error, getData, setData, React } from './dataStore';
+import { getData, setData, React } from './dataStore';
 import {
   isMember,
   isOwner,
@@ -491,7 +491,7 @@ export const messageUnReactV1 = (
 export const messagePinV1 = (
   token: string,
   messageId: number
- ) => {
+) => {
   const data = getData();
 
   const tokenId = isTokenValid(token);
@@ -659,7 +659,7 @@ export const messageShareV1 = (
   }
   const storedUser = findUser(uId);
   const ogMessage = findStoredMessageFromId(ogMessageId);
-  
+
   // messageId does not refer to a valid message within a channel/DM
   // that the authorised user has joined
   if (
@@ -749,7 +749,7 @@ export const messageSendLaterV1 = (
   });
 
   const user = findUser(authUserId);
-  
+
   // wait until timeSent, then update the message to channel, notify users and set 'isSent' to true
   setTimeout(() => {
     const messageObj = findStoredMessageFromId(messageId);
@@ -826,7 +826,7 @@ export const messageSendLaterDmV1 = (
   });
 
   const user = findUser(authUserId);
-  
+
   // wait until timeSent, then update the message to dm, notify users and set 'isSent' to true
   setTimeout(() => {
     const messageObj = findStoredMessageFromId(messageId);

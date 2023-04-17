@@ -1,4 +1,4 @@
-import { getData, setData, User, paginatedMessage } from './dataStore';
+import { getData, setData } from './dataStore';
 import {
   isTokenValid,
   findUserFromToken,
