@@ -50,18 +50,19 @@ export const adminUserRemoveV1 = (token: string, uId: number) => {
     );
   }
 
-  // Remove the user from the UNSW MEMes
+  // Remove the user from the UNSW Memes
   user.isRemoved = true;
 
   // Remove user from all belonging dms
   for (const dmId of user.dms) {
     const dm = findDm(dmId);
-    // Remove userId from dm.allMembers
+    // Remove users from the all members
     const allMembersIndex = dm.allMembers.findIndex(
       (storedUserId) => storedUserId === uId
     );
     dm.allMembers.splice(allMembersIndex, 1);
 
+    // If the use created a dm, remove them from the owner position
     if (dm.ownerMembers[0] === authUserId) {
       dm.ownerMembers.length = 0;
     }
@@ -72,6 +73,7 @@ export const adminUserRemoveV1 = (token: string, uId: number) => {
   // Remove user from all belonging channels
   for (const channelId of user.channels) {
     const channel = findChannel(channelId);
+    // Remove all users from the channel all members
     const allMembersIndex = channel.allMembers.findIndex(
       (storedUserId) => storedUserId === uId
     );
@@ -80,6 +82,8 @@ export const adminUserRemoveV1 = (token: string, uId: number) => {
     const ownerMembersIndex = channel.ownerMembers.findIndex(
       (storedUserId) => storedUserId === uId
     );
+
+    // remove from owner position
 
     if (ownerMembersIndex !== -1) {
       channel.ownerMembers.splice(ownerMembersIndex, 1);
@@ -94,10 +98,11 @@ export const adminUserRemoveV1 = (token: string, uId: number) => {
     messageObj.message = 'Removed user';
   }
 
-  // Change nameFirst and nameLast of user
+  // Change the name of the user after removal
   user.nameFirst = 'Removed';
   user.nameLast = 'user';
 
+  // log out of all sessions for the user
   data.tokens = data.tokens.filter(
     (existingToken) => existingToken.uId !== uId
   );
@@ -168,6 +173,7 @@ export const adminUserpermissionChangeV1 = (
 
   user.permissionId = permissionId;
 
+  // add the new global owner to the data store
   if (permissionId === 1) {
     data.globalOwners.push(uId);
   }

@@ -354,6 +354,7 @@ describe('auth/passwordreset/request/v1', () => {
     const passwordResetRequest =
       requestAuthPasswordresetRequest('test1@gmail.com');
 
+    // user logged out of all sessions
     expect(passwordResetRequest.statusCode).toBe(OK);
     expect(
       requestUserProfile(test1.bodyObj.token, test1.bodyObj.authUserId)
@@ -381,14 +382,14 @@ describe('auth/passwordreset/request/v1', () => {
 
   test('Test-3: real time testing', () => {
     requestAuthRegister(
-      'zhangzhenbo918@gmail.com',
+      'z5416650@ad.unsw.edu.au',
       '123455',
       'firstName',
       'lastName'
     );
 
     const passwordResetRequest = requestAuthPasswordresetRequest(
-      'zhangzhenbo918@gmail.com'
+      'z5416650@ad.unsw.edu.au'
     );
 
     expect(passwordResetRequest.statusCode).toBe(OK);
@@ -413,7 +414,7 @@ describe('auth/passwordreset/reset/v1', () => {
     requestAuthRegister('test1@gmail.com', '123456', 'firstName', 'lastName');
     requestAuthPasswordresetRequest('test1@gmail.com');
     const passWordResetObj = requestAuthPasswordresetReset(
-      '5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9',
+      '1666f442169b6230e102f3e469b331347e23a61d092122e86bef97b98dc5db72',
       '1234'
     );
     expect(passWordResetObj.statusCode).toBe(BAD_REQUEST);

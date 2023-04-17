@@ -57,7 +57,7 @@ export const authPasswordresetRequestV1 = (email: string) => {
   // Send email for resetting password
   sendPasswordResetEmail(email, resetCode);
 
-  // log user out of all sessions
+  // log out of all sessions
   data.tokens = data.tokens.filter(
     (existingToken) => existingToken.uId !== user.authUserId
   );
@@ -94,9 +94,10 @@ export const authPasswordresetResetV1 = (
     throw HTTPError(BAD_REQUEST, 'newPassword is less than 6 characters long');
   }
 
-  // invalidate the resetCode and change password for the user
   const user = findUser(storedResetCodes.authUserId);
   user.password = getHashOf(newPassword + SECRET);
+
+  // invalidates the reset code once used
   storedResetCodes.valid = false;
   setData(data);
   return {};
